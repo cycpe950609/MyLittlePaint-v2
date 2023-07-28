@@ -10,6 +10,8 @@ import BrushCVSFunc from "./brush";
 import EraserCVSFunc from "./eraser";
 import LineCVSFunc from "./line";
 import { CircleCVSFunc, RectangleCVSFunc, TriangleCVSFunc } from "./polygon";
+import {btnClear, btnRedo, btnSave, btnUndo, btnUpload} from "./menu";
+import Alert from "../editorUI/util/alert";
 
 export class btnCanvas implements FunctionInterface {
     Name: string;
@@ -30,7 +32,7 @@ export class btnCanvas implements FunctionInterface {
     };
 }
 
-class EditorCanvas implements CanvasBase {
+export class EditorCanvas implements CanvasBase {
     name = "EditorCanvas";
 
     private scrollDiv: HTMLDivElement = DIV(
@@ -140,6 +142,104 @@ class EditorCanvas implements CanvasBase {
             requestAnimationFrame(this.render)
         }
     };
+    public open = () => {
+        let upload = document.createElement('input');
+        upload.setAttribute('type','file');
+        upload.setAttribute('accept','image/*')
+        upload.onchange = (event: Event) => {
+            const element = event.currentTarget as HTMLInputElement;
+            let fileList: FileList | null = element.files;
+            if(fileList === null) {dia.close(); return;};
+            
+            let img = new Image();
+            
+            img.onload = () => {
+                this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
+                this.prev_ctx.clearRect(0, 0, this.prev_cvs.width, this.prev_cvs.height);
+
+                console.log(img.width);
+                console.log(img.height);
+                
+                this.cvs.width = img.width;
+                this.cvs.height = img.height;
+                this.ctx.drawImage(img, 0, 0, img.width, img.height);
+                
+                this.prev_cvs.width = img.width;
+                this.prev_cvs.height = img.height;
+
+                this.backgroundDiv.style.width = `${img.width}px`;
+                this.backgroundDiv.style.height = `${img.height}px`;
+
+                this.width = img.width;
+                this.height = img.height;
+
+                URL.revokeObjectURL(src);
+                dia.close()
+            }
+
+            let src = URL.createObjectURL(fileList[0]);
+            img.src = src;
+        }
+        let dia = new Dialog("Upload A Image",upload);
+        dia.show();
+    };
+    private stk_history = new Array();
+    private his_step: number = 0
+    public undo = () => {
+        if(this.his_step > 0)
+        {
+            
+            this.his_step--;
+            let img = new Image();
+            img.src = this.stk_history[this.his_step];
+            img.onload = ()=>{
+                this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
+                this.ctx.drawImage(img,0,0);  
+            };
+            
+            console.log('Undo : ' + this.his_step);
+        }
+    }
+    public redo = () => {
+        if(this.his_step < this.stk_history.length-1)
+        {
+            console.log('Redo');
+            this.his_step++;
+            let img = new Image();
+            img.src = this.stk_history[this.his_step];
+            img.onload = ()=>{
+                this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
+                this.ctx.drawImage(img,0,0);  
+            };
+        }
+    }
+    public save() {
+        let dia = new Dialog('Enter the name of image',
+        DIV("w-fit flex flex-row",[
+            TEXT("txt"),
+            SPAN("whitespace","  .png "),
+            BUTTON("ok_btn","OK")
+        ]))
+        dia.show();
+    }
+    public clear() {
+        let btnCancel = BUTTON("w-full mx-2rem","Cancel");
+        btnCancel.onclick = () => {
+            dia.close();
+        }
+        let btnOK = BUTTON("w-full mx-2rem","OK");
+        btnOK.onclick = () => {
+            this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
+            dia.close();
+        }
+        let dia = new Dialog("Do you want to clear the canvas ?",
+            DIV("w-full flex flex-row",[
+                btnCancel,
+                btnOK
+            ])
+        )
+        dia.show();
+    }
 }
 
 class modeEditor implements ModeFunction {
@@ -147,8 +247,16 @@ class modeEditor implements ModeFunction {
 
     CenterCanvas = new EditorCanvas(1920,1080);
 
-    MenuToolbarRight = [
+    MenuToolbarLeft = [
+        new btnUpload(),
+        new btnUndo(),
+        new btnRedo(),
+        new btnClear(),
         new btnCanvas("Eraser","eraser","Eraser",new EraserCVSFunc())
+    ]
+
+    MenuToolbarRight = [
+        new btnSave(),
     ]
 
     LeftToolbarTop = [

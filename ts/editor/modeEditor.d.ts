@@ -1,6 +1,7 @@
 import { CanvasBase, CanvasInterface } from "../editorUI/canvas";
 import FunctionInterface from "../editorUI/interface/function";
 import ModeFunction from "../editorUI/interface/mode";
+import { btnClear, btnRedo, btnSave, btnUndo, btnUpload } from "./menu";
 export declare class btnCanvas implements FunctionInterface {
     Name: string;
     ImgName?: string | undefined;
@@ -9,7 +10,7 @@ export declare class btnCanvas implements FunctionInterface {
     constructor(name: string, imgName: string, tip: string, func: CanvasInterface);
     StartFunction: (cvs: CanvasBase) => boolean;
 }
-declare class EditorCanvas implements CanvasBase {
+export declare class EditorCanvas implements CanvasBase {
     name: string;
     private scrollDiv;
     private backgroundDiv;
@@ -28,11 +29,19 @@ declare class EditorCanvas implements CanvasBase {
     resizeCanvas: (e?: UIEvent) => void;
     removeCanvas: () => void;
     render: () => void;
+    open: () => void;
+    private stk_history;
+    private his_step;
+    undo: () => void;
+    redo: () => void;
+    save(): void;
+    clear(): void;
 }
 declare class modeEditor implements ModeFunction {
     Enable: boolean;
     CenterCanvas: EditorCanvas;
-    MenuToolbarRight: btnCanvas[];
+    MenuToolbarLeft: (btnUpload | btnUndo | btnRedo | btnClear | btnCanvas)[];
+    MenuToolbarRight: btnSave[];
     LeftToolbarTop: btnCanvas[];
     StartMode(): void;
     EndMode(): void;
