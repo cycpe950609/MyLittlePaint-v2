@@ -18,12 +18,14 @@ export declare class EditorCanvas implements CanvasBase {
     private ctx;
     private prev_cvs;
     private prev_ctx;
+    private render_cvs;
+    private render_ctx;
     private draw_func;
     private EventFired;
     private width;
     private height;
     constructor(width: number, height: number);
-    FinishDrawing(): void;
+    private finishDrawing;
     attachCanvas(container: HTMLDivElement): void;
     setFunction: (func: CanvasInterface) => void;
     resizeCanvas: (e?: UIEvent) => void;
@@ -36,6 +38,14 @@ export declare class EditorCanvas implements CanvasBase {
     redo: () => void;
     save(): void;
     clear(): void;
+    private scaleFactor;
+    private scaleTip;
+    private isCtlKeyDown;
+    private isShiftDown;
+    private scaleTo;
+    private cvsMouseWheelHandler;
+    private docKeydownHandler;
+    private docKeyupHandler;
 }
 declare class modeEditor implements ModeFunction {
     Enable: boolean;

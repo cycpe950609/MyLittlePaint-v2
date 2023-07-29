@@ -12,12 +12,12 @@ declare class LineCVSFunc implements CanvasInterface {
     private NextY;
     private ifDrawing;
     private ifMouseMove;
-    MouseDown: (e: MouseEvent) => void;
-    MouseMove: (e: MouseEvent) => void;
-    MouseUp: (e: MouseEvent) => void;
-    MouseOut: (e: MouseEvent) => void;
+    MouseDown: (e: MouseEvent, scaleFactor: number) => void;
+    MouseMove: (e: MouseEvent, scaleFactor: number) => void;
+    MouseUp: (e: MouseEvent, scaleFactor: number) => void;
+    MouseOut: (e: MouseEvent, scaleFactor: number) => void;
     CanFinishDrawing: boolean;
-    DrawFunction: (Ctx: CanvasRenderingContext2D) => void;
+    DrawFunction: (Ctx: CanvasRenderingContext2D, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export default LineCVSFunc;

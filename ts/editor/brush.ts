@@ -16,33 +16,33 @@ class BrushCVSFunc implements CanvasInterface {
     private NextY : number = 0;
     private ifDrawing: boolean = false;
     private ifMouseMove: boolean = false;
-    MouseDown = (e: MouseEvent) =>{
-        [this.LastX, this.LastY] = [e.offsetX, e.offsetY];
-        [this.NextX, this.NextY] = [e.offsetX, e.offsetY];
+    MouseDown = (e: MouseEvent,scaleFactor: number) =>{
+        [this.LastX, this.LastY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
+        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
         this.ifDrawing = true;
         this.ifMouseMove = false;
         this.CanFinishDrawing = false;
     };
-    MouseMove = (e: MouseEvent) => {
+    MouseMove = (e: MouseEvent,scaleFactor: number) => {
         if(!this.ifDrawing) return;
     
         this.ifMouseMove = true;
         
-        [this.NextX, this.NextY] = [e.offsetX, e.offsetY];
+        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
     };
-    MouseUp = (e: MouseEvent) => {
+    MouseUp = (e: MouseEvent,scaleFactor: number) => {
         this.CanFinishDrawing = true;
         this.ifMouseMove = false;
         this.ifDrawing = false;
     };
-    MouseOut = (e: MouseEvent) => {
+    MouseOut = (e: MouseEvent,scaleFactor: number) => {
         this.CanFinishDrawing = true;
         this.ifMouseMove = false;
         this.ifDrawing = false; 
         
     };
     CanFinishDrawing = true;
-    DrawFunction = (Ctx: CanvasRenderingContext2D) =>
+    DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) =>
     { 
         
         if(this.ifDrawing)

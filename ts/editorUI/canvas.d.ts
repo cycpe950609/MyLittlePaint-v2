@@ -1,10 +1,10 @@
 export interface CanvasInterface {
     CanFinishDrawing: boolean;
-    MouseDown?: (e: MouseEvent) => void;
-    MouseMove?: (e: MouseEvent) => void;
-    MouseUp?: (e: MouseEvent) => void;
-    MouseOut?: (e: MouseEvent) => void;
-    DrawFunction: (ctx: CanvasRenderingContext2D) => void;
+    MouseDown?: (e: MouseEvent, scaleFactor: number) => void;
+    MouseMove?: (e: MouseEvent, scaleFactor: number) => void;
+    MouseUp?: (e: MouseEvent, scaleFactor: number) => void;
+    MouseOut?: (e: MouseEvent, scaleFactor: number) => void;
+    DrawFunction: (ctx: CanvasRenderingContext2D, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export declare class NoOPCVSFunc implements CanvasInterface {

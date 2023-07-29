@@ -12,6 +12,7 @@ import LineCVSFunc from "./line";
 import { CircleCVSFunc, RectangleCVSFunc, TriangleCVSFunc } from "./polygon";
 import {btnClear, btnRedo, btnSave, btnUndo, btnUpload} from "./menu";
 import Alert from "../editorUI/util/alert";
+import { TipComponent } from "../editorUI/statusbar";
 
 export class btnCanvas implements FunctionInterface {
     Name: string;
@@ -43,6 +44,8 @@ export class EditorCanvas implements CanvasBase {
     private ctx!: CanvasRenderingContext2D;
     private prev_cvs!: HTMLCanvasElement;
     private prev_ctx!: CanvasRenderingContext2D;
+    private render_cvs!: HTMLCanvasElement;
+    private render_ctx!: CanvasRenderingContext2D;
     private draw_func:CanvasInterface = new NoOPCVSFunc();
     private EventFired: boolean = false;
 
@@ -51,20 +54,17 @@ export class EditorCanvas implements CanvasBase {
     constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
+        this.scaleTip    = window.editorUI.Statusbar.addTip('Scale : 100%',true)
     }
 
-    FinishDrawing()
+    private finishDrawing()
     {
-        if(this.EventFired)//only mousedown and keydown can fire the event
-        {
-            //console.log('Finish Drawing ...');
-            this.ctx.globalCompositeOperation = this.draw_func.CompositeOperation;
-            this.ctx.drawImage(this.prev_cvs,0,0);
-            this.prev_ctx.clearRect(0, 0, this.prev_cvs.width, this.prev_cvs.height);
-            this.EventFired = false;
-            this.ctx.globalCompositeOperation = "source-over";
-        }
-        
+        console.log('Finish Drawing ...');
+        this.render_ctx.globalCompositeOperation = this.draw_func.CompositeOperation;
+        this.render_ctx.drawImage(this.prev_cvs,0,0,this.width,this.height);
+        this.prev_ctx.clearRect(0, 0, this.width, this.height);
+        this.EventFired = false;
+        this.ctx.globalCompositeOperation = "source-over";
         //Add Redo Undo stack
 
     }
@@ -87,37 +87,51 @@ export class EditorCanvas implements CanvasBase {
         this.prev_cvs.width = this.width;
         this.prev_cvs.height = this.height;
 
+        this.render_cvs = CANVAS("absolute disable-mouse");
+        this.render_ctx = this.render_cvs.getContext(
+            "2d"
+        ) as CanvasRenderingContext2D;
+        this.render_cvs.width = this.width;
+        this.render_cvs.height = this.height;
+
+
         this.prev_cvs.addEventListener('mousedown', (e) => {
             if(this.draw_func.MouseDown !== undefined)
             {
                 this.EventFired = true;
                 //console.log('Mouse Down');
-                this.draw_func.MouseDown(e);
+                this.draw_func.MouseDown(e,this.scaleFactor);
                 requestAnimationFrame(this.render);
             }
             
             console.log('Mouse Down');
         });
         
+        window.addEventListener("wheel", this.cvsMouseWheelHandler,{passive: false});
+
+        window.addEventListener("keydown", this.docKeydownHandler);
+        window.addEventListener("keyup", this.docKeyupHandler);
         this.prev_cvs.addEventListener('mousemove',  (e) => {
             if(this.draw_func.MouseMove !== undefined)
             {
                 // console.log('Mouse Move');
-                this.draw_func.MouseMove(e);
+                this.draw_func.MouseMove(e,this.scaleFactor);
             }
         });	
         this.prev_cvs.addEventListener('mouseup',  (e) => {
             if(this.draw_func.MouseUp !== undefined)
             {
                 console.log('Mouse Up');
-                this.draw_func.MouseUp(e);
+                let ev = new MouseEvent("mouseup", { clientX:e.clientX/this.scaleFactor, clientY: e.clientY/this.scaleFactor });
+                this.draw_func.MouseUp(e,this.scaleFactor);
             }
         });
         this.prev_cvs.addEventListener('mouseout',  (e) => {
             if(this.draw_func.MouseOut !== undefined)
             {
                 console.log('Mouse Out');
-                this.draw_func.MouseOut(e);
+                let ev = new MouseEvent("mouseup", { clientX:e.clientX/this.scaleFactor, clientY: e.clientY/this.scaleFactor });
+                this.draw_func.MouseOut(e,this.scaleFactor);
             }
         });
 
@@ -136,11 +150,14 @@ export class EditorCanvas implements CanvasBase {
     
     render = () => {
         if(this.EventFired){
-            this.draw_func.DrawFunction(this.prev_ctx);
+            // this.prev_ctx.clearRect(0,0,this.width,this.height);
+            this.draw_func.DrawFunction(this.prev_ctx,this.width,this.height);
             if(this.draw_func.CanFinishDrawing)
-                this.FinishDrawing();
+                this.finishDrawing();
             requestAnimationFrame(this.render)
         }
+        this.ctx.clearRect(0,0,this.width,this.height);
+        this.ctx.drawImage(this.render_cvs,0,0,this.width,this.height);
     };
     public open = () => {
         let upload = document.createElement('input');
@@ -229,7 +246,8 @@ export class EditorCanvas implements CanvasBase {
         }
         let btnOK = BUTTON("w-full mx-2rem","OK");
         btnOK.onclick = () => {
-            this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
+            console.log(`Clear ${this.width}, ${this.height}`,this.ctx);
+            this.ctx.clearRect(0, 0, this.width/this.scaleFactor, this.height/this.scaleFactor);
             dia.close();
         }
         let dia = new Dialog("Do you want to clear the canvas ?",
@@ -239,6 +257,80 @@ export class EditorCanvas implements CanvasBase {
             ])
         )
         dia.show();
+    }
+    /* Scaling of Canvas */
+    private scaleFactor: number = 1.0;
+    private scaleTip: TipComponent;
+    private isCtlKeyDown: boolean = false;
+    private isShiftDown: boolean = false;
+    private scaleTo = (scale: number) => {
+        let new_scale = scale
+        if(new_scale >= 4) new_scale = 4;
+        if(new_scale <= 0.1) new_scale = 0.1;
+        this.scaleFactor = new_scale;
+        this.scaleTip.updateTip(
+            "Scale : " + (this.scaleFactor * 100).toFixed(0) + "%"
+        );
+        console.log("Next scale factor = " + this.scaleFactor);
+        
+
+        let tmpCtx = new Image();
+        tmpCtx.onload = () => {
+
+            this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
+            this.ctx.canvas.width = this.width * this.scaleFactor;
+            this.ctx.canvas.height = this.height * this.scaleFactor;
+            this.ctx.scale(this.scaleFactor,this.scaleFactor);
+            this.ctx.drawImage(tmpCtx,0,0,this.width,this.height);
+            this.render();
+        }
+        tmpCtx.src = this.cvs.toDataURL();
+
+        let tmpPrev = new Image();
+        tmpPrev.onload = () => {
+            this.prev_ctx.clearRect(0,0,this.prev_cvs.width,this.prev_cvs.height);
+            this.prev_ctx.canvas.width = this.width * this.scaleFactor;
+            this.prev_ctx.canvas.height = this.height * this.scaleFactor;
+            this.prev_ctx.scale(this.scaleFactor,this.scaleFactor);
+            this.prev_ctx.drawImage(tmpPrev,0,0,this.width,this.height);
+        }
+        tmpPrev.src = this.prev_cvs.toDataURL();
+
+        this.backgroundDiv.style.width = `${this.width * this.scaleFactor}px`;
+        this.backgroundDiv.style.height = `${this.height * this.scaleFactor}px`;
+
+    };
+    private cvsMouseWheelHandler = (ev: WheelEvent) => {
+        if (this.isCtlKeyDown) {
+            ev.preventDefault();
+            if (ev.deltaY < 0)// ZOOM IN
+            {
+                this.scaleTo(this.scaleFactor + 0.1);
+            }
+            else if (ev.deltaY > 0) // zoom out 
+            {
+                this.scaleTo(this.scaleFactor - 0.1);
+
+            }
+            this.render()
+            return;
+        }
+    }
+    private docKeydownHandler = (ev: KeyboardEvent) => {
+        console.log("docKeydown", ev.key);
+        if (ev.key === "Control") this.isCtlKeyDown = true;
+        if (ev.key === "Shift") this.isShiftDown = true;
+        if(ev.key === "+" && this.isCtlKeyDown && !this.isShiftDown)
+            this.scaleTo(this.scaleFactor + 0.1);
+        if(ev.key === "-" && this.isCtlKeyDown && !this.isShiftDown)
+            this.scaleTo(this.scaleFactor - 0.1);    
+        ev.preventDefault();
+    }
+    private docKeyupHandler = (ev: KeyboardEvent) => {
+        console.log("docKeyup", ev.key);
+        if (ev.key === "Control") this.isCtlKeyDown = false;
+        if (ev.key === "Shift") this.isShiftDown = false;
+        ev.preventDefault();
     }
 }
 

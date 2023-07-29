@@ -12,12 +12,12 @@ export declare class CircleCVSFunc implements CanvasInterface {
     private NextY;
     private ifDrawing;
     private ifMouseMove;
-    MouseDown: (e: MouseEvent) => void;
-    MouseMove: (e: MouseEvent) => void;
-    MouseUp: (e: MouseEvent) => void;
-    MouseOut: (e: MouseEvent) => void;
+    MouseDown: (e: MouseEvent, scaleFactor: number) => void;
+    MouseMove: (e: MouseEvent, scaleFactor: number) => void;
+    MouseUp: (e: MouseEvent, scaleFactor: number) => void;
+    MouseOut: (e: MouseEvent, scaleFactor: number) => void;
     CanFinishDrawing: boolean;
-    DrawFunction: (Ctx: CanvasRenderingContext2D) => void;
+    DrawFunction: (Ctx: CanvasRenderingContext2D, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export declare class TriangleCVSFunc implements CanvasInterface {
@@ -33,12 +33,12 @@ export declare class TriangleCVSFunc implements CanvasInterface {
     private NextY;
     private ifDrawing;
     private ifMouseMove;
-    MouseDown: (e: MouseEvent) => void;
-    MouseMove: (e: MouseEvent) => void;
-    MouseUp: (e: MouseEvent) => void;
-    MouseOut: (e: MouseEvent) => void;
+    MouseDown: (e: MouseEvent, scaleFactor: number) => void;
+    MouseMove: (e: MouseEvent, scaleFactor: number) => void;
+    MouseUp: (e: MouseEvent, scaleFactor: number) => void;
+    MouseOut: (e: MouseEvent, scaleFactor: number) => void;
     CanFinishDrawing: boolean;
-    DrawFunction: (Ctx: CanvasRenderingContext2D) => void;
+    DrawFunction: (Ctx: CanvasRenderingContext2D, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export declare class RectangleCVSFunc implements CanvasInterface {
@@ -54,11 +54,11 @@ export declare class RectangleCVSFunc implements CanvasInterface {
     private NextY;
     private ifDrawing;
     private ifMouseMove;
-    MouseDown: (e: MouseEvent) => void;
-    MouseMove: (e: MouseEvent) => void;
-    MouseUp: (e: MouseEvent) => void;
-    MouseOut: (e: MouseEvent) => void;
+    MouseDown: (e: MouseEvent, scaleFactor: number) => void;
+    MouseMove: (e: MouseEvent, scaleFactor: number) => void;
+    MouseUp: (e: MouseEvent, scaleFactor: number) => void;
+    MouseOut: (e: MouseEvent, scaleFactor: number) => void;
     CanFinishDrawing: boolean;
-    DrawFunction: (Ctx: CanvasRenderingContext2D) => void;
+    DrawFunction: (Ctx: CanvasRenderingContext2D, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }

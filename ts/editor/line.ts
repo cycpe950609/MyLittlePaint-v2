@@ -13,33 +13,33 @@ class LineCVSFunc implements CanvasInterface {
     private NextY = 0;
     private ifDrawing = false;
     private ifMouseMove = false;
-    MouseDown = (e: MouseEvent) => {
-        [this.LastX, this.LastY] = [e.offsetX, e.offsetY];
-        [this.NextX, this.NextY] = [e.offsetX, e.offsetY];
+    MouseDown = (e: MouseEvent,scaleFactor: number) => {
+        [this.LastX, this.LastY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
+        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
         this.ifDrawing = true;
         this.ifMouseMove = false;
         this.CanFinishDrawing = false;
     };
-    MouseMove = (e: MouseEvent) => {
+    MouseMove = (e: MouseEvent,scaleFactor: number) => {
         if(!this.ifDrawing) return;
     
         this.ifMouseMove = true;
         
-        [this.NextX, this.NextY] = [e.offsetX, e.offsetY];
+        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
     };
-    MouseUp = (e: MouseEvent) => {
+    MouseUp = (e: MouseEvent,scaleFactor: number) => {
         this.CanFinishDrawing = true;
         this.ifMouseMove = false;
         this.ifDrawing = false;
     };
-    MouseOut = (e: MouseEvent) => {
+    MouseOut = (e: MouseEvent,scaleFactor: number) => {
         this.CanFinishDrawing = true;
         this.ifMouseMove = false;
         this.ifDrawing = false; 
         
     };
     CanFinishDrawing  = true;
-    DrawFunction = (Ctx: CanvasRenderingContext2D) => 
+    DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) => 
     { 
         
         if(this.ifDrawing)
@@ -47,7 +47,7 @@ class LineCVSFunc implements CanvasInterface {
             //console.log('Drawing...');
             Ctx.strokeStyle = this.BrushColor;
             Ctx.lineWidth = this.BrushWidth;
-            Ctx.clearRect(0,0,Ctx.canvas.clientWidth,Ctx.canvas.clientHeight);
+            Ctx.clearRect(0,0,width,height);
             Ctx.lineCap = 'round';
             Ctx.beginPath();
             Ctx.moveTo(this.LastX, this.LastY);
