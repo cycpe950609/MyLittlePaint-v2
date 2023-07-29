@@ -94,38 +94,69 @@ export class EditorCanvas implements CanvasBase {
         this.render_cvs.width = this.width;
         this.render_cvs.height = this.height;
 
-
-        this.prev_cvs.addEventListener('mousedown', (e) => {
+        this.prev_cvs.addEventListener("mousedown", (e) => {
             if(this.draw_func.MouseDown !== undefined)
             {
                 this.EventFired = true;
                 //console.log('Mouse Down');
-                this.draw_func.MouseDown(e,this.scaleFactor);
+                this.draw_func.MouseDown(e as MouseEvent,this.scaleFactor);
                 requestAnimationFrame(this.render);
             }
             
-            console.log('Mouse Down');
-        });
+            console.log(`Mouse Down`);
+        },false);
+        this.prev_cvs.addEventListener("touchstart", (e) => {
+            let touch = e.touches[0];
+            e.preventDefault();
+            e.stopPropagation();
+            var mouseEvent = new MouseEvent("mousedown", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            this.prev_cvs.dispatchEvent(mouseEvent);
+            // this.scaleTip.updateTip("touchstart");
+        },false)
         
         window.addEventListener("wheel", this.cvsMouseWheelHandler,{passive: false});
 
         window.addEventListener("keydown", this.docKeydownHandler);
         window.addEventListener("keyup", this.docKeyupHandler);
-        this.prev_cvs.addEventListener('mousemove',  (e) => {
+        
+        this.prev_cvs.addEventListener("mousemove",  (e) => {
             if(this.draw_func.MouseMove !== undefined)
             {
                 // console.log('Mouse Move');
-                this.draw_func.MouseMove(e,this.scaleFactor);
+                this.draw_func.MouseMove(e as MouseEvent,this.scaleFactor);
             }
-        });	
-        this.prev_cvs.addEventListener('mouseup',  (e) => {
+        },false);
+        this.prev_cvs.addEventListener("touchmove", (e) => {
+            let touch = e.touches[0];
+            e.preventDefault();
+            e.stopPropagation();
+            var mouseEvent = new MouseEvent("mousemove", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            this.prev_cvs.dispatchEvent(mouseEvent);
+            // this.scaleTip.updateTip("touchmove");
+        },false)
+
+        this.prev_cvs.addEventListener("mouseup",  (e) => {
             if(this.draw_func.MouseUp !== undefined)
             {
                 console.log('Mouse Up');
-                let ev = new MouseEvent("mouseup", { clientX:e.clientX/this.scaleFactor, clientY: e.clientY/this.scaleFactor });
-                this.draw_func.MouseUp(e,this.scaleFactor);
+                this.draw_func.MouseUp(e as MouseEvent,this.scaleFactor);
             }
         });
+        this.prev_cvs.addEventListener("touchend", (e) => {
+            // let touch = e.touches[0];
+            e.preventDefault();
+            e.stopPropagation();
+            var mouseEvent = new MouseEvent("mouseup");
+            this.prev_cvs.dispatchEvent(mouseEvent);
+            // this.scaleTip.updateTip("touchend");
+        },false);
+
         this.prev_cvs.addEventListener('mouseout',  (e) => {
             if(this.draw_func.MouseOut !== undefined)
             {
