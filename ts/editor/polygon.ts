@@ -3,6 +3,8 @@ import { DrawBase } from "../editorUI/canvas";
 export class CircleCVSFunc extends DrawBase
 {
     Name = 'Circle';
+    ImgName = 'circle';
+    Tip = 'Circle'
     CursorName ='cross';
     BorderBrush = 'rgb(255,0,0)';
     BorderWidth = 4;
@@ -41,6 +43,8 @@ export class CircleCVSFunc extends DrawBase
 export class TriangleCVSFunc extends DrawBase
 {
     Name = 'Triangle';
+    ImgName = 'triangle';
+    Tip = 'Triangle'
     CursorName ='cross';
     BorderBrush = 'rgb(255,0,0)';
     BorderWidth = 4;
@@ -83,6 +87,8 @@ export class TriangleCVSFunc extends DrawBase
 export class RectangleCVSFunc extends DrawBase
 {
     Name = 'Rectangle';
+    ImgName = 'rectangle';
+    Tip = 'Rectangle'
     CursorName='cross';
     BorderBrush= 'rgb(255,0,0)';
     BorderWidth= 4;

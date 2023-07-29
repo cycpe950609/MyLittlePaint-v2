@@ -7,7 +7,7 @@ export declare class btnCanvas implements FunctionInterface {
     ImgName?: string | undefined;
     Tip?: string | (() => string) | undefined;
     private draw_func;
-    constructor(name: string, imgName: string, tip: string, func: CanvasInterface);
+    constructor(func: CanvasInterface);
     StartFunction: (cvs: CanvasBase) => boolean;
 }
 export declare class EditorCanvas implements CanvasBase {

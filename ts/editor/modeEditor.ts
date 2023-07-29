@@ -20,10 +20,10 @@ export class btnCanvas implements FunctionInterface {
     Tip?: string | (() => string) | undefined;
 
     private draw_func : CanvasInterface;
-    constructor(name: string, imgName: string, tip: string, func: CanvasInterface){
-        this.Name = name;
-        this.ImgName = imgName;
-        this.Tip = tip;
+    constructor(func: CanvasInterface){
+        this.Name = func.Name;
+        this.ImgName = func.ImgName;
+        this.Tip = func.Tip;
         this.draw_func = func;
     }
 
@@ -344,7 +344,7 @@ class modeEditor implements ModeFunction {
         new btnUndo(),
         new btnRedo(),
         new btnClear(),
-        new btnCanvas("Eraser","eraser","Eraser",new EraserCVSFunc())
+        new btnCanvas(new EraserCVSFunc())
     ]
 
     MenuToolbarRight = [
@@ -352,11 +352,11 @@ class modeEditor implements ModeFunction {
     ]
 
     LeftToolbarTop = [
-        new btnCanvas("Brush","brush","Brush",new BrushCVSFunc()),
-        new btnCanvas("Line","line","Line",new LineCVSFunc()),
-        new btnCanvas("Circle","circle","Circle",new CircleCVSFunc()),
-        new btnCanvas("Triangle","triangle","Triangle",new TriangleCVSFunc()),
-        new btnCanvas("Rectangle","rectangle","Rectangle",new RectangleCVSFunc())
+        new btnCanvas(new BrushCVSFunc()),
+        new btnCanvas(new LineCVSFunc()),
+        new btnCanvas(new CircleCVSFunc()),
+        new btnCanvas(new TriangleCVSFunc()),
+        new btnCanvas(new RectangleCVSFunc())
     ]
 
     StartMode() {}

@@ -1,4 +1,8 @@
 export interface CanvasInterface {
+    Name: string;
+    Tip?: string;
+    ImgName?: string;
+    CursorName?: string;
     CanFinishDrawing: boolean;
     MouseDown?: (e: MouseEvent, scaleFactor: number) => void;
     MouseMove?: (e: MouseEvent, scaleFactor: number) => void;
@@ -8,6 +12,7 @@ export interface CanvasInterface {
     CompositeOperation: GlobalCompositeOperation;
 }
 export declare class DrawBase implements CanvasInterface {
+    Name: string;
     private _canfinishDrawing;
     get CanFinishDrawing(): boolean;
     protected LastX: number;
@@ -23,10 +28,7 @@ export declare class DrawBase implements CanvasInterface {
     DrawFunction(ctx: CanvasRenderingContext2D, width: number, height: number): void;
     CompositeOperation: GlobalCompositeOperation;
 }
-export declare class NoOPCVSFunc implements CanvasInterface {
-    CanFinishDrawing: boolean;
-    DrawFunction: (ctx: CanvasRenderingContext2D) => void;
-    CompositeOperation: GlobalCompositeOperation;
+export declare class NoOPCVSFunc extends DrawBase {
 }
 export interface CanvasBase {
     name: string;

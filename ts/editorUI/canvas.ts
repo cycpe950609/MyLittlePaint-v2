@@ -1,4 +1,8 @@
 export interface CanvasInterface {
+    Name: string;
+    Tip?: string;
+    ImgName?:string;
+    CursorName?:string;
     CanFinishDrawing: boolean;
     MouseDown?: (e: MouseEvent,scaleFactor: number) => void;
     MouseMove?: (e: MouseEvent,scaleFactor: number) => void;
@@ -13,6 +17,7 @@ export interface CanvasInterface {
 }
 
 export class DrawBase implements CanvasInterface {
+    Name: string = "base";
     private _canfinishDrawing: boolean = true
     public get CanFinishDrawing(){ return this._canfinishDrawing; };
 
@@ -48,13 +53,7 @@ export class DrawBase implements CanvasInterface {
     public DrawFunction(ctx: CanvasRenderingContext2D, width: number, height: number) {};
     public CompositeOperation: GlobalCompositeOperation = <GlobalCompositeOperation>"source-over";
 };
-
-export class NoOPCVSFunc implements CanvasInterface {
-    CanFinishDrawing: boolean = true;
-    DrawFunction: (ctx: CanvasRenderingContext2D) => void = (ctx) => {};
-    CompositeOperation: GlobalCompositeOperation = <GlobalCompositeOperation>"source-over";
-};
-
+export class NoOPCVSFunc extends DrawBase{};
 export interface CanvasBase {
     name: string;
     attachCanvas: (container: HTMLDivElement) => void;
