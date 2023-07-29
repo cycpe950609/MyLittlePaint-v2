@@ -56,6 +56,15 @@ export class EditorCanvas implements CanvasBase {
         this.height = height;
         this.scaleTip    = window.editorUI.Statusbar.addTip('Scale : 100%',true)
     }
+    private undo_stk_history = new Array();
+    private redo_stk_history = new Array();
+    private pushState() {
+        if(this.redo_stk_history.length > 0)
+            this.undo_stk_history.push(this.redo_stk_history.pop());
+        this.redo_stk_history = [];
+        this.redo_stk_history.push(this.render_cvs.toDataURL());
+        console.log("pushState",this.undo_stk_history.length,this.redo_stk_history.length)
+    }
 
     private finishDrawing()
     {
@@ -66,7 +75,7 @@ export class EditorCanvas implements CanvasBase {
         this.EventFired = false;
         this.ctx.globalCompositeOperation = "source-over";
         //Add Redo Undo stack
-
+        this.pushState();
     }
 
     attachCanvas(container: HTMLDivElement) {
@@ -170,6 +179,8 @@ export class EditorCanvas implements CanvasBase {
         this.scrollDiv.appendChild(this.cvs);
         this.scrollDiv.appendChild(this.prev_cvs);
         container.appendChild(this.scrollDiv);
+
+        this.pushState();
     }
 
     setFunction = (func: CanvasInterface) => {
@@ -248,33 +259,31 @@ export class EditorCanvas implements CanvasBase {
         let dia = new Dialog("Upload A Image",upload);
         dia.show();
     };
-    private stk_history = new Array();
-    private his_step: number = 0
     public undo = () => {
-        if(this.his_step > 0)
-        {
-            
-            this.his_step--;
+        if(this.undo_stk_history.length > 1){
+            console.log("Undo",this.undo_stk_history.length,this.redo_stk_history.length)
+            let undo_img = this.undo_stk_history.pop();
+            this.redo_stk_history.push(undo_img);
             let img = new Image();
-            img.src = this.stk_history[this.his_step];
+            img.src = undo_img;
             img.onload = ()=>{
-                this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
-                this.ctx.drawImage(img,0,0);  
+                this.render_ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
+                this.render_ctx.drawImage(img,0,0);  
+                this.render();
             };
-            
-            console.log('Undo : ' + this.his_step);
         }
     }
     public redo = () => {
-        if(this.his_step < this.stk_history.length-1)
-        {
-            console.log('Redo');
-            this.his_step++;
+        if(this.redo_stk_history.length > 1){
+            console.log("Redo",this.undo_stk_history.length,this.redo_stk_history.length)
+            let redo_img = this.redo_stk_history.pop();
+            this.undo_stk_history.push(redo_img);
             let img = new Image();
-            img.src = this.stk_history[this.his_step];
+            img.src = this.redo_stk_history[this.redo_stk_history.length - 1];
             img.onload = ()=>{
-                this.ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
-                this.ctx.drawImage(img,0,0);  
+                this.render_ctx.clearRect(0,0,this.cvs.width,this.cvs.height);
+                this.render_ctx.drawImage(img,0,0);  
+                this.render();
             };
         }
     }

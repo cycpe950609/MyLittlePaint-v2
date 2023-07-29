@@ -25,6 +25,9 @@ export declare class EditorCanvas implements CanvasBase {
     private width;
     private height;
     constructor(width: number, height: number);
+    private undo_stk_history;
+    private redo_stk_history;
+    private pushState;
     private finishDrawing;
     attachCanvas(container: HTMLDivElement): void;
     setFunction: (func: CanvasInterface) => void;
@@ -32,8 +35,6 @@ export declare class EditorCanvas implements CanvasBase {
     removeCanvas: () => void;
     render: () => void;
     open: () => void;
-    private stk_history;
-    private his_step;
     undo: () => void;
     redo: () => void;
     save(): void;
