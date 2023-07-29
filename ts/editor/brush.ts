@@ -1,8 +1,6 @@
-import { CanvasBase, CanvasInterface } from "../editorUI/canvas";
-import FunctionInterface, { PropertyItem } from "../editorUI/interface/function"
-import { btnCanvas } from "./modeEditor";
+import { DrawBase } from "../editorUI/canvas";
 
-class BrushCVSFunc implements CanvasInterface {
+class BrushCVSFunc extends DrawBase {
 
     Name = 'Brush';
     Tip = 'Brush';
@@ -10,38 +8,6 @@ class BrushCVSFunc implements CanvasInterface {
     CursorName = 'brush';
     BrushColor = 'rgb(0,255,0)';
     BrushWidth = 10;
-    private LastX : number = 0;
-    private LastY : number = 0;
-    private NextX : number = 0;
-    private NextY : number = 0;
-    private ifDrawing: boolean = false;
-    private ifMouseMove: boolean = false;
-    MouseDown = (e: MouseEvent,scaleFactor: number) =>{
-        [this.LastX, this.LastY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-        this.ifDrawing = true;
-        this.ifMouseMove = false;
-        this.CanFinishDrawing = false;
-    };
-    MouseMove = (e: MouseEvent,scaleFactor: number) => {
-        if(!this.ifDrawing) return;
-    
-        this.ifMouseMove = true;
-        
-        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-    };
-    MouseUp = (e: MouseEvent,scaleFactor: number) => {
-        this.CanFinishDrawing = true;
-        this.ifMouseMove = false;
-        this.ifDrawing = false;
-    };
-    MouseOut = (e: MouseEvent,scaleFactor: number) => {
-        this.CanFinishDrawing = true;
-        this.ifMouseMove = false;
-        this.ifDrawing = false; 
-        
-    };
-    CanFinishDrawing = true;
     DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) =>
     { 
         

@@ -7,6 +7,22 @@ export interface CanvasInterface {
     DrawFunction: (ctx: CanvasRenderingContext2D, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
+export declare class DrawBase implements CanvasInterface {
+    private _canfinishDrawing;
+    get CanFinishDrawing(): boolean;
+    protected LastX: number;
+    protected LastY: number;
+    protected NextX: number;
+    protected NextY: number;
+    protected ifDrawing: boolean;
+    protected ifMouseMove: boolean;
+    MouseDown(e: MouseEvent, scaleFactor: number): void;
+    MouseMove(e: MouseEvent, scaleFactor: number): void;
+    MouseUp(e: MouseEvent, scaleFactor: number): void;
+    MouseOut(e: MouseEvent, scaleFactor: number): void;
+    DrawFunction(ctx: CanvasRenderingContext2D, width: number, height: number): void;
+    CompositeOperation: GlobalCompositeOperation;
+}
 export declare class NoOPCVSFunc implements CanvasInterface {
     CanFinishDrawing: boolean;
     DrawFunction: (ctx: CanvasRenderingContext2D) => void;

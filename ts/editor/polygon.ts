@@ -1,6 +1,6 @@
-import { CanvasInterface } from "../editorUI/canvas";
+import { DrawBase } from "../editorUI/canvas";
 
-export class CircleCVSFunc implements CanvasInterface
+export class CircleCVSFunc extends DrawBase
 {
     Name = 'Circle';
     CursorName ='cross';
@@ -8,37 +8,6 @@ export class CircleCVSFunc implements CanvasInterface
     BorderWidth = 4;
     ContentColor = 'rgb(0,0,255)';
     CanFilled = false;
-    private LastX = 0;
-    private LastY = 0;
-    private NextX = 0;
-    private NextY = 0;
-    private ifDrawing = false;
-    private ifMouseMove = false;
-    MouseDown = (e: MouseEvent,scaleFactor: number) => {
-        [this.LastX, this.LastY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-        this.ifDrawing = true;
-        this.ifMouseMove = false;
-        this.CanFinishDrawing = false;
-    };
-    MouseMove = (e: MouseEvent,scaleFactor: number) => {
-        if(!this.ifDrawing) return;
-    
-        this.ifMouseMove = true;
-        
-        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-    };
-    MouseUp = (e: MouseEvent,scaleFactor: number) => {
-        this.CanFinishDrawing = true;
-        this.ifMouseMove = false;
-        this.ifDrawing = false;
-    };
-    MouseOut = (e: MouseEvent,scaleFactor: number) => {
-        this.CanFinishDrawing = true;
-        this.ifMouseMove = false;
-        this.ifDrawing = false; 
-    };
-    CanFinishDrawing = true;
     DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) =>
     { 
         
@@ -69,7 +38,7 @@ export class CircleCVSFunc implements CanvasInterface
 }
 
 /* Triangle */
-export class TriangleCVSFunc implements CanvasInterface
+export class TriangleCVSFunc extends DrawBase
 {
     Name = 'Triangle';
     CursorName ='cross';
@@ -77,37 +46,6 @@ export class TriangleCVSFunc implements CanvasInterface
     BorderWidth = 4;
     ContentColor = 'rgb(255,0,255)';
     CanFilled=false;
-    private LastX = 0;
-    private LastY = 0;
-    private NextX = 0;
-    private NextY = 0;
-    private ifDrawing = false;
-    private ifMouseMove = false;
-    MouseDown = (e: MouseEvent,scaleFactor: number) => {
-        [this.LastX, this.LastY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-        this.ifDrawing = true;
-        this.ifMouseMove = false;
-        this.CanFinishDrawing = false;
-    };
-    MouseMove = (e: MouseEvent,scaleFactor: number) => {
-        if(!this.ifDrawing) return;
-    
-        this.ifMouseMove = true;
-        
-        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-    };
-    MouseUp = (e: MouseEvent,scaleFactor: number) => {
-        this.CanFinishDrawing = true;
-        this.ifMouseMove = false;
-        this.ifDrawing = false;
-    };
-    MouseOut = (e: MouseEvent,scaleFactor: number) => {
-        this.CanFinishDrawing = true;
-        this.ifMouseMove = false;
-        this.ifDrawing = false; 
-    };
-    CanFinishDrawing = true;
     DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) =>
     { 
         console.log('Test');
@@ -142,45 +80,14 @@ export class TriangleCVSFunc implements CanvasInterface
 
 
 
-export class RectangleCVSFunc implements CanvasInterface
+export class RectangleCVSFunc extends DrawBase
 {
     Name = 'Rectangle';
     CursorName='cross';
     BorderBrush= 'rgb(255,0,0)';
     BorderWidth= 4;
     ContentColor= 'rgb(0,0,255)';
-    CanFilled=false;    
-    private LastX=0;
-    private LastY=0;
-    private NextX=0;
-    private NextY=0;
-    private ifDrawing= false;
-    private ifMouseMove= false;
-    MouseDown = (e: MouseEvent,scaleFactor: number) => {
-        [this.LastX, this.LastY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-        this.ifDrawing = true;
-        this.ifMouseMove = false;
-        this.CanFinishDrawing = false;
-    };
-    MouseMove = (e: MouseEvent,scaleFactor: number) => {
-        if(!this.ifDrawing) return;
-    
-        this.ifMouseMove = true;
-        
-        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-    };
-    MouseUp = (e: MouseEvent,scaleFactor: number) => {
-        this.CanFinishDrawing = true;
-        this.ifMouseMove = false;
-        this.ifDrawing = false;
-    };
-    MouseOut = (e: MouseEvent,scaleFactor: number) => {
-        this.CanFinishDrawing = true;
-        this.ifMouseMove = false;
-        this.ifDrawing = false; 
-    };
-    CanFinishDrawing = true;
+    CanFilled=false;
     DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) =>
     { 
         if(this.ifDrawing)
