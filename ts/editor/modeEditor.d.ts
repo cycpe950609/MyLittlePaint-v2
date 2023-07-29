@@ -35,11 +35,14 @@ export declare class EditorCanvas implements CanvasBase {
     private pushState;
     private finishDrawing;
     attachCanvas(container: HTMLDivElement): void;
+    enableDrag(): void;
+    disableDrag(): void;
     setFunction: (func: CanvasInterface) => void;
     resizeCanvas: (e?: UIEvent) => void;
     removeCanvas: () => void;
     render: () => void;
     private drawWithTouch;
+    get canDrawWithTouch(): boolean;
     toggleTouch: () => void;
     open: () => void;
     undo: () => void;
@@ -50,7 +53,7 @@ export declare class EditorCanvas implements CanvasBase {
     private scaleTip;
     private isCtlKeyDown;
     private isShiftDown;
-    private scaleTo;
+    scaleTo: (scale: number) => void;
     private cvsMouseWheelHandler;
     private docKeydownHandler;
     private docKeyupHandler;

@@ -1418,6 +1418,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@interactjs/types@npm:1.10.17":
+  version: 1.10.17
+  resolution: "@interactjs/types@npm:1.10.17"
+  checksum: 7e2d5e9448c714b4b2e00a423c33c259719bec3be87914cba1c80058eaecc8d5a587dcb29dcbb837d8832a4cf0eb26d9456f00d800f66717984952fb731891ec
+  languageName: node
+  linkType: hard
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -4523,6 +4530,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"interactjs@npm:^1.10.17":
+  version: 1.10.17
+  resolution: "interactjs@npm:1.10.17"
+  dependencies:
+    "@interactjs/types": 1.10.17
+  checksum: a3754aa1ca5600084b33902097051f435ea0c89e96992e0a54bb3c780bd59e10f95997bc6b2c98fcfc2f7289ef0a7df192e93e83cceec7e5612e8d5912d74720
+  languageName: node
+  linkType: hard
+
 "interpret@npm:^2.2.0":
   version: 2.2.0
   resolution: "interpret@npm:2.2.0"
@@ -5609,6 +5625,7 @@ __metadata:
     file-loader: ^6.2.0
     html-loader: ^4.2.0
     immer: ^10.0.2
+    interactjs: ^1.10.17
     leaflet: ^1.9.4
     lodash: ^4.17.21
     prettier: ^2.7.1
