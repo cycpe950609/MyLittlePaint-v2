@@ -4,7 +4,7 @@ class LineCVSFunc extends DrawBase{
     Name = 'Line';
     Tip = 'Line';
     ImgName = 'line';
-    CursorName ='cross';
+    CursorName ='crosshair';
     BrushColor = 'rgb(0,255,0)';
     BrushWidth = 10;
     DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) => 

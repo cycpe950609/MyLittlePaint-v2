@@ -330,6 +330,7 @@ body
     /* width: calc(100vw - 10px); */
     pointer-events: all;
     margin-left: 5px;
+    cursor: default;
 }
 .status_help_tip
 {

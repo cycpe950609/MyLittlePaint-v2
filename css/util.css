@@ -105,3 +105,7 @@
 .cursor-cross {
     cursor: crosshair;
 }
+
+.cursor-hand {
+    cursor: pointer;
+}

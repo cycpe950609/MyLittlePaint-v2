@@ -5,7 +5,7 @@ export class CircleCVSFunc extends DrawBase
     Name = 'Circle';
     ImgName = 'circle';
     Tip = 'Circle'
-    CursorName ='cross';
+    CursorName ='crosshair';
     BorderBrush = 'rgb(255,0,0)';
     BorderWidth = 4;
     ContentColor = 'rgb(0,0,255)';
@@ -45,14 +45,13 @@ export class TriangleCVSFunc extends DrawBase
     Name = 'Triangle';
     ImgName = 'triangle';
     Tip = 'Triangle'
-    CursorName ='cross';
+    CursorName ='crosshair';
     BorderBrush = 'rgb(255,0,0)';
     BorderWidth = 4;
     ContentColor = 'rgb(255,0,255)';
     CanFilled=false;
     DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) =>
     { 
-        console.log('Test');
         if(this.ifDrawing)
         {
             Ctx.clearRect(0, 0, width, height);
@@ -89,7 +88,7 @@ export class RectangleCVSFunc extends DrawBase
     Name = 'Rectangle';
     ImgName = 'rectangle';
     Tip = 'Rectangle'
-    CursorName='cross';
+    CursorName='crosshair';
     BorderBrush= 'rgb(255,0,0)';
     BorderWidth= 4;
     ContentColor= 'rgb(0,0,255)';

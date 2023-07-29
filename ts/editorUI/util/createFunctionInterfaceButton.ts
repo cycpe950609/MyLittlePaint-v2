@@ -5,7 +5,7 @@ const createFunctionInterfaceButton = (
     func: FunctionInterface
 ) => {
     let tip = SPAN("tooltip-text","")
-    const btn = DIV("toolbar-item",func.Tip !== undefined ? tip : undefined);
+    const btn = DIV("toolbar-item cursor-hand",func.Tip !== undefined ? tip : undefined);
 
     if (func.Tip !== undefined)
         btn.addEventListener(
