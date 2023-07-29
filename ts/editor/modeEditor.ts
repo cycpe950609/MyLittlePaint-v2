@@ -10,7 +10,7 @@ import BrushCVSFunc from "./brush";
 import EraserCVSFunc from "./eraser";
 import LineCVSFunc from "./line";
 import { CircleCVSFunc, RectangleCVSFunc, TriangleCVSFunc } from "./polygon";
-import {btnClear, btnRedo, btnSave, btnUndo, btnUpload} from "./menu";
+import {btnClear, btnRedo, btnSave, btnToggleTouch, btnUndo, btnUpload} from "./menu";
 import Alert from "../editorUI/util/alert";
 import { TipComponent } from "../editorUI/statusbar";
 
@@ -31,6 +31,12 @@ export class btnCanvas implements FunctionInterface {
         cvs.setFunction(this.draw_func);
         return true;
     };
+}
+
+declare global {
+    interface Touch { 
+        touchType: string; 
+    }
 }
 
 export class EditorCanvas implements CanvasBase {
@@ -104,26 +110,30 @@ export class EditorCanvas implements CanvasBase {
         this.render_cvs.height = this.height;
 
         this.prev_cvs.addEventListener("mousedown", (e) => {
-            if(this.draw_func.MouseDown !== undefined)
+            if(this.draw_func.PointerDown !== undefined)
             {
                 this.EventFired = true;
                 //console.log('Mouse Down');
-                this.draw_func.MouseDown(e as MouseEvent,this.scaleFactor);
+                this.draw_func.PointerDown(e as MouseEvent,this.scaleFactor);
                 requestAnimationFrame(this.render);
             }
             
             console.log(`Mouse Down`);
         },false);
         this.prev_cvs.addEventListener("touchstart", (e) => {
-            let touch = e.touches[0];
-            e.preventDefault();
-            e.stopPropagation();
-            var mouseEvent = new MouseEvent("mousedown", {
+            let pressure = 1.0
+            let touch = e.touches[0]
+            let mouseEvent = new MouseEvent("mousedown", {
                 clientX: touch.clientX,
                 clientY: touch.clientY
             });
+            if (typeof e.touches[0]["force"] !== "undefined" && e.touches[0]["force"] > 0) {
+                pressure = e.touches[0]["force"]
+            }
+            if(touch.touchType === 'direct' && this.drawWithTouch === false) return;
+            e.preventDefault();
+            e.stopPropagation();
             this.prev_cvs.dispatchEvent(mouseEvent);
-            // this.scaleTip.updateTip("touchstart");
         },false)
         
         window.addEventListener("wheel", this.cvsMouseWheelHandler,{passive: false});
@@ -132,29 +142,37 @@ export class EditorCanvas implements CanvasBase {
         window.addEventListener("keyup", this.docKeyupHandler);
         
         this.prev_cvs.addEventListener("mousemove",  (e) => {
-            if(this.draw_func.MouseMove !== undefined)
+            if(this.draw_func.PointerMove !== undefined)
             {
                 // console.log('Mouse Move');
-                this.draw_func.MouseMove(e as MouseEvent,this.scaleFactor);
+                this.draw_func.PointerMove(e as MouseEvent,this.scaleFactor);
             }
         },false);
         this.prev_cvs.addEventListener("touchmove", (e) => {
-            let touch = e.touches[0];
-            e.preventDefault();
-            e.stopPropagation();
-            var mouseEvent = new MouseEvent("mousemove", {
+            let pressure = 0.1
+            let touch = e.touches[0]
+            let mouseEvent = new MouseEvent("mousemove", {
                 clientX: touch.clientX,
                 clientY: touch.clientY
             });
+            if (e.touches && e.touches[0] && typeof e.touches[0]["force"] !== "undefined") {
+                if (e.touches[0]["force"] > 0) {
+                    pressure = e.touches[0]["force"]
+                }
+            } else {
+                pressure = 1.0
+            }
+            if(touch.touchType === 'direct' && this.drawWithTouch === false) return;
+            e.preventDefault();
+            e.stopPropagation();
             this.prev_cvs.dispatchEvent(mouseEvent);
-            // this.scaleTip.updateTip("touchmove");
         },false)
 
         this.prev_cvs.addEventListener("mouseup",  (e) => {
-            if(this.draw_func.MouseUp !== undefined)
+            if(this.draw_func.PointerUp !== undefined)
             {
                 console.log('Mouse Up');
-                this.draw_func.MouseUp(e as MouseEvent,this.scaleFactor);
+                this.draw_func.PointerUp(e as MouseEvent,this.scaleFactor);
             }
         });
         this.prev_cvs.addEventListener("touchend", (e) => {
@@ -167,11 +185,11 @@ export class EditorCanvas implements CanvasBase {
         },false);
 
         this.prev_cvs.addEventListener('mouseout',  (e) => {
-            if(this.draw_func.MouseOut !== undefined)
+            if(this.draw_func.PointerOut !== undefined)
             {
                 console.log('Mouse Out');
                 let ev = new MouseEvent("mouseup", { clientX:e.clientX/this.scaleFactor, clientY: e.clientY/this.scaleFactor });
-                this.draw_func.MouseOut(e,this.scaleFactor);
+                this.draw_func.PointerOut(e,this.scaleFactor);
             }
         });
 
@@ -218,6 +236,12 @@ export class EditorCanvas implements CanvasBase {
         this.ctx.clearRect(0,0,this.width,this.height);
         this.ctx.drawImage(this.render_cvs,0,0,this.width,this.height);
     };
+
+    private drawWithTouch = false;
+    public toggleTouch = () => {
+        this.drawWithTouch = !this.drawWithTouch;
+    }
+
     public open = () => {
         let upload = document.createElement('input');
         upload.setAttribute('type','file');
@@ -405,6 +429,7 @@ class modeEditor implements ModeFunction {
     ]
 
     MenuToolbarRight = [
+        new btnToggleTouch(),
         new btnSave(),
     ]
 

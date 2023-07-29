@@ -66,3 +66,16 @@ export class btnSave implements FunctionInterface {
         return false;
     };
 }
+
+export class btnToggleTouch implements FunctionInterface {
+    Name = "btn_touch";
+    ImgName= "toggleTouch";
+    Tip = "Toggle Touch / Pen";
+
+    constructor(){}
+
+    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+        (cvs as EditorCanvas).toggleTouch();
+        return false;
+    };
+}

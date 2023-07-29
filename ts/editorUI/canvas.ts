@@ -4,10 +4,10 @@ export interface CanvasInterface {
     ImgName?:string;
     CursorName?:string;
     CanFinishDrawing: boolean;
-    MouseDown?: (e: MouseEvent,scaleFactor: number) => void;
-    MouseMove?: (e: MouseEvent,scaleFactor: number) => void;
-    MouseUp?: (e: MouseEvent,scaleFactor: number) => void;
-    MouseOut?: (e: MouseEvent,scaleFactor: number) => void;
+    PointerDown?: (e: MouseEvent,scaleFactor: number) => void;
+    PointerMove?: (e: MouseEvent,scaleFactor: number) => void;
+    PointerUp?: (e: MouseEvent,scaleFactor: number) => void;
+    PointerOut?: (e: MouseEvent,scaleFactor: number) => void;
     DrawFunction: (
         ctx: CanvasRenderingContext2D,
         width: number, 
@@ -28,24 +28,24 @@ export class DrawBase implements CanvasInterface {
     protected ifDrawing = false;
     protected ifMouseMove = false;
 
-    public MouseDown(e: MouseEvent, scaleFactor: number){
+    public PointerDown(e: MouseEvent, scaleFactor: number){
         [this.LastX, this.LastY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
         [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
         this.ifDrawing = true;
         this.ifMouseMove = false;
         this._canfinishDrawing = false;
     };
-    public MouseMove(e: MouseEvent, scaleFactor: number){
+    public PointerMove(e: MouseEvent, scaleFactor: number){
         if(!this.ifDrawing) return;
         this.ifMouseMove = true;
         [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
     };
-    public MouseUp(e: MouseEvent, scaleFactor: number){
+    public PointerUp(e: MouseEvent, scaleFactor: number){
         this._canfinishDrawing = true;
         this.ifMouseMove = false;
         this.ifDrawing = false;
     };
-    public MouseOut(e: MouseEvent, scaleFactor: number){
+    public PointerOut(e: MouseEvent, scaleFactor: number){
         this._canfinishDrawing = true;
         this.ifMouseMove = false;
         this.ifDrawing = false; 

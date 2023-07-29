@@ -1,7 +1,7 @@
 import { CanvasBase, CanvasInterface } from "../editorUI/canvas";
 import FunctionInterface from "../editorUI/interface/function";
 import ModeFunction from "../editorUI/interface/mode";
-import { btnClear, btnRedo, btnSave, btnUndo, btnUpload } from "./menu";
+import { btnClear, btnRedo, btnSave, btnToggleTouch, btnUndo, btnUpload } from "./menu";
 export declare class btnCanvas implements FunctionInterface {
     Name: string;
     ImgName?: string | undefined;
@@ -9,6 +9,11 @@ export declare class btnCanvas implements FunctionInterface {
     private draw_func;
     constructor(func: CanvasInterface);
     StartFunction: (cvs: CanvasBase) => boolean;
+}
+declare global {
+    interface Touch {
+        touchType: string;
+    }
 }
 export declare class EditorCanvas implements CanvasBase {
     name: string;
@@ -34,6 +39,8 @@ export declare class EditorCanvas implements CanvasBase {
     resizeCanvas: (e?: UIEvent) => void;
     removeCanvas: () => void;
     render: () => void;
+    private drawWithTouch;
+    toggleTouch: () => void;
     open: () => void;
     undo: () => void;
     redo: () => void;
@@ -52,7 +59,7 @@ declare class modeEditor implements ModeFunction {
     Enable: boolean;
     CenterCanvas: EditorCanvas;
     MenuToolbarLeft: (btnUpload | btnUndo | btnRedo | btnClear | btnCanvas)[];
-    MenuToolbarRight: btnSave[];
+    MenuToolbarRight: (btnToggleTouch | btnSave)[];
     LeftToolbarTop: btnCanvas[];
     StartMode(): void;
     EndMode(): void;

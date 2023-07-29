@@ -35,3 +35,10 @@ export declare class btnSave implements FunctionInterface {
     constructor();
     StartFunction: (cvs: CanvasBase) => boolean;
 }
+export declare class btnToggleTouch implements FunctionInterface {
+    Name: string;
+    ImgName: string;
+    Tip: string;
+    constructor();
+    StartFunction: (cvs: CanvasBase) => boolean;
+}

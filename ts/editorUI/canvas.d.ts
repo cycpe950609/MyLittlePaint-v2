@@ -4,10 +4,10 @@ export interface CanvasInterface {
     ImgName?: string;
     CursorName?: string;
     CanFinishDrawing: boolean;
-    MouseDown?: (e: MouseEvent, scaleFactor: number) => void;
-    MouseMove?: (e: MouseEvent, scaleFactor: number) => void;
-    MouseUp?: (e: MouseEvent, scaleFactor: number) => void;
-    MouseOut?: (e: MouseEvent, scaleFactor: number) => void;
+    PointerDown?: (e: MouseEvent, scaleFactor: number) => void;
+    PointerMove?: (e: MouseEvent, scaleFactor: number) => void;
+    PointerUp?: (e: MouseEvent, scaleFactor: number) => void;
+    PointerOut?: (e: MouseEvent, scaleFactor: number) => void;
     DrawFunction: (ctx: CanvasRenderingContext2D, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
@@ -21,10 +21,10 @@ export declare class DrawBase implements CanvasInterface {
     protected NextY: number;
     protected ifDrawing: boolean;
     protected ifMouseMove: boolean;
-    MouseDown(e: MouseEvent, scaleFactor: number): void;
-    MouseMove(e: MouseEvent, scaleFactor: number): void;
-    MouseUp(e: MouseEvent, scaleFactor: number): void;
-    MouseOut(e: MouseEvent, scaleFactor: number): void;
+    PointerDown(e: MouseEvent, scaleFactor: number): void;
+    PointerMove(e: MouseEvent, scaleFactor: number): void;
+    PointerUp(e: MouseEvent, scaleFactor: number): void;
+    PointerOut(e: MouseEvent, scaleFactor: number): void;
     DrawFunction(ctx: CanvasRenderingContext2D, width: number, height: number): void;
     CompositeOperation: GlobalCompositeOperation;
 }
