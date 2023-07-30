@@ -1,9 +1,5 @@
-import { Vector3, Mesh, BufferGeometry, Material } from "three";
 import { CanvasBase, CanvasInterface, NoOPCVSFunc, PaintEvent } from "../editorUI/canvas";
 import Dialog from "../editorUI/dialog";
-import FunctionInterface, {
-    PropertyItem
-} from "../editorUI/interface/function";
 import ModeFunction from "../editorUI/interface/mode";
 import {
     BUTTON,
@@ -13,8 +9,6 @@ import {
     SPAN,
     TEXT
 } from "../editorUI/util/HTMLElement";
-import { data, frontendUI } from "../main";
-import Mode from "../mode";
 import BrushCVSFunc from "./brush";
 import EraserCVSFunc from "./eraser";
 import LineCVSFunc from "./line";
@@ -27,9 +21,9 @@ import {
     btnUndo,
     btnUpload
 } from "./menu";
-import Alert from "../editorUI/util/alert";
 import { TipComponent } from "../editorUI/statusbar";
 import interact from "interactjs";
+import FunctionInterface from "../editorUI/interface/function";
 
 export class btnCanvas implements FunctionInterface {
     Name: string;
@@ -134,61 +128,6 @@ export class EditorCanvas implements CanvasBase {
             styleCursor: false,
         });
         interactCVS
-        // .on("pointerdown",(e: PointerEvent)=>{
-        //     // console.log("pointerdown",e);
-        //     if(e.pointerType === "touch" && (window.editorUI.CenterCanvas as EditorCanvas).canDrawWithTouch === false) {
-        //         return;
-        //     };
-        //     e.preventDefault();
-        //     e.stopPropagation();
-        //     let mouseEvent = new MouseEvent("mousedown", {
-        //         clientX : e.clientX,
-        //         clientY : e.clientY,
-        //     });
-        //     if (this.draw_func.PointerDown !== undefined) {
-        //         this.EventFired = true;
-        //         //console.log('Mouse Down');
-        //         this.draw_func.PointerDown(
-        //             mouseEvent,
-        //             this.scaleFactor
-        //         );
-        //         requestAnimationFrame(this.render);
-        //     }
-
-        //     console.log(`Mouse Down`);
-        // })
-        // .on("pointermove ",(e)=>{
-        //     // console.log("pointermove");
-        //     if(e.pointerType === "touch" && (window.editorUI.CenterCanvas as EditorCanvas).canDrawWithTouch === false) return;
-        //     e.preventDefault();
-        //     e.stopPropagation();
-        //     let mouseEvent = new MouseEvent("mousemove", {
-        //         clientX : e.clientX,
-        //         clientY : e.clientY,
-        //     });
-        //     if (this.draw_func.PointerMove !== undefined) {
-        //         // console.log('Mouse Move');
-        //         this.draw_func.PointerMove(
-        //             mouseEvent,
-        //             this.scaleFactor
-        //         );
-        //     }
-        // })
-        // .on("pointerup",(e)=>{
-        //     // console.log("pointerup");
-        //     if(e.pointerType === "touch" && (window.editorUI.CenterCanvas as EditorCanvas).canDrawWithTouch === false) return;
-        //     e.preventDefault();
-        //     e.stopPropagation();
-        //     let mouseEvent = new MouseEvent("mouseup", {
-        //         clientX : e.clientX,
-        //         clientY : e.clientY,
-        //     });
-        //     if (this.draw_func.PointerUp !== undefined) {
-        //         console.log("Mouse Up");
-        //         this.draw_func.PointerUp(mouseEvent, this.scaleFactor);
-        //     }
-        // })
-        
         .gesturable({
             listeners: {
                 start(e) {
@@ -227,7 +166,6 @@ export class EditorCanvas implements CanvasBase {
             };
             if (this.draw_func.PointerDown !== undefined) {
                 this.EventFired = true;
-                //console.log('Mouse Down');
                 this.draw_func.PointerDown(mouseEvent);
                 requestAnimationFrame(this.render);
             }
@@ -361,7 +299,6 @@ export class EditorCanvas implements CanvasBase {
 
     render = () => {
         if (this.EventFired) {
-            // this.prev_ctx.clearRect(0,0,this.width,this.height);
             this.draw_func.DrawFunction(this.prev_ctx, this.width, this.height);
             if (this.draw_func.CanFinishDrawing) this.finishDrawing();
             requestAnimationFrame(this.render);

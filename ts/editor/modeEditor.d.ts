@@ -1,7 +1,7 @@
 import { CanvasBase, CanvasInterface } from "../editorUI/canvas";
-import FunctionInterface from "../editorUI/interface/function";
 import ModeFunction from "../editorUI/interface/mode";
 import { btnClear, btnRedo, btnSave, btnToggleTouch, btnUndo, btnUpload } from "./menu";
+import FunctionInterface from "../editorUI/interface/function";
 export declare class btnCanvas implements FunctionInterface {
     Name: string;
     ImgName?: string | undefined;
