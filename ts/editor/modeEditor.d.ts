@@ -34,6 +34,7 @@ export declare class EditorCanvas implements CanvasBase {
     private redo_stk_history;
     private pushState;
     private finishDrawing;
+    private initCanvas;
     attachCanvas(container: HTMLDivElement): void;
     enableDrag(): void;
     disableDrag(): void;

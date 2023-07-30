@@ -99,7 +99,14 @@ export class EditorCanvas implements CanvasBase {
         if(this.draw_func.HistoryName !== undefined)
             this.pushState();
     }
-
+    private initCanvas = () => {
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.prev_ctx.clearRect(0, 0, this.width, this.height);
+        this.render_ctx.clearRect(0, 0, this.width, this.height);
+        this.undo_stk_history = new Array();
+        this.redo_stk_history = new Array();
+        this.pushState();
+    }
     attachCanvas(container: HTMLDivElement) {
         this.cvs = CANVAS("absolute disable-mouse");
         this.ctx = this.cvs.getContext("2d") as CanvasRenderingContext2D;
@@ -234,7 +241,7 @@ export class EditorCanvas implements CanvasBase {
         this.scrollDiv.appendChild(this.prev_cvs);
         container.appendChild(this.scrollDiv);
 
-        this.pushState();
+        this.initCanvas();
     }
 
     public enableDrag() {
@@ -428,12 +435,7 @@ export class EditorCanvas implements CanvasBase {
         let btnOK = BUTTON("w-full mx-2rem", "OK");
         btnOK.onclick = () => {
             console.log(`Clear ${this.width}, ${this.height}`, this.ctx);
-            this.ctx.clearRect(
-                0,
-                0,
-                this.width / this.scaleFactor,
-                this.height / this.scaleFactor
-            );
+            this.initCanvas();
             dia.close();
         };
         let dia = new Dialog(
