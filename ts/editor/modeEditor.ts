@@ -508,6 +508,8 @@ export class EditorCanvas implements CanvasBase {
             this.scaleTo(this.scaleFactor + 0.1);
         if (ev.key === "-" && this.isCtlKeyDown && !this.isShiftDown)
             this.scaleTo(this.scaleFactor - 0.1);
+        if (ev.key === "0" && this.isCtlKeyDown && !this.isShiftDown)
+            this.scaleTo(1.0);
         ev.preventDefault();
     };
     private docKeyupHandler = (ev: KeyboardEvent) => {
