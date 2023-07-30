@@ -1,5 +1,5 @@
 import { Vector3, Mesh, BufferGeometry, Material } from "three";
-import { CanvasBase, CanvasInterface, NoOPCVSFunc } from "../editorUI/canvas";
+import { CanvasBase, CanvasInterface, NoOPCVSFunc, PaintEvent } from "../editorUI/canvas";
 import Dialog from "../editorUI/dialog";
 import FunctionInterface, {
     PropertyItem
@@ -210,7 +210,7 @@ export class EditorCanvas implements CanvasBase {
                 }
             }
         })
-        .on('down',(e)=>{
+        .on('down',(e: Interact.PointerEvent)=>{
             if(e.pointerType === "touch" && (window.editorUI.CenterCanvas as EditorCanvas).canDrawWithTouch === false) {
                 console.log("pointerdown");
                 this.prev_cvs.style.touchAction = "auto";
@@ -219,37 +219,35 @@ export class EditorCanvas implements CanvasBase {
             this.prev_cvs.style.touchAction = "none";
             e.preventDefault();
             e.stopPropagation();
-            let mouseEvent = new MouseEvent("mousedown", {
-                clientX : e.clientX,
-                clientY : e.clientY,
-            });
+            let mouseEvent: PaintEvent = {
+                X: e.offsetX/this.scaleFactor,
+                Y: e.offsetY/this.scaleFactor,
+                type: "mouse",
+                pressure: 1.0
+            };
             if (this.draw_func.PointerDown !== undefined) {
                 this.EventFired = true;
                 //console.log('Mouse Down');
-                this.draw_func.PointerDown(
-                    mouseEvent,
-                    (window.editorUI.CenterCanvas as EditorCanvas).scaleFactor
-                );
+                this.draw_func.PointerDown(mouseEvent);
                 requestAnimationFrame(this.render);
             }
 
             console.log(`Mouse Down`);
         })
-        .on('move',(e)=>{
+        .on('move',(e: Interact.PointerEvent)=>{
             // console.log("pointermove");
             if(e.pointerType === "touch" && (window.editorUI.CenterCanvas as EditorCanvas).canDrawWithTouch === false) return;
             e.preventDefault();
             e.stopPropagation();
-            let mouseEvent = new MouseEvent("mousemove", {
-                clientX : e.clientX,
-                clientY : e.clientY,
-            });
+            let mouseEvent: PaintEvent = {
+                X: e.offsetX/this.scaleFactor,
+                Y: e.offsetY/this.scaleFactor,
+                type: "mouse",
+                pressure: 1.0
+            };
             if (this.draw_func.PointerMove !== undefined) {
                 // console.log('Mouse Move');
-                this.draw_func.PointerMove(
-                    mouseEvent,
-                    this.scaleFactor
-                );
+                this.draw_func.PointerMove(mouseEvent);
             }
         })
         .on('up',(e: Interact.PointerEvent)=>{
@@ -262,130 +260,18 @@ export class EditorCanvas implements CanvasBase {
             this.prev_cvs.style.touchAction = "none";
             e.preventDefault();
             e.stopPropagation();
-            let mouseEvent = new MouseEvent("mouseup", {
-                clientX : e.clientX,
-                clientY : e.clientY,
-            });
+            let mouseEvent: PaintEvent = {
+                X: e.offsetX/this.scaleFactor,
+                Y: e.offsetY/this.scaleFactor,
+                type: "mouse",
+                pressure: 1.0
+            };
             if (this.draw_func.PointerUp !== undefined) {
                 console.log("Mouse Up");
-                this.draw_func.PointerUp(mouseEvent, this.scaleFactor);
+                this.draw_func.PointerUp(mouseEvent);
             }
         })
-        // .draggable({
-        //     listeners:{
-        //         start: (e)=>{
-        //             console.log("pointerdown",e);
-        //             // if(e.pointerType === "touch" && (window.editorUI.CenterCanvas as EditorCanvas).canDrawWithTouch === false) {
-        //             //     return;
-        //             // };
-        //             e.preventDefault();
-        //             e.stopPropagation();
-        //             let mouseEvent = new MouseEvent("mousedown", {
-        //                 clientX : e.clientX,
-        //                 clientY : e.clientY,
-        //             });
-        //             if (this.draw_func.PointerDown !== undefined) {
-        //                 this.EventFired = true;
-        //                 //console.log('Mouse Down');
-        //                 this.draw_func.PointerDown(
-        //                     mouseEvent,
-        //                     (window.editorUI.CenterCanvas as EditorCanvas).scaleFactor
-        //                 );
-        //                 requestAnimationFrame(this.render);
-        //             }
-
-        //             console.log(`Mouse Down`);
-        //         },
-        //         move: (e)=>{
-        //             // console.log("pointermove");
-        //             if(e.pointerType === "touch" && (window.editorUI.CenterCanvas as EditorCanvas).canDrawWithTouch === false) return;
-        //             e.preventDefault();
-        //             e.stopPropagation();
-        //             let mouseEvent = new MouseEvent("mousemove", {
-        //                 clientX : e.clientX,
-        //                 clientY : e.clientY,
-        //             });
-        //             if (this.draw_func.PointerMove !== undefined) {
-        //                 // console.log('Mouse Move');
-        //                 this.draw_func.PointerMove(
-        //                     mouseEvent,
-        //                     this.scaleFactor
-        //                 );
-        //             }
-        //         },
-        //         end: (e)=>{
-        //             // console.log("pointerup");
-        //             if(e.pointerType === "touch" && (window.editorUI.CenterCanvas as EditorCanvas).canDrawWithTouch === false) return;
-        //             e.preventDefault();
-        //             e.stopPropagation();
-        //             let mouseEvent = new MouseEvent("mouseup", {
-        //                 clientX : e.clientX,
-        //                 clientY : e.clientY,
-        //             });
-        //             if (this.draw_func.PointerUp !== undefined) {
-        //                 console.log("Mouse Up");
-        //                 this.draw_func.PointerUp(mouseEvent, this.scaleFactor);
-        //             }
-        //         }
-        //     }
-        // })
-        // .actionChecker(function(pointer:PointerEvent, event:any, action:any, interactable:any, element:any, interaction:any) {
-        //     if(pointer.type === "pointerdown"){
-        //         console.log("actionChecker : ",action);
-        //         return {type: pointer.pointerType}
-        //     }
-        //     return action
-        // })
-        // this.prev_cvs.addEventListener(
-        //     "mousedown",
-        //     (e) => {
-        //         if (this.draw_func.PointerDown !== undefined) {
-        //             this.EventFired = true;
-        //             //console.log('Mouse Down');
-        //             this.draw_func.PointerDown(
-        //                 e as MouseEvent,
-        //                 this.scaleFactor
-        //             );
-        //             requestAnimationFrame(this.render);
-        //         }
-
-        //         console.log(`Mouse Down`);
-        //     },
-        //     false
-        // );
-        // this.prev_cvs.addEventListener(
-        //     "touchstart",
-        //     (e) => {
-        //         if (e.touches.length === 1) {
-        //             let pressure = 1.0;
-        //             let touch = e.touches[0];
-        //             let mouseEvent = new MouseEvent("mousedown", {
-        //                 clientX: touch.clientX,
-        //                 clientY: touch.clientY
-        //             });
-        //             if (
-        //                 typeof e.touches[0]["force"] !== "undefined" &&
-        //                 e.touches[0]["force"] > 0
-        //             ) {
-        //                 pressure = e.touches[0]["force"];
-        //             }
-        //             if (
-        //                 touch.touchType === "direct" &&
-        //                 this.drawWithTouch === false
-        //             )
-        //                 return;
-        //             e.preventDefault();
-        //             e.stopPropagation();
-        //             this.prev_cvs.dispatchEvent(mouseEvent);
-        //         }
-        //         if (e.touches.length === 2) {
-        //             // this.scaleTip.updateTip("Two finger touch start");
-        //             this.twoTouch = true;
-        //         }
-        //     },
-        //     false
-        // );
-
+        
         window.addEventListener("wheel", this.cvsMouseWheelHandler, {
             passive: false
         });
@@ -393,26 +279,6 @@ export class EditorCanvas implements CanvasBase {
         window.addEventListener("keydown", this.docKeydownHandler);
         window.addEventListener("keyup", this.docKeyupHandler);
 
-        // this.prev_cvs.addEventListener(
-        //     "mousemove",
-        //     (e) => {
-        //         if (this.draw_func.PointerMove !== undefined) {
-        //             // console.log('Mouse Move');
-        //             this.draw_func.PointerMove(
-        //                 e as MouseEvent,
-        //                 this.scaleFactor
-        //             );
-        //         }
-        //     },
-        //     false
-        // );
-
-        // this.prev_cvs.addEventListener("mouseup", (e) => {
-        //     if (this.draw_func.PointerUp !== undefined) {
-        //         console.log("Mouse Up");
-        //         this.draw_func.PointerUp(e as MouseEvent, this.scaleFactor);
-        //     }
-        // });
         this.prev_cvs.addEventListener("mouseout", (e) => {
             if (this.draw_func.PointerOut !== undefined) {
                 console.log("Mouse Out");
@@ -420,7 +286,7 @@ export class EditorCanvas implements CanvasBase {
                     clientX: e.clientX / this.scaleFactor,
                     clientY: e.clientY / this.scaleFactor
                 });
-                this.draw_func.PointerOut(e, this.scaleFactor);
+                // this.draw_func.PointerOut(e);
             }
         });
 

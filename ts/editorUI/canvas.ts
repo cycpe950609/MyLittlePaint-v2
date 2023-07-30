@@ -1,13 +1,20 @@
+export type PaintEvent = {
+    X: number;
+    Y: number;
+    type: "touch" | "mouse" | "pen";
+    pressure: number;
+}
+
 export interface CanvasInterface {
     Name: string;
     Tip?: string;
     ImgName?:string;
     CursorName?:string;
     CanFinishDrawing: boolean;
-    PointerDown?: (e: MouseEvent,scaleFactor: number) => void;
-    PointerMove?: (e: MouseEvent,scaleFactor: number) => void;
-    PointerUp?: (e: MouseEvent,scaleFactor: number) => void;
-    PointerOut?: (e: MouseEvent,scaleFactor: number) => void;
+    PointerDown?: (e: PaintEvent) => void;
+    PointerMove?: (e: PaintEvent) => void;
+    PointerUp?: (e: PaintEvent) => void;
+    PointerOut?: (e: PaintEvent) => void;
     DrawFunction: (
         ctx: CanvasRenderingContext2D,
         width: number, 
@@ -28,24 +35,24 @@ export class DrawBase implements CanvasInterface {
     protected ifDrawing = false;
     protected ifMouseMove = false;
 
-    public PointerDown(e: MouseEvent, scaleFactor: number){
-        [this.LastX, this.LastY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
-        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
+    public PointerDown(e: PaintEvent){
+        [this.LastX, this.LastY] = [e.X, e.Y];
+        [this.NextX, this.NextY] = [e.X, e.Y];
         this.ifDrawing = true;
         this.ifMouseMove = false;
         this._canfinishDrawing = false;
     };
-    public PointerMove(e: MouseEvent, scaleFactor: number){
+    public PointerMove(e: PaintEvent){
         if(!this.ifDrawing) return;
         this.ifMouseMove = true;
-        [this.NextX, this.NextY] = [e.offsetX/scaleFactor, e.offsetY/scaleFactor];
+        [this.NextX, this.NextY] = [e.X, e.Y];
     };
-    public PointerUp(e: MouseEvent, scaleFactor: number){
+    public PointerUp(e: PaintEvent){
         this._canfinishDrawing = true;
         this.ifMouseMove = false;
         this.ifDrawing = false;
     };
-    public PointerOut(e: MouseEvent, scaleFactor: number){
+    public PointerOut(e: PaintEvent){
         this._canfinishDrawing = true;
         this.ifMouseMove = false;
         this.ifDrawing = false; 
