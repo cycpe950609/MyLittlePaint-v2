@@ -96,7 +96,8 @@ export class EditorCanvas implements CanvasBase {
         this.EventFired = false;
         this.ctx.globalCompositeOperation = "source-over";
         //Add Redo Undo stack
-        this.pushState();
+        if(this.draw_func.HistoryName !== undefined)
+            this.pushState();
     }
 
     attachCanvas(container: HTMLDivElement) {

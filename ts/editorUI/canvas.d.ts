@@ -6,6 +6,7 @@ export type PaintEvent = {
 };
 export interface CanvasInterface {
     Name: string;
+    HistoryName?: string;
     Tip?: string;
     ImgName?: string;
     CursorName?: string;

@@ -3,6 +3,7 @@ import { DrawBase } from "../editorUI/canvas";
 class BrushCVSFunc extends DrawBase {
 
     Name = 'Brush';
+    HistoryName = 'brush';
     Tip = 'Brush';
     ImgName = 'brush';
     CursorName = 'brush';

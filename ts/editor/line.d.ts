@@ -1,6 +1,7 @@
 import { DrawBase } from "../editorUI/canvas";
 declare class LineCVSFunc extends DrawBase {
     Name: string;
+    HistoryName: string;
     Tip: string;
     ImgName: string;
     CursorName: string;

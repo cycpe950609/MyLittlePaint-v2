@@ -7,6 +7,7 @@ export type PaintEvent = {
 
 export interface CanvasInterface {
     Name: string;
+    HistoryName?: string;// undefined if dont want to push into history stack
     Tip?: string;
     ImgName?:string;
     CursorName?:string;

@@ -3,6 +3,7 @@ import { DrawBase } from "../editorUI/canvas";
 export class CircleCVSFunc extends DrawBase
 {
     Name = 'Circle';
+    HistoryName = 'polygon-circle';
     ImgName = 'circle';
     Tip = 'Circle'
     CursorName ='crosshair';
@@ -12,7 +13,6 @@ export class CircleCVSFunc extends DrawBase
     CanFilled = false;
     DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) =>
     { 
-        
         if(this.ifDrawing)
         {
             Ctx.clearRect(0, 0, width, height);
@@ -33,8 +33,6 @@ export class CircleCVSFunc extends DrawBase
             }
             Ctx.stroke();
         }
-        
-        
     };
     CompositeOperation = <GlobalCompositeOperation>"source-over"
 }
@@ -43,6 +41,7 @@ export class CircleCVSFunc extends DrawBase
 export class TriangleCVSFunc extends DrawBase
 {
     Name = 'Triangle';
+    HistoryName = 'polygon-triangle';
     ImgName = 'triangle';
     Tip = 'Triangle'
     CursorName ='crosshair';
@@ -64,19 +63,13 @@ export class TriangleCVSFunc extends DrawBase
             Ctx.lineTo(this.LastX,this.NextY);
             Ctx.lineTo((this.LastX + this.NextX)/2,this.LastY);
             Ctx.lineTo(this.NextX,this.NextY);
-
-
-
-            //Ctx.arc(this.LastX, this.LastY, dst, 0, 2*Math.PI);
             if(this.CanFilled)
             {
                 Ctx.fillStyle = this.ContentColor;
                 Ctx.fill();
             }
             Ctx.stroke();
-        }
-        
-        
+        }        
     };
     CompositeOperation = <GlobalCompositeOperation>"source-over"
 }
@@ -86,6 +79,7 @@ export class TriangleCVSFunc extends DrawBase
 export class RectangleCVSFunc extends DrawBase
 {
     Name = 'Rectangle';
+    HistoryName = 'polygon-rectangle';
     ImgName = 'rectangle';
     Tip = 'Rectangle'
     CursorName='crosshair';
@@ -99,18 +93,13 @@ export class RectangleCVSFunc extends DrawBase
         {
             let OffsetX = this.NextX;
             let OffsetY = this.NextY;
-            
-            
             Ctx.clearRect(0, 0, width , height);
             Ctx.strokeStyle = this.BorderBrush;
             Ctx.lineWidth = this.BorderWidth;
             Ctx.beginPath();
-
             //Get radius
             let dx = OffsetX - this.LastX;
             let dy = OffsetY - this.LastY;
-
-
             Ctx.rect(this.LastX,this.LastY,dx,dy);
             if(this.CanFilled)
             {
@@ -119,8 +108,6 @@ export class RectangleCVSFunc extends DrawBase
             }
             Ctx.stroke();
         }
-        
-        
     };
     CompositeOperation= <GlobalCompositeOperation>"source-over"
 }

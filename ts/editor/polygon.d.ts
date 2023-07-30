@@ -1,6 +1,7 @@
 import { DrawBase } from "../editorUI/canvas";
 export declare class CircleCVSFunc extends DrawBase {
     Name: string;
+    HistoryName: string;
     ImgName: string;
     Tip: string;
     CursorName: string;
@@ -13,6 +14,7 @@ export declare class CircleCVSFunc extends DrawBase {
 }
 export declare class TriangleCVSFunc extends DrawBase {
     Name: string;
+    HistoryName: string;
     ImgName: string;
     Tip: string;
     CursorName: string;
@@ -25,6 +27,7 @@ export declare class TriangleCVSFunc extends DrawBase {
 }
 export declare class RectangleCVSFunc extends DrawBase {
     Name: string;
+    HistoryName: string;
     ImgName: string;
     Tip: string;
     CursorName: string;

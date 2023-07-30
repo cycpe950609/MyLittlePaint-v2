@@ -2,6 +2,7 @@ import { DrawBase } from "../editorUI/canvas";
 
 class LineCVSFunc extends DrawBase{
     Name = 'Line';
+    HistoryName = 'line';
     Tip = 'Line';
     ImgName = 'line';
     CursorName ='crosshair';

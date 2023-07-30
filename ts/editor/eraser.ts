@@ -2,6 +2,7 @@ import { DrawBase } from "../editorUI/canvas";
 
 class EraserCVSFunc extends DrawBase {
     Name = 'Eraser';
+    HistoryName = 'eraser';
     Tip = 'Eraser';
     ImgName = 'eraser';
     CursorName = 'eraser';
