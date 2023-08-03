@@ -64,7 +64,7 @@ export declare class EditorCanvas implements CanvasBase {
 declare class modeEditor implements ModeFunction {
     Enable: boolean;
     CenterCanvas: EditorCanvas;
-    MenuToolbarLeft: (btnUpload | btnUndo | btnRedo | btnClear | btnCanvas)[];
+    MenuToolbarLeft: (btnCanvas | btnUpload | btnUndo | btnRedo | btnClear)[];
     MenuToolbarRight: (btnToggleTouch | btnSave)[];
     LeftToolbarTop: btnCanvas[];
     StartMode(): void;

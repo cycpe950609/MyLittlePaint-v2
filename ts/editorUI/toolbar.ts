@@ -117,10 +117,9 @@ export const bootstrap = async (props: ToolbarPropsType) => {
 }
 
 const renderToolPart = (type:string,partName: string,partListName:string,partList: ToolbarStateType<any>) => {
-    console.log("[DEB] ToolbarPart render", partListName, Object.keys(partList).length)
+    rendered[partListName] = true;
     return DIV(partName,
         Object.keys(partList).map((key:string) => {
-            rendered[partListName] = true;
             return createFunctionInterfaceButton(createFuncList[type](partListName,key,partList[key]));
         })
     );
@@ -170,10 +169,7 @@ const render = (type: string) => {
 export const mount = async (props: ToolbarPropsType) => {
     unsubscribe[props.type] = data.subscribe(() =>
     {
-        // console.log(`[EUI] data updated : toolbar ${props.type}`,data.getState());
         let underscore      = props.type.replace('-','_');
-        if(data.getState()[`${underscore}_top_`].action === "toolbar_top.clear")
-            console.log("[DEB] action is clear")
         console.log('[DEB] Should rerendered ?',
             rendered[`${underscore}_top_`]        , data.getState()[`${underscore}_top_`].action        ,
             rendered[`${underscore}_top_perm`]    , data.getState()[`${underscore}_top_perm`].action    ,
@@ -190,7 +186,7 @@ export const mount = async (props: ToolbarPropsType) => {
         )
         {
             // console.log(`${props.type} rerendered`);
-            console.log(`[DEB] ${props.type} before render`, data.getState());
+            // console.log(`[DEB] ${props.type} before render`, data.getState());
             render(props.type);
         }
         
@@ -201,7 +197,6 @@ export const mount = async (props: ToolbarPropsType) => {
             `${underscore}_bottom_perm`,
         ].forEach((name) => {
             if(data.getState()[name].action !== "" && rendered[name] === true){
-                console.log(`[DEB] ${name} rendered`, data.getState());
                 rendered[name] = false;
                 data.dispatch(editorUIActions[name].rendered(null));
             }
