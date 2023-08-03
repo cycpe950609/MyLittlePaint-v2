@@ -516,6 +516,10 @@ export class EditorCanvas implements CanvasBase {
             this.scaleTo(this.scaleFactor - 0.1);
         if (ev.key === "0" && this.isCtlKeyDown && !this.isShiftDown)
             this.scaleTo(1.0);
+        if (ev.key === "z" && this.isCtlKeyDown && !this.isShiftDown)
+            this.undo();
+        if (ev.key === "y" && this.isCtlKeyDown && !this.isShiftDown)
+            this.redo();
         ev.preventDefault();
     };
     private docKeyupHandler = (ev: KeyboardEvent) => {
