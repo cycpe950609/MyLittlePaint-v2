@@ -340,12 +340,12 @@ export class EditorCanvas implements CanvasBase {
             let img = new Image();
 
             img.onload = () => {
-                this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
+                this.ctx.clearRect(0, 0, this.width, this.height);
                 this.prev_ctx.clearRect(
                     0,
                     0,
-                    this.prev_cvs.width,
-                    this.prev_cvs.height
+                    this.width,
+                    this.height
                 );
 
                 console.log(img.width);
@@ -389,8 +389,8 @@ export class EditorCanvas implements CanvasBase {
                 this.render_ctx.clearRect(
                     0,
                     0,
-                    this.cvs.width,
-                    this.cvs.height
+                    this.width,
+                    this.height
                 );
                 this.render_ctx.drawImage(img, 0, 0);
                 this.render();
@@ -412,8 +412,8 @@ export class EditorCanvas implements CanvasBase {
                 this.render_ctx.clearRect(
                     0,
                     0,
-                    this.cvs.width,
-                    this.cvs.height
+                    this.width,
+                    this.height
                 );
                 this.render_ctx.drawImage(img, 0, 0);
                 this.render();
@@ -465,7 +465,7 @@ export class EditorCanvas implements CanvasBase {
 
         let tmpCtx = new Image();
         tmpCtx.onload = () => {
-            this.ctx.clearRect(0, 0, this.cvs.width, this.cvs.height);
+            this.ctx.clearRect(0, 0, this.width, this.height);
             this.ctx.canvas.width = this.width * this.scaleFactor;
             this.ctx.canvas.height = this.height * this.scaleFactor;
             this.ctx.scale(this.scaleFactor, this.scaleFactor);
@@ -479,8 +479,8 @@ export class EditorCanvas implements CanvasBase {
             this.prev_ctx.clearRect(
                 0,
                 0,
-                this.prev_cvs.width,
-                this.prev_cvs.height
+                this.width,
+                this.height
             );
             this.prev_ctx.canvas.width = this.width * this.scaleFactor;
             this.prev_ctx.canvas.height = this.height * this.scaleFactor;
