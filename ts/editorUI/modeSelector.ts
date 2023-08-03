@@ -1,5 +1,5 @@
 import { Unsubscribe } from "@reduxjs/toolkit";
-import { ModeInfo, data } from "./data";
+import { ModeInfo, data, editorUIActions } from "./data";
 import { DIV, LABEL } from "./util/HTMLElement";
 
 let unsubscribe: Unsubscribe;
@@ -8,7 +8,6 @@ export const bootstrap = async () => {
     console.log("[EUI] modeSelector bootstrapping");
 }
 const render = () => {
-    console.log(data);
     let editMenuMiddle = document.getElementById("editorui-menubar-middle");
     if(editMenuMiddle === null) throw new Error("INTERNAL_ERROR: Cannot find container of editorui-menubar-middle");
     editMenuMiddle.innerHTML = '';
@@ -51,9 +50,12 @@ const render = () => {
 export const mount = async () => {
     unsubscribe = data.subscribe(() =>
     {
-        console.log("[EUI] data updated");
-        console.log("modeSelector",data.getState()["mode"].data)
-        render();
+        if(data.getState()["mode"].action !== "")
+        {
+            // console.log("modeSelector rerendered");
+            data.dispatch(editorUIActions.mode.rendered(null));
+            render();
+        }
     });
     render();
     console.log("[EUI] modeSelector mounted");

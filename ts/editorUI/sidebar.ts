@@ -19,7 +19,6 @@ class Sidebar implements FunctionInterface {
         uuid: string,
         sidebar: SidebarInterface
     ) {
-        console.log("New Sidebar :",listName,uuid)
         this.listName = listName;
         this.interfaceUUID = uuid;
 
@@ -29,22 +28,21 @@ class Sidebar implements FunctionInterface {
     }
 
     showSidebar() {
-        let curSideInterface = data.getState()[this.listName][this.interfaceUUID];
+        let curSideInterface = data.getState()[this.listName].data[this.interfaceUUID];
         if(curSideInterface.Visible === true) return;
         curSideInterface.Visible = true;
         data.dispatch(editorUIActions[this.listName].update({id:this.interfaceUUID,new_func:curSideInterface}))
     }
 
     hiddenSidebar() {
-        console.log("hiddenSidebar :",this.listName,this.interfaceUUID)
-        let curSideInterface = data.getState()[this.listName][this.interfaceUUID];
+        let curSideInterface = data.getState()[this.listName].data[this.interfaceUUID];
         if(curSideInterface.Visible === false) return;
         curSideInterface.Visible = false;
         data.dispatch(editorUIActions[this.listName].update({id:this.interfaceUUID,new_func:curSideInterface}))
     }
 
     toggleSidebar() {
-        let curSideInterface = data.getState()[this.listName][this.interfaceUUID];
+        let curSideInterface = data.getState()[this.listName].data[this.interfaceUUID];
         let isShowSidebar = !curSideInterface.Visible;
         if (isShowSidebar === true) this.showSidebar();
         else this.hiddenSidebar();
@@ -52,7 +50,6 @@ class Sidebar implements FunctionInterface {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     StartFunction(/*cvs: CanvasBase*/) {
-        console.log(`Start Function ${this.Name}`);
         this.toggleSidebar();
         return false;
     }
@@ -66,7 +63,7 @@ export const bootstrap = async () => {
 }
 let windowCache: {[key:string]:HTMLDivElement} = {};
 let renderWindow = (uuid:string) => {
-    if(uuid in windowCache) return windowCache[uuid];
+    if(uuid in windowCache && !window.editorUI.CenterCanvas.isUpdate) return windowCache[uuid];
     let sidebar = DIV("property-bar", [
         DIV("pd_title", 
             SPAN("pb_Property_title", "Title~")),
@@ -87,14 +84,14 @@ let renderWindow = (uuid:string) => {
         (<HTMLDivElement>dv).appendChild(body);
     }
     let sidebarImple = undefined;
-    if(uuid in data.getState()['sidebar_top_'])
-        sidebarImple = data.getState()['sidebar_top_'][uuid];
-    else if(uuid in data.getState()['sidebar_top_perm'])
-        sidebarImple = data.getState()['sidebar_top_perm'][uuid];
-        else if(uuid in data.getState()['sidebar_bottom_'])
-        sidebarImple = data.getState()['sidebar_bottom_'][uuid];
-    else if(uuid in data.getState()['sidebar_bottom_perm'])
-        sidebarImple = data.getState()['sidebar_bottom_perm'][uuid];
+    if(uuid in data.getState()['sidebar_top_'].data)
+        sidebarImple = data.getState()['sidebar_top_'].data[uuid];
+    else if(uuid in data.getState()['sidebar_top_perm'].data)
+        sidebarImple = data.getState()['sidebar_top_perm'].data[uuid];
+        else if(uuid in data.getState()['sidebar_bottom_'].data)
+        sidebarImple = data.getState()['sidebar_bottom_'].data[uuid];
+    else if(uuid in data.getState()['sidebar_bottom_perm'].data)
+        sidebarImple = data.getState()['sidebar_bottom_perm'].data[uuid];
     if(sidebarImple === undefined) throw new Error("INTERNAL_ERROR: SidebarInterface is not found");
     
     setTitle(sidebarImple.Title());
@@ -120,10 +117,10 @@ const renderSidebarPart = (partList: ToolbarStateType<SidebarInterface>) => {
 const render = () => {
     let cnt = document.getElementById("editorui-sidebar-windows");
     if(cnt === null) throw new Error(`INTERNAL_ERROR: Container of Sidebar-Window not found`);
-    let dataTop         = data.getState()[`sidebar_top_`];
-    let dataTopPerm     = data.getState()[`sidebar_top_perm`];
-    let dataBottom      = data.getState()[`sidebar_bottom_`];
-    let dataBottomPerm  = data.getState()[`sidebar_bottom_perm`];
+    let dataTop         = data.getState()[`sidebar_top_`].data;
+    let dataTopPerm     = data.getState()[`sidebar_top_perm`].data;
+    let dataBottom      = data.getState()[`sidebar_bottom_`].data;
+    let dataBottomPerm  = data.getState()[`sidebar_bottom_perm`].data;
     let sidebar = DIV("sidebar",[
         renderSidebarPart(dataTop         ),
         renderSidebarPart(dataTopPerm     ),
@@ -132,8 +129,21 @@ const render = () => {
     ])
     sidebar.id = "editorui-sidebar-windows"
     // <div class="sidebar" id="editorui-sidebar-windows">
+    let visiableCount = (partList: ToolbarStateType<SidebarInterface>) => {
+        let count = 0;
+        Object.keys(partList).forEach((key) => {
+            count += partList[key].Visible ? 1 : 0;
+        })
+        return count;
+    }
+    let windowCount =   visiableCount(dataTop) + 
+                        visiableCount(dataBottom) + 
+                        visiableCount(dataTopPerm) + 
+                        visiableCount(dataBottomPerm);
+    // console.log("[EUI] Sidebar pointerEvents : ",windowCount)
+    sidebar.style.pointerEvents = (windowCount > 0) ? "auto" : "none";
     cnt.parentNode?.replaceChild(sidebar,cnt);
-
+    window.editorUI.CenterCanvas.isUpdate = false;
 }
 export const mount = async () => {
     unsubscribe = data.subscribe(() =>

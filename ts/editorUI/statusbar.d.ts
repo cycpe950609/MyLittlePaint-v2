@@ -11,8 +11,6 @@ declare class StatusBar {
     private defaultTip;
     private __createTipComponent__;
     addTip(defaultTip: string, atRight?: boolean): TipComponent;
-    init(): void;
-    updateTip(tip: string): void;
     clear(): void;
 }
 export default StatusBar;

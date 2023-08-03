@@ -4,6 +4,7 @@ import ModeFunction from './interface/mode';
 import SidebarInterface from './interface/sidebar';
 import { CanvasBase } from './canvas';
 import StatusBar from './statusbar';
+import './util/console';
 declare global {
     interface Window {
         editorUI: EditorUI;

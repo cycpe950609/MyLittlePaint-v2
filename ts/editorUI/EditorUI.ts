@@ -1,10 +1,5 @@
 import * as singleSpa from 'single-spa';
 import editoruiTemplate from "./editorui.html"
-import {
-    constructApplications,
-    constructRoutes,
-    constructLayoutEngine,
-} from 'single-spa-layout';
 import FunctionInterface, { NoOPFunc } from './interface/function';
 import Toolbar, { ToolbarInterface, ToolbarPart } from './toolbar';
 // import SidebarInterface from './interface/sidebar';
@@ -15,6 +10,7 @@ import SidebarInterface from './interface/sidebar';
 import Sidebar from './sidebar';
 import { CanvasBase, NoOPCanvas } from './canvas';
 import StatusBar from './statusbar';
+import './util/console';
 
 declare global {
     interface Window { 
@@ -104,7 +100,7 @@ class ModeManger {
         if (this.func_mode === modeName) return;
 
         let modeNameHash = `#/${modeName}`;
-        console.log(modeNameHash in data.getState()["mode"].data && data.getState()["mode"].data[modeNameHash].enable !== true)
+        // console.log(modeNameHash in data.getState()["mode"].data && data.getState()["mode"].data[modeNameHash].enable !== true)
         if (
             modeNameHash in data.getState()["mode"].data &&
             data.getState()["mode"].data[modeNameHash].enable !== true
@@ -254,7 +250,6 @@ class EditorUI {
         else {
             _cnt = container;
         }
-        console.log("_cnt",_cnt,container);
         _cnt.appendChild(this.container);
         singleSpa.start();
         console.log("[EUI] EditorUI Mounted");

@@ -103,17 +103,24 @@ export default Toolbar;
 
 let unsubscribe: {[key:string]:Unsubscribe} = {};
 let createFuncList : {[key:string]:createFuncType<any>} = {};
-
+let rendered : {[key:string]:boolean} = {};
 export type ToolbarPropsType = {
     type: string;
 }
 export const bootstrap = async (props: ToolbarPropsType) => {
     console.log("[EUI] Toolbar bootstrapping");
+    let underscore      = props.type.replace('-','_');
+    rendered[`${underscore}_top_`] = false;
+    rendered[`${underscore}_top_perm`] = false;
+    rendered[`${underscore}_bottom_`] = false;
+    rendered[`${underscore}_bottom_perm`] = false;
 }
 
 const renderToolPart = (type:string,partName: string,partListName:string,partList: ToolbarStateType<any>) => {
+    console.log("[DEB] ToolbarPart render", partListName, Object.keys(partList).length)
     return DIV(partName,
         Object.keys(partList).map((key:string) => {
+            rendered[partListName] = true;
             return createFunctionInterfaceButton(createFuncList[type](partListName,key,partList[key]));
         })
     );
@@ -123,13 +130,12 @@ const render = (type: string) => {
     let name = `editorui-${type}`;
     let cnt = document.getElementById(name);
     if(cnt === null) throw new Error(`INTERNAL_ERROR: Container of ${type} not found`);
-    console.log(cnt);
 
     let underscore      = type.replace('-','_');
-    let dataTop         = data.getState()[`${underscore}_top_`];
-    let dataTopPerm     = data.getState()[`${underscore}_top_perm`];
-    let dataBottom      = data.getState()[`${underscore}_bottom_`];
-    let dataBottomPerm  = data.getState()[`${underscore}_bottom_perm`];
+    let dataTop         = data.getState()[`${underscore}_top_`].data;
+    let dataTopPerm     = data.getState()[`${underscore}_top_perm`].data;
+    let dataBottom      = data.getState()[`${underscore}_bottom_`].data;
+    let dataBottomPerm  = data.getState()[`${underscore}_bottom_perm`].data;
     // <div class="toolbar-vertical" style="display: flex;">
     //      <div class="toolbar-perm"></div>
     //      <div class="toolbar-top">
@@ -162,12 +168,45 @@ const render = (type: string) => {
     cnt.parentNode?.replaceChild(toolbar,cnt);
 }
 export const mount = async (props: ToolbarPropsType) => {
-    console.log(props);
     unsubscribe[props.type] = data.subscribe(() =>
     {
-        console.log("[EUI] data updated");
-        console.log("Toolbar",data.getState()["mode"].data)
-        render(props.type);
+        // console.log(`[EUI] data updated : toolbar ${props.type}`,data.getState());
+        let underscore      = props.type.replace('-','_');
+        if(data.getState()[`${underscore}_top_`].action === "toolbar_top.clear")
+            console.log("[DEB] action is clear")
+        console.log('[DEB] Should rerendered ?',
+            rendered[`${underscore}_top_`]        , data.getState()[`${underscore}_top_`].action        ,
+            rendered[`${underscore}_top_perm`]    , data.getState()[`${underscore}_top_perm`].action    ,
+            rendered[`${underscore}_bottom_`]     , data.getState()[`${underscore}_bottom_`].action     ,
+            rendered[`${underscore}_bottom_perm`] , data.getState()[`${underscore}_bottom_perm`].action
+        )
+        if(
+            (
+                rendered[`${underscore}_top_`]          === false && data.getState()[`${underscore}_top_`].action !== ""         ||
+                rendered[`${underscore}_top_perm`]      === false && data.getState()[`${underscore}_top_perm`].action !== ""     ||
+                rendered[`${underscore}_bottom_`]       === false && data.getState()[`${underscore}_bottom_`].action !== ""      ||
+                rendered[`${underscore}_bottom_perm`]   === false && data.getState()[`${underscore}_bottom_perm`].action !== ""  
+            )
+        )
+        {
+            // console.log(`${props.type} rerendered`);
+            console.log(`[DEB] ${props.type} before render`, data.getState());
+            render(props.type);
+        }
+        
+        [
+            `${underscore}_top_`,
+            `${underscore}_top_perm`,
+            `${underscore}_bottom_`,
+            `${underscore}_bottom_perm`,
+        ].forEach((name) => {
+            if(data.getState()[name].action !== "" && rendered[name] === true){
+                console.log(`[DEB] ${name} rendered`, data.getState());
+                rendered[name] = false;
+                data.dispatch(editorUIActions[name].rendered(null));
+            }
+        })
+
     });
     render(props.type);
     console.log(`[EUI] Toolbar ${props.type} mounted`);

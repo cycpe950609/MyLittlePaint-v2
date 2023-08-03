@@ -8,6 +8,7 @@ export class TipComponent {
     constructor(defaultTip: string,side:string,idx: number){
         this.idx = idx;
         this.side = side;
+        console.log(`[EUI] ${idx} tip component created`);
         data.dispatch(editorUIActions[`statusbar_${this.side}_`].update(
             {
                 id:this.idx,
@@ -62,25 +63,16 @@ class StatusBar {
     private __createTipComponent__(defaultTip: string,right: boolean = false){
         if(right)
         {
-            let count = Object.keys(data.getState()[`statusbar_right_`]).length;
+            let count = Object.keys(data.getState()[`statusbar_right_`].data).length;
             return new TipComponent(defaultTip,"right",count+1);
         }
         else {
-            let count = Object.keys(data.getState()[`statusbar_left_`]).length;
+            let count = Object.keys(data.getState()[`statusbar_left_`].data).length;
             return new TipComponent(defaultTip,"left",count+1);
         }
     }
     public addTip(defaultTip: string,atRight: boolean = false): TipComponent {
         return this.__createTipComponent__(defaultTip,atRight);
-    }
-
-    public init() {
-        this.defaultTip = this.addTip('No message',true);
-        this.defaultTip.hide();
-    }
-
-    public updateTip(tip: string) {
-        this.defaultTip.updateTip(tip);
     }
 
     public clear(): void {
@@ -95,38 +87,60 @@ export type StatusbarPropsType = {
     side: string,
 }
 let unsubscribe: {[key:string]:Unsubscribe} = {};
+let rendered : {[key:string]:boolean} = {};
 
 export const bootstrap = async (props: StatusbarPropsType) => {
     console.log("[EUI] modeSelector bootstrapping");
+    rendered[`statusbar_${props.side}_`]    = false;
 }
 const renderTipComponent = (tip: string) => {
     return DIV("status-bar",
         SPAN("status_help_tip", tip)
     );
 }
-const renderStatusPart = (partList: StatusbarStateType) => {
+const renderStatusPart = (partListName: string,partList: StatusbarStateType) => {
     return Object.keys(partList).map((key:string)=>{
+        rendered[partListName] = true;
         return partList[key].showed ? renderTipComponent(partList[key].tip) : document.createElement("span");
     })
 }
 const render = (side: string) => {
-    console.log(data);
     let name = `editorui-statusbar-${side}`
     let statusbarCNT = document.getElementById(name);
     if(statusbarCNT === null) throw new Error("INTERNAL_ERROR: Cannot find container of editorui-menubar-middle");
     statusbarCNT.innerHTML = '';
-    let sidebar = DIV(name,renderStatusPart(data.getState()[`statusbar_${side}_`]));
+    // console.log("[DEB] Statusbar data : ",data.getState()[`statusbar_${side}_`]);
+    let sidebar = DIV(name,renderStatusPart(`statusbar_${side}_`,data.getState()[`statusbar_${side}_`].data));
     sidebar.id = name;
     statusbarCNT.parentNode?.replaceChild(sidebar,statusbarCNT);
 }
 export const mount = async (props: StatusbarPropsType) => {
     unsubscribe[props.side] = data.subscribe(() =>
     {
-        console.log("[EUI] data updated");
-        render(props.side);
+        if(
+            (
+                rendered[`statusbar_${props.side}_`]    === false && data.getState()[`statusbar_${props.side}_`].action !== ""
+            )
+        )
+        {
+            // console.log(`[DEB] Statusbar ${props.side} rerendered`);
+            
+            render(props.side);
+        }
+        
+        [
+            `statusbar_${props.side}_`,
+        ].forEach((name) => {
+            // console.log(`[DEB] ${data.getState()[name].action}, ${rendered[name]}`)
+            if(data.getState()[name].action !== "" && rendered[name] === true){
+                rendered[name] = false;
+                // console.log(`[DEB] Statusbar ${name} rendered`)
+                data.dispatch(editorUIActions[name].rendered(null));
+            }
+        })
     });
     render(props.side);
-    console.log(`[EUI] Statusbar $side} mounted`);
+    console.log(`[EUI] Statusbar ${props.side} mounted`);
 }
 export const unmount = async (props: StatusbarPropsType) => {
     unsubscribe[props.side]();

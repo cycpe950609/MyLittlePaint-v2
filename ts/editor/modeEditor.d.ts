@@ -29,7 +29,9 @@ export declare class EditorCanvas implements CanvasBase {
     private EventFired;
     private width;
     private height;
+    isUpdate: boolean;
     constructor(width: number, height: number);
+    update?: ((time: number) => void) | undefined;
     private undo_stk_history;
     private redo_stk_history;
     private pushState;
@@ -38,7 +40,7 @@ export declare class EditorCanvas implements CanvasBase {
     attachCanvas(container: HTMLDivElement): void;
     enableDrag(): void;
     disableDrag(): void;
-    setFunction: (func: CanvasInterface) => void;
+    setFunction(func: CanvasInterface): void;
     resizeCanvas: (e?: UIEvent) => void;
     removeCanvas: () => void;
     render: () => void;

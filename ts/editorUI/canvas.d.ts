@@ -45,6 +45,7 @@ export interface CanvasBase {
     removeCanvas: () => void;
     render: () => void;
     update?: (time: DOMHighResTimeStamp) => void;
+    isUpdate: boolean;
 }
 export declare class NoOPCanvas implements CanvasBase {
     update?: ((time: number) => void) | undefined;
@@ -54,4 +55,5 @@ export declare class NoOPCanvas implements CanvasBase {
     resizeCanvas(e?: UIEvent): void;
     removeCanvas(): void;
     render(): void;
+    isUpdate: boolean;
 }

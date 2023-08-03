@@ -22,9 +22,13 @@ let modeManagerSlice: Slice = createSlice({
     name: "modeManager",
     initialState: {
         root: "",
+        action: "",
         data: {}
     },
     reducers: {
+        rendered: (state,action) => {
+            state.action = "";
+        },
         enable: (state, action: PayloadAction<string>) => {
             // Redux Toolkit allows us to write "mutating" logic in reducers. It
             // doesn't actually mutate the state because it uses the Immer library,
@@ -32,20 +36,23 @@ let modeManagerSlice: Slice = createSlice({
             // immutable state based off those changes
             let modeName = action.payload
             console.log("[EUI] Tried to enable " + modeName);
-
-            if (modeName in state) {
+            let modeNameWithHash = `#/${modeName}`;
+            if (modeNameWithHash in state.data) {
                 console.log("[EUI] Enable " + modeName);
-                const mode = state.data[modeName];
+                const mode = state.data[modeNameWithHash];
                 if (mode === undefined) throw new Error("MODEMGR_INTERNAL_ERROR");
                 mode.enable = true;
+                state.action = `mode.${modeName}.enable`;
             }
         },
         disable: (state, action: PayloadAction<string>) => {
             let modeName = action.payload
-            if (modeName in state) {
-                const mode = state.data[modeName];
+            let modeNameWithHash = `#/${modeName}`;
+            if (modeNameWithHash in state.data) {
+                const mode = state.data[modeNameWithHash];
                 if (mode === undefined) throw new Error("MODEMGR_INTERNAL_ERROR");
                 mode.enable = false;
+                state.action = `mode.${modeName}.disable`;
             }
         },
         toggle: (state, action: PayloadAction<string>) => {
@@ -60,12 +67,14 @@ let modeManagerSlice: Slice = createSlice({
         add: (state, action: PayloadAction<ModeInfo>) => {
             const name = `#/${action.payload.modeName}`;
             state.data[name] = action.payload;
+            state.action = `mode.${action.payload.modeName}.added`;
         },
         remove: (state, action: PayloadAction<string>) => {
             let modeName = action.payload
             if(modeName === state.root) throw new Error("MODEMGR_ERROR: root can't be delete");
             if (modeName in state) {
                 delete state.data[modeName]
+                state.action = `mode.${modeName}.removed`;
             }
         },
         setRoot: (state, action: PayloadAction<string>) => {
@@ -80,28 +89,41 @@ export type ToolbarStateType<ButtonInfoType> = {[key:string]:ButtonInfoType};
 const createToolbarPartSlice = <ButtonInfoType>(name: string) => {
     return createSlice({
         name: name,
-        initialState: {} as any,
+        initialState: {
+            action: "",
+            data: {} as any
+        },
         reducers: {
+            rendered: (state,action) => {
+                state.action = "";
+            },
             updateAll: (state, action: PayloadAction<ToolbarStateType<ButtonInfoType>>) => {
                 // Redux Toolkit allows us to write "mutating" logic in reducers. It
                 // doesn't actually mutate the state because it uses the Immer library,
                 // which detects changes to a "draft state" and produces a brand new
                 // immutable state based off those changes
-                state = action.payload;
+                state.data = action.payload;
+                state.action = `${name}.all.update`;
             },
             update: (state, action: PayloadAction<{id:string,new_func:ButtonInfoType}>) => {
-                state[action.payload.id] = action.payload.new_func;
+                state.data[action.payload.id] = action.payload.new_func;
+                state.action = `${name}.${action.payload.id}.update`;
             },
             add: (state, action: PayloadAction<{id:string,func:ButtonInfoType}>) => {
-                state[action.payload.id] = action.payload.func;
+                state.data[action.payload.id] = action.payload.func;
+                state.action = `${name}.${action.payload.id}.add`;
             },
             remove: (state, action: PayloadAction<string>) => {
                 if(action.payload in state){
-                    delete state[action.payload]
+                    delete state.data[action.payload]
+                    state.action = `${name}.${action.payload}.delete`;
                 }
             },
             clear: (state, action: PayloadAction) => {
-                return {} // We need to return empty state so that redux will clear the state properly
+                return {
+                    action: `${name}.clear`,
+                    data: {}
+                } // We need to return empty state so that redux will clear the state properly
             }
         },
     })
@@ -172,5 +194,5 @@ export const data: Store = configureStore({
             serializableCheck: false
         })
             .concat(thunkMiddleware)
-            .concat(logger)
+            // .concat(logger)
 });

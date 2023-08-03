@@ -68,11 +68,15 @@ export class EditorCanvas implements CanvasBase {
 
     private width: number;
     private height: number;
+
+    public isUpdate: boolean = false;
+
     constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
         this.scaleTip = window.editorUI.Statusbar.addTip("Scale : 100%", true);
     }
+    update?: ((time: number) => void) | undefined;
     private undo_stk_history = new Array();
     private redo_stk_history = new Array();
     private pushState() {
@@ -251,7 +255,7 @@ export class EditorCanvas implements CanvasBase {
         this.prev_cvs.style.touchAction = "none";
     }
 
-    setFunction = (func: CanvasInterface) => {
+    public setFunction(func: CanvasInterface){
         console.log("setFunction", func);
         this.draw_func = func;
         const browerCursor = [

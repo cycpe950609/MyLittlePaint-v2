@@ -12,10 +12,10 @@ export interface CanvasInterface {
     ImgName?:string;
     CursorName?:string;
     CanFinishDrawing: boolean;
-    PointerDown?: (e: PaintEvent) => void;
-    PointerMove?: (e: PaintEvent) => void;
-    PointerUp?: (e: PaintEvent) => void;
-    PointerOut?: (e: PaintEvent) => void;
+    PointerDown?:   (e: PaintEvent) => void;
+    PointerMove?:   (e: PaintEvent) => void;
+    PointerUp?:     (e: PaintEvent) => void;
+    PointerOut?:    (e: PaintEvent) => void;
     DrawFunction: (
         ctx: CanvasRenderingContext2D,
         width: number, 
@@ -70,6 +70,7 @@ export interface CanvasBase {
     removeCanvas: () => void;
     render: () => void;
     update?: (time: DOMHighResTimeStamp) => void; //Use in animateion
+    isUpdate: boolean;
 }
 
 export class NoOPCanvas implements CanvasBase {
@@ -91,4 +92,5 @@ export class NoOPCanvas implements CanvasBase {
     render() {
         // console.log("NoOPCanvas render");
     }
+    isUpdate: boolean = false;
 }

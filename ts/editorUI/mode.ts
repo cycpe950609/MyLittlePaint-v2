@@ -12,7 +12,7 @@ export const bootstrap = async (props: ModeInfo) => {
 export const mount = async (props: ModeInfo) => {
     unsubscribe[props.modeName] = data.subscribe(() =>
     {
-        console.log("[EUI] data updated");
+        // console.log("[EUI] data updated");
     });
 
     if (props.def.StartMode !== undefined) {
@@ -41,7 +41,6 @@ export const mount = async (props: ModeInfo) => {
     window.editorUI.Sidebar.Top.addButtonList(props.def.RightToolbarTop);
     window.editorUI.Sidebar.Bottom.addButtonList(props.def.RightToolbarBottom);
     
-    // window.editorUI.Statusbar.init();
     let funcNoop = new NoOPFunc(0);
     window.editorUI.Mode.changeFunction(funcNoop);
 
