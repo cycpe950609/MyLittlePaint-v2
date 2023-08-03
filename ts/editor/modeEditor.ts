@@ -84,15 +84,15 @@ export class EditorCanvas implements CanvasBase {
             this.undo_stk_history.push(this.redo_stk_history.pop());
         this.redo_stk_history = [];
         this.redo_stk_history.push(this.render_cvs.toDataURL());
-        console.log(
-            "pushState",
-            this.undo_stk_history.length,
-            this.redo_stk_history.length
-        );
+        // console.log(
+        //     "pushState",
+        //     this.undo_stk_history.length,
+        //     this.redo_stk_history.length
+        // );
     }
 
     private finishDrawing() {
-        console.log("Finish Drawing ...");
+        // console.log("Finish Drawing ...");
         this.render_ctx.globalCompositeOperation =
             this.draw_func.CompositeOperation;
         this.render_ctx.drawImage(this.prev_cvs, 0, 0, this.width, this.height);
@@ -163,7 +163,7 @@ export class EditorCanvas implements CanvasBase {
         })
         .on('down',(e: Interact.PointerEvent)=>{
             if(e.pointerType === "touch" && (window.editorUI.CenterCanvas as EditorCanvas).canDrawWithTouch === false) {
-                console.log("pointerdown");
+                // console.log("pointerdown");
                 this.prev_cvs.style.touchAction = "auto";
                 return;
             };
@@ -182,7 +182,7 @@ export class EditorCanvas implements CanvasBase {
                 requestAnimationFrame(this.render);
             }
 
-            console.log(`Mouse Down`);
+            // console.log(`Mouse Down`);
         })
         .on('move',(e: Interact.PointerEvent)=>{
             // console.log("pointermove");
@@ -203,7 +203,7 @@ export class EditorCanvas implements CanvasBase {
         .on('up',(e: Interact.PointerEvent)=>{
             // console.log("pointerup");
             if(e.pointerType === "touch" && (window.editorUI.CenterCanvas as EditorCanvas).canDrawWithTouch === false){
-                console.log("pointerup");
+                // console.log("pointerup");
                 this.prev_cvs.style.touchAction = "none";
                 return;
             };
@@ -217,7 +217,7 @@ export class EditorCanvas implements CanvasBase {
                 pressure: 1.0
             };
             if (this.draw_func.PointerUp !== undefined) {
-                console.log("Mouse Up");
+                // console.log("Mouse Up");
                 this.draw_func.PointerUp(mouseEvent);
             }
         })
@@ -231,7 +231,7 @@ export class EditorCanvas implements CanvasBase {
 
         this.prev_cvs.addEventListener("mouseout", (e) => {
             if (this.draw_func.PointerOut !== undefined) {
-                console.log("Mouse Out");
+                // console.log("Mouse Out");
                 let ev = new MouseEvent("mouseup", {
                     clientX: e.clientX / this.scaleFactor,
                     clientY: e.clientY / this.scaleFactor
@@ -507,7 +507,7 @@ export class EditorCanvas implements CanvasBase {
         }
     };
     private docKeydownHandler = (ev: KeyboardEvent) => {
-        console.log("docKeydown", ev.key);
+        // console.log("docKeydown", ev.key);
         if (ev.key === "Control") this.isCtlKeyDown = true;
         if (ev.key === "Shift") this.isShiftDown = true;
         if (ev.key === "+" && this.isCtlKeyDown && !this.isShiftDown)
@@ -519,7 +519,7 @@ export class EditorCanvas implements CanvasBase {
         ev.preventDefault();
     };
     private docKeyupHandler = (ev: KeyboardEvent) => {
-        console.log("docKeyup", ev.key);
+        // console.log("docKeyup", ev.key);
         if (ev.key === "Control") this.isCtlKeyDown = false;
         if (ev.key === "Shift") this.isShiftDown = false;
         ev.preventDefault();

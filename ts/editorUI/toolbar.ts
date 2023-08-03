@@ -170,12 +170,6 @@ export const mount = async (props: ToolbarPropsType) => {
     unsubscribe[props.type] = data.subscribe(() =>
     {
         let underscore      = props.type.replace('-','_');
-        console.log('[DEB] Should rerendered ?',
-            rendered[`${underscore}_top_`]        , data.getState()[`${underscore}_top_`].action        ,
-            rendered[`${underscore}_top_perm`]    , data.getState()[`${underscore}_top_perm`].action    ,
-            rendered[`${underscore}_bottom_`]     , data.getState()[`${underscore}_bottom_`].action     ,
-            rendered[`${underscore}_bottom_perm`] , data.getState()[`${underscore}_bottom_perm`].action
-        )
         if(
             (
                 rendered[`${underscore}_top_`]          === false && data.getState()[`${underscore}_top_`].action !== ""         ||
