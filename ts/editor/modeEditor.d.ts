@@ -18,6 +18,7 @@ declare global {
 export declare class EditorCanvas implements CanvasBase {
     name: string;
     private scrollDiv;
+    private scaleElement;
     private backgroundDiv;
     private cvs;
     private ctx;
@@ -37,6 +38,9 @@ export declare class EditorCanvas implements CanvasBase {
     private pushState;
     private finishDrawing;
     private initCanvas;
+    private angleScale;
+    private dragMoveListener;
+    private isDrawing;
     attachCanvas(container: HTMLDivElement): void;
     enableDrag(): void;
     disableDrag(): void;
@@ -52,10 +56,11 @@ export declare class EditorCanvas implements CanvasBase {
     redo: () => void;
     save(): void;
     clear(): void;
-    private scaleFactor;
+    get scaleFactor(): number;
     private scaleTip;
     private isCtlKeyDown;
     private isShiftDown;
+    private transformTo;
     scaleTo: (scale: number) => void;
     private cvsMouseWheelHandler;
     private docKeydownHandler;
