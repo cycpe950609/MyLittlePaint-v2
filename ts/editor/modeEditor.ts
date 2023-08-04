@@ -82,7 +82,8 @@ export class EditorCanvas implements CanvasBase {
     constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
-        this.scaleTip = window.editorUI.Statusbar.addTip("Scale : 100%", true);
+        this.scaleTip = window.editorUI.Statusbar.addTip("", true);
+        this.refreshScaleTip(0,1);
     }
     update?: ((time: number) => void) | undefined;
     private undo_stk_history = new Array();
@@ -138,9 +139,7 @@ export class EditorCanvas implements CanvasBase {
         target.setAttribute("data-x", x.toString());
         target.setAttribute("data-y", y.toString());
 
-        this.scaleTip.updateTip(
-            "Scale : " + (currentScale * 100).toFixed(0) + "%"
-        );
+        this.refreshScaleTip(currentAngle,currentScale);
     }
     private isDrawing: boolean = false;
     attachCanvas(container: HTMLDivElement) {
@@ -565,6 +564,12 @@ export class EditorCanvas implements CanvasBase {
     /* Scaling of Canvas */
     public get scaleFactor() { return this.angleScale.scale; }
     private scaleTip: TipComponent;
+    private refreshScaleTip = (angle: number,scale: number) => {
+        this.scaleTip.updateTip(
+            "Rotate : " + (angle).toFixed(0) + "°, " +
+            "Scale : " + (scale * 100).toFixed(0) + "%"
+        );
+    }
     private isCtlKeyDown: boolean = false;
     private isShiftDown: boolean = false;
     private transformTo = (target: HTMLElement,x:number,y:number,angle:number,scale:number) => {
@@ -578,9 +583,7 @@ export class EditorCanvas implements CanvasBase {
         if (new_scale >= 4) new_scale = 4;
         if (new_scale <= 0.1) new_scale = 0.1;
         this.angleScale.scale = new_scale;
-        this.scaleTip.updateTip(
-            "Scale : " + (this.angleScale.scale * 100).toFixed(0) + "%"
-        );
+        this.refreshScaleTip(this.angleScale.angle,this.angleScale.scale);
         console.log("Next scale factor = " + this.angleScale.scale);
 
         this.transformTo(this.scaleElement,0,0,this.angleScale.angle,this.angleScale.scale)

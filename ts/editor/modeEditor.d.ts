@@ -59,6 +59,7 @@ export declare class EditorCanvas implements CanvasBase {
     clear(): void;
     get scaleFactor(): number;
     private scaleTip;
+    private refreshScaleTip;
     private isCtlKeyDown;
     private isShiftDown;
     private transformTo;
