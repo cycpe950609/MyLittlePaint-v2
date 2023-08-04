@@ -63,9 +63,11 @@ export declare class EditorCanvas implements CanvasBase {
     private refreshScaleTip;
     private isCtlKeyDown;
     private isShiftDown;
+    private isAltDown;
     private transformTo;
     scaleTo: (scale: number) => void;
     rotateTo: (rotate: number) => void;
+    moveTo: (moveX: number, moveY: number) => void;
     private cvsMouseWheelHandler;
     private docKeydownHandler;
     private docKeyupHandler;
@@ -73,7 +75,7 @@ export declare class EditorCanvas implements CanvasBase {
 declare class modeEditor implements ModeFunction {
     Enable: boolean;
     CenterCanvas: EditorCanvas;
-    MenuToolbarLeft: (btnCanvas | btnUpload | btnUndo | btnRedo | btnClear)[];
+    MenuToolbarLeft: (btnUpload | btnUndo | btnRedo | btnClear | btnCanvas)[];
     MenuToolbarRight: (btnResetScale | btnResetRotate | btnToggleTouch | btnSave)[];
     LeftToolbarTop: btnCanvas[];
     StartMode(): void;
