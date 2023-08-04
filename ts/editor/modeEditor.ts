@@ -60,7 +60,7 @@ export class EditorCanvas implements CanvasBase {
     name = "EditorCanvas";
 
     private scrollDiv: HTMLDivElement = DIV(
-        "w-full h-full overflowX-scroll overflowY-scroll relative"
+        "w-full h-full overflowX-scroll overflowY-scroll relative disable-touch"
     );
     private scaleElement: HTMLDivElement = DIV("absolute w-fit h-fit transform-center")
     private backgroundDiv: HTMLDivElement = DIV("absolute disable-mouse");
@@ -122,7 +122,7 @@ export class EditorCanvas implements CanvasBase {
         scale: 1
     };
     private dragMoveListener = (event: Interact.GestureEvent, target: HTMLElement,angleScale: {angle:number, scale:number}) => {
-        console.log("[DEB] dragMoveListener : ",event)
+        // console.log("[DEB] dragMoveListener : ",event)
         // keep the dragged position in the data-x/data-y attributes
         var x = (parseFloat(target.getAttribute("data-x") || "0") || 0) + event.dx;
         var y = (parseFloat(target.getAttribute("data-y") || "0") || 0) + event.dy;
@@ -168,144 +168,165 @@ export class EditorCanvas implements CanvasBase {
         let interactCVS = interact(this.prev_cvs, {
             styleCursor: false
         });
+
+        let gestureStart = (e: Interact.GestureEvent) => {
+            if(isDrawing) return;
+            console.log(
+                `[DEB] Gesture start scale:${e.scale}, angle: ${e.angle}`
+            );
+            e.preventDefault();
+            e.stopPropagation();
+            angleScale.angle -= e.angle;
+            scaleElement.classList.remove("reset");
+        }
+        let gestureMove = (e: Interact.GestureEvent) => {
+            if(isDrawing) return;
+            console.log(
+                `[DEB] Gesture move scale:${e.ds}, angle: ${e.da}`
+            );
+            // let cvs = window.editorUI.CenterCanvas as EditorCanvas
+            // cvs.scaleTo(cvs.scaleFactor+e.ds/2)
+
+            let currentAngle = e.angle + angleScale.angle;
+            let currentScale = e.scale * angleScale.scale;
+            // scaleElement.style.transform =
+            //     "rotate(" + currentAngle + "deg)" +
+            //     "scale(" + currentScale + ")";
+            dragMoveListener(e,scaleElement,angleScale);
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        let gestureEnd = (e: Interact.GestureEvent) => {
+            if(isDrawing) return;
+            console.log(
+                `[DEB] Gesture end scale:${e.scale}, angle: ${e.angle}`
+            );
+            angleScale.angle = angleScale.angle + e.angle;
+            angleScale.scale = angleScale.scale * e.scale;
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        let dragMove = (e: Interact.GestureEvent) => { 
+            if(!isDrawing)
+                dragMoveListener(e,scaleElement,angleScale) 
+        }
+
         var scaleElement = this.scaleElement;
         var angleScale = this.angleScale;
         var dragMoveListener = this.dragMoveListener;
         var isDrawing = this.isDrawing;
         interactCVS
-            .gesturable({
-                listeners: {
-                    start(e) {
-                        if(isDrawing) return;
-                        console.log(
-                            `Gesture start scale:${e.scale}, angle: ${e.angle}`
-                        );
-                        e.preventDefault();
-                        e.stopPropagation();
-                        angleScale.angle -= e.angle;
-                        scaleElement.classList.remove("reset");
-                    },
-                    move(e) {
-                        if(isDrawing) return;
-                        console.log(
-                            `Gesture move scale:${e.ds}, angle: ${e.da}`
-                        );
-                        // let cvs = window.editorUI.CenterCanvas as EditorCanvas
-                        // cvs.scaleTo(cvs.scaleFactor+e.ds/2)
-
-                        let currentAngle = e.angle + angleScale.angle;
-                        let currentScale = e.scale * angleScale.scale;
-                        // scaleElement.style.transform =
-                        //     "rotate(" + currentAngle + "deg)" +
-                        //     "scale(" + currentScale + ")";
-                        dragMoveListener(e,scaleElement,angleScale);
-                        e.preventDefault();
-                        e.stopPropagation();
-                    },
-                    end(e) {
-                        if(isDrawing) return;
-                        console.log(
-                            `Gesture end scale:${e.scale}, angle: ${e.angle}`
-                        );
-                        angleScale.angle = angleScale.angle + e.angle;
-                        angleScale.scale = angleScale.scale * e.scale;
-                        e.preventDefault();
-                        e.stopPropagation();
-                    }
-                }
-            })
-            .draggable({
-                listeners: { 
-                    move: (e) => { 
-                        console.log(e)
-                        if(!isDrawing)
-                            dragMoveListener(e,scaleElement,angleScale) 
-                    }
-                }
-            })
-            .on("down", (e: Interact.PointerEvent) => {
-                if (
-                    e.pointerType === "touch" &&
-                    (window.editorUI.CenterCanvas as EditorCanvas)
-                        .canDrawWithTouch === false
-                ) {
-                    // console.log("pointerdown");
-                    this.prev_cvs.style.touchAction = "auto";
-                    return;
-                }
-                this.prev_cvs.style.touchAction = "none";
-                e.preventDefault();
-                e.stopPropagation();
-                let mouseEvent: PaintEvent = {
-                    X: e.offsetX,
-                    Y: e.offsetY,
-                    type: "mouse",
-                    pressure: 1.0
-                };
-                if (this.draw_func.PointerDown !== undefined) {
-                    this.EventFired = true;
-                    this.draw_func.PointerDown(mouseEvent);
-                    requestAnimationFrame(this.render);
-                }
-                isDrawing = true;
-                // console.log(`Mouse Down`);
-            })
-            .on("move", (e: Interact.PointerEvent) => {
-                // console.log("pointermove");
-                if (
-                    e.pointerType === "touch" &&
-                    (window.editorUI.CenterCanvas as EditorCanvas)
-                        .canDrawWithTouch === false
-                )
-                {
-                    let gestureEvent = {
-                        dx : e.dx,
-                        dy : e.dy
-                    } as Interact.GestureEvent
-                    // console.log("[DEB] pointermove",e);
-                    // dragMoveListener(gestureEvent,scaleElement,angleScale);
-                    return 
-                }
-                e.preventDefault();
-                e.stopPropagation();
-                let mouseEvent: PaintEvent = {
-                    X: e.offsetX,
-                    Y: e.offsetY,
-                    type: "mouse",
-                    pressure: 1.0
-                };
-                if (this.draw_func.PointerMove !== undefined) {
-                    // console.log('Mouse Move');
-                    this.draw_func.PointerMove(mouseEvent);
-                }
-            })
-            .on("up", (e: Interact.PointerEvent) => {
+        .gesturable({
+            listeners: {
+                start : gestureStart,
+                move : gestureMove,
+                end : gestureEnd
+            }
+        })
+        .draggable({
+            listeners: { 
+                move: dragMove
+            }
+        })
+        .on("down", (e: Interact.PointerEvent) => {
+            if (
+                e.pointerType === "touch" &&
+                (window.editorUI.CenterCanvas as EditorCanvas)
+                    .canDrawWithTouch === false
+            ) {
+                // console.log("pointerdown");
+                this.prev_cvs.style.touchAction = "auto";
+                return;
+            }
+            this.prev_cvs.style.touchAction = "none";
+            e.preventDefault();
+            e.stopPropagation();
+            let mouseEvent: PaintEvent = {
+                X: e.offsetX,
+                Y: e.offsetY,
+                type: "mouse",
+                pressure: 1.0
+            };
+            if (this.draw_func.PointerDown !== undefined) {
+                this.EventFired = true;
+                this.draw_func.PointerDown(mouseEvent);
+                requestAnimationFrame(this.render);
+            }
+            isDrawing = true;
+            // console.log(`Mouse Down`);
+        })
+        .on("move", (e: Interact.PointerEvent) => {
+            // console.log("pointermove");
+            if (
+                e.pointerType === "touch" &&
+                (window.editorUI.CenterCanvas as EditorCanvas)
+                    .canDrawWithTouch === false
+            )
+            {
+                let gestureEvent = {
+                    dx : e.dx,
+                    dy : e.dy
+                } as Interact.GestureEvent
+                // console.log("[DEB] pointermove",e);
+                // dragMoveListener(gestureEvent,scaleElement,angleScale);
+                return 
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            let mouseEvent: PaintEvent = {
+                X: e.offsetX,
+                Y: e.offsetY,
+                type: "mouse",
+                pressure: 1.0
+            };
+            if (this.draw_func.PointerMove !== undefined) {
+                // console.log('Mouse Move');
+                this.draw_func.PointerMove(mouseEvent);
+            }
+        })
+        .on("up", (e: Interact.PointerEvent) => {
+            // console.log("pointerup");
+            if (
+                e.pointerType === "touch" &&
+                (window.editorUI.CenterCanvas as EditorCanvas)
+                    .canDrawWithTouch === false
+            ) {
                 // console.log("pointerup");
-                if (
-                    e.pointerType === "touch" &&
-                    (window.editorUI.CenterCanvas as EditorCanvas)
-                        .canDrawWithTouch === false
-                ) {
-                    // console.log("pointerup");
-                    this.prev_cvs.style.touchAction = "none";
-                    return;
-                }
                 this.prev_cvs.style.touchAction = "none";
-                e.preventDefault();
-                e.stopPropagation();
-                let mouseEvent: PaintEvent = {
-                    X: e.offsetX,
-                    Y: e.offsetY,
-                    type: "mouse",
-                    pressure: 1.0
-                };
-                if (this.draw_func.PointerUp !== undefined) {
-                    // console.log("Mouse Up");
-                    this.draw_func.PointerUp(mouseEvent);
-                }
-                isDrawing = false;
+                return;
+            }
+            this.prev_cvs.style.touchAction = "none";
+            e.preventDefault();
+            e.stopPropagation();
+            let mouseEvent: PaintEvent = {
+                X: e.offsetX,
+                Y: e.offsetY,
+                type: "mouse",
+                pressure: 1.0
+            };
+            if (this.draw_func.PointerUp !== undefined) {
+                // console.log("Mouse Up");
+                this.draw_func.PointerUp(mouseEvent);
+            }
+            isDrawing = false;
 
-            });
+        });
+        
+        interact(this.scrollDiv, {
+            styleCursor: false
+        })
+        .gesturable({
+            listeners: {
+                start : gestureStart,
+                move : gestureMove,
+                end : gestureEnd
+            }
+        })
+        .draggable({
+            listeners: { 
+                move: dragMove
+            }
+        })
 
         window.addEventListener("wheel", this.cvsMouseWheelHandler, {
             passive: false
