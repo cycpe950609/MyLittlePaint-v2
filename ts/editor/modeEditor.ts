@@ -107,6 +107,7 @@ export class EditorCanvas implements CanvasBase {
         this.render_ctx.drawImage(this.prev_cvs, 0, 0, this.width, this.height);
         this.prev_ctx.clearRect(0, 0, this.width, this.height);
         this.EventFired = false;
+        this.isDrawing = false;
         this.ctx.globalCompositeOperation = "source-over";
         this.isPointOut = undefined;
         //Add Redo Undo stack
@@ -171,6 +172,7 @@ export class EditorCanvas implements CanvasBase {
         });
 
         let gestureStart = (e: Interact.GestureEvent) => {
+            console.log(`[DEB] isDrawing GestureStart ${isDrawing}`)
             if(isDrawing) return;
             console.log(
                 `[EUI] Gesture start scale:${e.scale}, angle: ${e.angle}`
@@ -181,6 +183,7 @@ export class EditorCanvas implements CanvasBase {
             scaleElement.classList.remove("reset");
         }
         let gestureMove = (e: Interact.GestureEvent) => {
+            console.log(`[DEB] isDrawing GestureMove ${isDrawing}`)
             if(isDrawing) return;
             console.log(
                 `[EUI] Gesture move scale:${e.ds}, angle: ${e.da}`
@@ -208,7 +211,7 @@ export class EditorCanvas implements CanvasBase {
             e.stopPropagation();
         }
         let dragMove = (e: Interact.GestureEvent) => { 
-            if(!isDrawing)
+            if(!isDrawing && this.isPointOut === undefined)
                 dragMoveListener(e,scaleElement,angleScale) 
         }
         let pointOut = (e: Interact.PointerEvent) => {
@@ -219,7 +222,6 @@ export class EditorCanvas implements CanvasBase {
                 pressure: e.pressure
             };
             if (this.draw_func.PointerMove !== undefined) {
-                console.log(`[DEB] PointLeave ${e.pointerType} with offsetX: ${e.offsetX}, offsetY: ${e.offsetY}`);
                 this.draw_func.PointerMove(ev);
             }
             this.isDrawing = false;
@@ -254,6 +256,7 @@ export class EditorCanvas implements CanvasBase {
             ) {
                 // console.log("pointerdown");
                 this.prev_cvs.style.touchAction = "auto";
+                isDrawing = false;
                 return;
             }
             this.prev_cvs.style.touchAction = "none";
@@ -345,6 +348,16 @@ export class EditorCanvas implements CanvasBase {
         .draggable({
             listeners: { 
                 move: dragMove
+            }
+        })
+        .on("down", (e: Interact.PointerEvent) => {
+            isDrawing = false;
+            this.isPointOut = undefined;
+        })
+        .on("up", (e: Interact.PointerEvent) => {
+            if(e.pointerType === "touch"){
+                isDrawing = false;
+                this.isPointOut = undefined;
             }
         })
 
