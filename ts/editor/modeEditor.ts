@@ -132,7 +132,7 @@ export class EditorCanvas implements CanvasBase {
         var y = (parseFloat(target.getAttribute("data-y") || "0") || 0) + event.dy;
 
         // translate the element
-        let currentAngle = (event.angle || 0) + angleScale.angle;
+        let currentAngle = this.normalizeRotate((event.angle || 0) + angleScale.angle);
         let currentScale = (event.scale || 1) * angleScale.scale;
 
         this.transformTo(target,x , y, currentAngle, currentScale);
@@ -577,6 +577,12 @@ export class EditorCanvas implements CanvasBase {
     /* Scaling of Canvas */
     public get scaleFactor() { return this.angleScale.scale; }
     private scaleTip: TipComponent;
+    private normalizeRotate = (rotate: number) => {
+        let angle = rotate % 360;
+        if(angle > 0)
+            return angle > 180 ? -360 + angle: angle;
+        return angle < -180 ? 360 + angle : angle;
+    }
     private refreshScaleTip = (angle: number,scale: number) => {
         this.scaleTip.updateTip(
             "Rotate : " + (angle).toFixed(0) + "°, " +
