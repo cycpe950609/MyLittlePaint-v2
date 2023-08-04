@@ -15,7 +15,7 @@ export interface CanvasInterface {
     PointerMove?: (e: PaintEvent) => void;
     PointerUp?: (e: PaintEvent) => void;
     PointerOut?: (e: PaintEvent) => void;
-    DrawFunction: (ctx: CanvasRenderingContext2D, width: number, height: number) => void;
+    DrawFunction: (ctx: CanvasRenderingContext2D, width: number, height: number, rotate: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export declare class DrawBase implements CanvasInterface {
@@ -32,7 +32,9 @@ export declare class DrawBase implements CanvasInterface {
     PointerMove(e: PaintEvent): void;
     PointerUp(e: PaintEvent): void;
     PointerOut(e: PaintEvent): void;
-    DrawFunction(ctx: CanvasRenderingContext2D, width: number, height: number): void;
+    protected rotatedDelta(radian: number): [number, number];
+    protected rotatedPoint(x: number, y: number, radian: number): [number, number];
+    DrawFunction(ctx: CanvasRenderingContext2D, width: number, height: number, rotate: number): void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export declare class NoOPCVSFunc extends DrawBase {

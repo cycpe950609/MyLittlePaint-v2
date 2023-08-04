@@ -49,20 +49,27 @@ export class TriangleCVSFunc extends DrawBase
     BorderWidth = 4;
     ContentColor = 'rgb(255,0,255)';
     CanFilled=false;
-    DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) =>
+    DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number,angle: number) =>
     { 
         if(this.ifDrawing)
         {
+
             Ctx.clearRect(0, 0, width, height);
             Ctx.strokeStyle = this.BorderBrush;
             Ctx.lineWidth = this.BorderWidth;
             Ctx.beginPath();
 
             //Get radius
-            Ctx.moveTo(this.NextX,this.NextY);
-            Ctx.lineTo(this.LastX,this.NextY);
-            Ctx.lineTo((this.LastX + this.NextX)/2,this.LastY);
-            Ctx.lineTo(this.NextX,this.NextY);
+            let radian = (-angle) * Math.PI/180;
+            let newDelta = this.rotatedDelta(radian);
+            let new_dx = newDelta[0];
+            let new_dy = newDelta[1];
+            // let new_dy = dx*Math.sin(-radian) + dy*Math.cos(radian);
+            Ctx.moveTo(...this.rotatedPoint(this.LastX+new_dx,this.LastY+new_dy,radian));
+            Ctx.lineTo(...this.rotatedPoint(this.LastX,this.LastY+new_dy,radian));
+            Ctx.lineTo(...this.rotatedPoint((this.LastX + this.LastX+new_dx)/2,this.LastY,radian));
+            Ctx.lineTo(...this.rotatedPoint(this.LastX+new_dx,this.LastY+new_dy,radian));
+            // Ctx.closePath();
             if(this.CanFilled)
             {
                 Ctx.fillStyle = this.ContentColor;
@@ -87,20 +94,27 @@ export class RectangleCVSFunc extends DrawBase
     BorderWidth= 4;
     ContentColor= 'rgb(0,0,255)';
     CanFilled=false;
-    DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) =>
+    DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number, angle: number) =>
     { 
         if(this.ifDrawing)
         {
-            let OffsetX = this.NextX;
-            let OffsetY = this.NextY;
             Ctx.clearRect(0, 0, width , height);
             Ctx.strokeStyle = this.BorderBrush;
             Ctx.lineWidth = this.BorderWidth;
             Ctx.beginPath();
-            //Get radius
-            let dx = OffsetX - this.LastX;
-            let dy = OffsetY - this.LastY;
-            Ctx.rect(this.LastX,this.LastY,dx,dy);
+
+            let radian = (-angle) * Math.PI/180;
+            let newDelta = this.rotatedDelta(radian);
+            let new_dx = newDelta[0];
+            let new_dy = newDelta[1];
+            
+            Ctx.moveTo(...this.rotatedPoint(this.LastX,this.LastY,radian));
+            Ctx.lineTo(...this.rotatedPoint(this.LastX + new_dx,this.LastY,radian));
+            Ctx.lineTo(...this.rotatedPoint(this.LastX + new_dx,this.LastY + new_dy,radian));
+            Ctx.lineTo(...this.rotatedPoint(this.LastX,this.LastY + new_dy,radian));
+            Ctx.lineTo(...this.rotatedPoint(this.LastX,this.LastY,radian));
+
+            Ctx.closePath();
             if(this.CanFilled)
             {
                 Ctx.fillStyle = this.ContentColor;

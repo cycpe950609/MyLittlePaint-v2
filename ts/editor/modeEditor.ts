@@ -145,6 +145,7 @@ export class EditorCanvas implements CanvasBase {
         this.refreshScaleTip(currentAngle,currentScale);
     }
     private isDrawing: boolean = false;
+    private isDrawRotate: boolean = true;
     attachCanvas(container: HTMLDivElement) {
         this.cvs = CANVAS("absolute disable-mouse");
         this.ctx = this.cvs.getContext("2d") as CanvasRenderingContext2D;
@@ -442,14 +443,15 @@ export class EditorCanvas implements CanvasBase {
 
     render = () => {
         if (this.EventFired) {
-            this.draw_func.DrawFunction(this.prev_ctx, this.width, this.height);
+            let angle = this.isDrawRotate ? this.angleScale.angle : 0;
+            this.draw_func.DrawFunction(this.prev_ctx, this.width, this.height,angle);
             if(this.isPointOut !== undefined){
                 if (this.draw_func.PointerOut !== undefined) {
                     this.draw_func.PointerOut(this.isPointOut);
                     this.isPointOut = undefined;
                     requestAnimationFrame(this.render);
                 }
-                this.draw_func.DrawFunction(this.prev_ctx, this.width, this.height);
+                this.draw_func.DrawFunction(this.prev_ctx, this.width, this.height,angle);
                 this.isPointOut = undefined;
             }
             if (this.draw_func.CanFinishDrawing) this.finishDrawing();

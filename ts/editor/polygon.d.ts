@@ -22,7 +22,7 @@ export declare class TriangleCVSFunc extends DrawBase {
     BorderWidth: number;
     ContentColor: string;
     CanFilled: boolean;
-    DrawFunction: (Ctx: CanvasRenderingContext2D, width: number, height: number) => void;
+    DrawFunction: (Ctx: CanvasRenderingContext2D, width: number, height: number, angle: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export declare class RectangleCVSFunc extends DrawBase {
@@ -35,6 +35,6 @@ export declare class RectangleCVSFunc extends DrawBase {
     BorderWidth: number;
     ContentColor: string;
     CanFilled: boolean;
-    DrawFunction: (Ctx: CanvasRenderingContext2D, width: number, height: number) => void;
+    DrawFunction: (Ctx: CanvasRenderingContext2D, width: number, height: number, angle: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }

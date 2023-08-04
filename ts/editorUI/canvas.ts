@@ -19,7 +19,8 @@ export interface CanvasInterface {
     DrawFunction: (
         ctx: CanvasRenderingContext2D,
         width: number, 
-        height: number
+        height: number,
+        rotate: number,
     ) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
@@ -58,7 +59,23 @@ export class DrawBase implements CanvasInterface {
         this.ifMouseMove = false;
         this.ifDrawing = false; 
     };
-    public DrawFunction(ctx: CanvasRenderingContext2D, width: number, height: number) {};
+    protected rotatedDelta(radian: number): [number, number] {
+        let OffsetX = this.NextX;
+        let OffsetY = this.NextY;
+        let dx = OffsetX - this.LastX;
+        let dy = OffsetY - this.LastY;
+        let new_dx = dx*Math.cos(radian) - dy*Math.sin(-radian);
+        let new_dy = dx*Math.sin(-radian) + dy*Math.cos(radian);
+        return [new_dx,new_dy];
+    }
+    protected rotatedPoint(x: number, y: number,radian: number):[number, number]{
+        let originX = x - this.LastX;
+        let originY = y - this.LastY;
+        let newX = originX*Math.cos(radian) - originY*Math.sin(radian);
+        let newY = originX*Math.sin(radian) + originY*Math.cos(radian);
+        return [newX + this.LastX, newY + this.LastY];
+    }
+    public DrawFunction(ctx: CanvasRenderingContext2D, width: number, height: number,rotate: number) {};
     public CompositeOperation: GlobalCompositeOperation = <GlobalCompositeOperation>"source-over";
 };
 export class NoOPCVSFunc extends DrawBase{};
