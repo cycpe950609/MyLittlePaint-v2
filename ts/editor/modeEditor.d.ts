@@ -1,6 +1,6 @@
 import { CanvasBase, CanvasInterface } from "../editorUI/canvas";
 import ModeFunction from "../editorUI/interface/mode";
-import { btnClear, btnRedo, btnSave, btnToggleTouch, btnUndo, btnUpload } from "./menu";
+import { btnClear, btnRedo, btnResetRotate, btnResetScale, btnSave, btnToggleTouch, btnUndo, btnUpload } from "./menu";
 import FunctionInterface from "../editorUI/interface/function";
 export declare class btnCanvas implements FunctionInterface {
     Name: string;
@@ -65,6 +65,7 @@ export declare class EditorCanvas implements CanvasBase {
     private isShiftDown;
     private transformTo;
     scaleTo: (scale: number) => void;
+    rotateTo: (rotate: number) => void;
     private cvsMouseWheelHandler;
     private docKeydownHandler;
     private docKeyupHandler;
@@ -72,8 +73,8 @@ export declare class EditorCanvas implements CanvasBase {
 declare class modeEditor implements ModeFunction {
     Enable: boolean;
     CenterCanvas: EditorCanvas;
-    MenuToolbarLeft: (btnUpload | btnUndo | btnRedo | btnClear | btnCanvas)[];
-    MenuToolbarRight: (btnToggleTouch | btnSave)[];
+    MenuToolbarLeft: (btnCanvas | btnUpload | btnUndo | btnRedo | btnClear)[];
+    MenuToolbarRight: (btnResetScale | btnResetRotate | btnToggleTouch | btnSave)[];
     LeftToolbarTop: btnCanvas[];
     StartMode(): void;
     EndMode(): void;

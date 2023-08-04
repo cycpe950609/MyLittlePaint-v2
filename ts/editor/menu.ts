@@ -79,3 +79,29 @@ export class btnToggleTouch implements FunctionInterface {
         return false;
     };
 }
+
+export class btnResetScale implements FunctionInterface {
+    Name = "btn_reset_scale";
+    ImgName= "resetScale";
+    Tip = "Reset scale to 100%";
+
+    constructor(){}
+
+    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+        (cvs as EditorCanvas).scaleTo(1);
+        return false;
+    };
+}
+
+export class btnResetRotate implements FunctionInterface {
+    Name = "btn_reset_rotate";
+    ImgName= "resetRotate";
+    Tip = "Reset rotate to 0°";
+
+    constructor(){}
+
+    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+        (cvs as EditorCanvas).rotateTo(0);
+        return false;
+    };
+}

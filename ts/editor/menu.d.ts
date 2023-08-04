@@ -42,3 +42,17 @@ export declare class btnToggleTouch implements FunctionInterface {
     constructor();
     StartFunction: (cvs: CanvasBase) => boolean;
 }
+export declare class btnResetScale implements FunctionInterface {
+    Name: string;
+    ImgName: string;
+    Tip: string;
+    constructor();
+    StartFunction: (cvs: CanvasBase) => boolean;
+}
+export declare class btnResetRotate implements FunctionInterface {
+    Name: string;
+    ImgName: string;
+    Tip: string;
+    constructor();
+    StartFunction: (cvs: CanvasBase) => boolean;
+}

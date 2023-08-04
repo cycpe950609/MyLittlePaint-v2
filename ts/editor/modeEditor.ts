@@ -21,6 +21,8 @@ import { CircleCVSFunc, RectangleCVSFunc, TriangleCVSFunc } from "./polygon";
 import {
     btnClear,
     btnRedo,
+    btnResetRotate,
+    btnResetScale,
     btnSave,
     btnToggleTouch,
     btnUndo,
@@ -601,11 +603,25 @@ export class EditorCanvas implements CanvasBase {
         let new_scale = scale;
         if (new_scale >= 4) new_scale = 4;
         if (new_scale <= 0.1) new_scale = 0.1;
+        // keep the dragged position in the data-x/data-y attributes
+        let x = parseFloat(this.scaleElement.getAttribute("data-x") || "0")
+        let y = parseFloat(this.scaleElement.getAttribute("data-y") || "0")
         this.angleScale.scale = new_scale;
         this.refreshScaleTip(this.angleScale.angle,this.angleScale.scale);
         console.log("Next scale factor = " + this.angleScale.scale);
 
-        this.transformTo(this.scaleElement,0,0,this.angleScale.angle,this.angleScale.scale)
+        this.transformTo(this.scaleElement,x,y,this.angleScale.angle,this.angleScale.scale)
+    };
+    public rotateTo = (rotate: number) => {
+        let new_rotate = this.normalizeRotate(rotate);
+        // keep the dragged position in the data-x/data-y attributes
+        let x = parseFloat(this.scaleElement.getAttribute("data-x") || "0")
+        let y = parseFloat(this.scaleElement.getAttribute("data-y") || "0")
+        this.angleScale.angle = new_rotate;
+        this.refreshScaleTip(this.angleScale.angle,this.angleScale.scale);
+        console.log("Next rotate factor = " + this.angleScale.scale);
+
+        this.transformTo(this.scaleElement,x,y,this.angleScale.angle,this.angleScale.scale)
     };
     private cvsMouseWheelHandler = (ev: WheelEvent) => {
         if (this.isCtlKeyDown) {
@@ -658,7 +674,7 @@ class modeEditor implements ModeFunction {
         new btnCanvas(new EraserCVSFunc())
     ];
 
-    MenuToolbarRight = [new btnToggleTouch(), new btnSave()];
+    MenuToolbarRight = [new btnResetScale(), new btnResetRotate(), new btnToggleTouch(), new btnSave()];
 
     LeftToolbarTop = [
         new btnCanvas(new BrushCVSFunc()),
