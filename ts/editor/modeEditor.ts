@@ -72,6 +72,7 @@ export class EditorCanvas implements CanvasBase {
     private render_ctx!: CanvasRenderingContext2D;
     private draw_func: CanvasInterface = new NoOPCVSFunc();
     private EventFired: boolean = false;
+    private isPointOut?: PaintEvent = undefined;
 
     private width: number;
     private height: number;
@@ -106,6 +107,7 @@ export class EditorCanvas implements CanvasBase {
         this.prev_ctx.clearRect(0, 0, this.width, this.height);
         this.EventFired = false;
         this.ctx.globalCompositeOperation = "source-over";
+        this.isPointOut = undefined;
         //Add Redo Undo stack
         if (this.draw_func.HistoryName !== undefined) this.pushState();
     }
@@ -172,7 +174,7 @@ export class EditorCanvas implements CanvasBase {
         let gestureStart = (e: Interact.GestureEvent) => {
             if(isDrawing) return;
             console.log(
-                `[DEB] Gesture start scale:${e.scale}, angle: ${e.angle}`
+                `[EUI] Gesture start scale:${e.scale}, angle: ${e.angle}`
             );
             e.preventDefault();
             e.stopPropagation();
@@ -182,7 +184,7 @@ export class EditorCanvas implements CanvasBase {
         let gestureMove = (e: Interact.GestureEvent) => {
             if(isDrawing) return;
             console.log(
-                `[DEB] Gesture move scale:${e.ds}, angle: ${e.da}`
+                `[EUI] Gesture move scale:${e.ds}, angle: ${e.da}`
             );
             // let cvs = window.editorUI.CenterCanvas as EditorCanvas
             // cvs.scaleTo(cvs.scaleFactor+e.ds/2)
@@ -199,7 +201,7 @@ export class EditorCanvas implements CanvasBase {
         let gestureEnd = (e: Interact.GestureEvent) => {
             if(isDrawing) return;
             console.log(
-                `[DEB] Gesture end scale:${e.scale}, angle: ${e.angle}`
+                `[EUI] Gesture end scale:${e.scale}, angle: ${e.angle}`
             );
             angleScale.angle = angleScale.angle + e.angle;
             angleScale.scale = angleScale.scale * e.scale;
@@ -209,6 +211,21 @@ export class EditorCanvas implements CanvasBase {
         let dragMove = (e: Interact.GestureEvent) => { 
             if(!isDrawing)
                 dragMoveListener(e,scaleElement,angleScale) 
+        }
+        let pointOut = (e: Interact.PointerEvent) => {
+            let ev: PaintEvent ={
+                X: e.offsetX,
+                Y: e.offsetY,
+                type: e.pointerType as PaintEvent["type"] || "",
+                pressure: e.pressure
+            };
+            if (this.draw_func.PointerMove !== undefined) {
+                console.log(`[DEB] PointLeave ${e.pointerType} with offsetX: ${e.offsetX}, offsetY: ${e.offsetY}`);
+                this.draw_func.PointerMove(ev);
+            }
+            this.isDrawing = false;
+            this.isPointOut = ev;
+            return;
         }
 
         var scaleElement = this.scaleElement;
@@ -229,6 +246,8 @@ export class EditorCanvas implements CanvasBase {
             }
         })
         .on("down", (e: Interact.PointerEvent) => {
+            // We MUST need the following line, so that we wont trigger pointleave accidently (WHY?)
+            this.isPointOut = undefined;
             if (
                 e.pointerType === "touch" &&
                 (window.editorUI.CenterCanvas as EditorCanvas)
@@ -263,16 +282,17 @@ export class EditorCanvas implements CanvasBase {
                     .canDrawWithTouch === false
             )
             {
-                let gestureEvent = {
-                    dx : e.dx,
-                    dy : e.dy
-                } as Interact.GestureEvent
-                // console.log("[DEB] pointermove",e);
-                // dragMoveListener(gestureEvent,scaleElement,angleScale);
                 return 
             }
             e.preventDefault();
             e.stopPropagation();
+            if( e.offsetX < 0 || e.offsetX > this.width ||
+                e.offsetY < 0 || e.offsetY > this.height
+            )
+            { 
+                // pointleave wont triggered when we draw with finger, so we need call it manually
+                pointOut(e);
+            }
             let mouseEvent: PaintEvent = {
                 X: e.offsetX,
                 Y: e.offsetY,
@@ -310,7 +330,8 @@ export class EditorCanvas implements CanvasBase {
             }
             isDrawing = false;
 
-        });
+        })
+        .on('pointerleave', pointOut);
         
         interact(this.scrollDiv, {
             styleCursor: false
@@ -334,17 +355,6 @@ export class EditorCanvas implements CanvasBase {
 
         window.addEventListener("keydown", this.docKeydownHandler);
         window.addEventListener("keyup", this.docKeyupHandler);
-
-        this.prev_cvs.addEventListener("mouseout", (e) => {
-            if (this.draw_func.PointerOut !== undefined) {
-                // console.log("Mouse Out");
-                let ev = new MouseEvent("mouseup", {
-                    clientX: e.clientX,
-                    clientY: e.clientY
-                });
-                // this.draw_func.PointerOut(e);
-            }
-        });
 
         this.scaleElement.appendChild(this.backgroundDiv);
         this.scaleElement.appendChild(this.cvs);
@@ -419,9 +429,19 @@ export class EditorCanvas implements CanvasBase {
     render = () => {
         if (this.EventFired) {
             this.draw_func.DrawFunction(this.prev_ctx, this.width, this.height);
+            if(this.isPointOut !== undefined){
+                if (this.draw_func.PointerOut !== undefined) {
+                    this.draw_func.PointerOut(this.isPointOut);
+                    this.isPointOut = undefined;
+                    requestAnimationFrame(this.render);
+                }
+                this.draw_func.DrawFunction(this.prev_ctx, this.width, this.height);
+                this.isPointOut = undefined;
+            }
             if (this.draw_func.CanFinishDrawing) this.finishDrawing();
             requestAnimationFrame(this.render);
         }
+        this.isPointOut = undefined;
         this.ctx.clearRect(0, 0, this.width, this.height);
         this.ctx.drawImage(this.render_cvs, 0, 0, this.width, this.height);
     };

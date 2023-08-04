@@ -28,6 +28,7 @@ export declare class EditorCanvas implements CanvasBase {
     private render_ctx;
     private draw_func;
     private EventFired;
+    private isPointOut?;
     private width;
     private height;
     isUpdate: boolean;
