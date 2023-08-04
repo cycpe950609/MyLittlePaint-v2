@@ -1,4 +1,5 @@
 import { DrawBase } from "../editorUI/canvas";
+import { PaintContext } from "./canvas";
 
 class BrushCVSFunc extends DrawBase {
 
@@ -9,7 +10,7 @@ class BrushCVSFunc extends DrawBase {
     CursorName = 'brush';
     BrushColor = 'rgb(0,255,0)';
     BrushWidth = 10;
-    DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) =>
+    DrawFunction = (Ctx: PaintContext,width: number, height: number) =>
     { 
         
         if(this.ifDrawing)

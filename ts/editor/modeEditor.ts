@@ -32,6 +32,7 @@ import { TipComponent } from "../editorUI/statusbar";
 import interact from "interactjs";
 import FunctionInterface from "../editorUI/interface/function";
 import Interact from "@interactjs/types/index";
+import { PaintCanvas, PaintContext } from "./canvas";
 
 export class btnCanvas implements FunctionInterface {
     Name: string;
@@ -66,12 +67,12 @@ export class EditorCanvas implements CanvasBase {
     );
     private scaleElement: HTMLDivElement = DIV("absolute w-fit h-fit transform-center")
     private backgroundDiv: HTMLDivElement = DIV("absolute disable-mouse");
-    private cvs!: HTMLCanvasElement;
-    private ctx!: CanvasRenderingContext2D;
-    private prev_cvs!: HTMLCanvasElement;
-    private prev_ctx!: CanvasRenderingContext2D;
-    private render_cvs!: HTMLCanvasElement;
-    private render_ctx!: CanvasRenderingContext2D;
+    private cvs!: PaintCanvas;
+    private ctx!: PaintContext;
+    private prev_cvs!: PaintCanvas;
+    private prev_ctx!: PaintContext;
+    private render_cvs!: PaintCanvas;
+    private render_ctx!: PaintContext;
     private draw_func: CanvasInterface = new NoOPCVSFunc();
     private EventFired: boolean = false;
     private isPointOut?: PaintEvent = undefined;
@@ -106,7 +107,7 @@ export class EditorCanvas implements CanvasBase {
         // console.log("Finish Drawing ...");
         this.render_ctx.globalCompositeOperation =
             this.draw_func.CompositeOperation;
-        this.render_ctx.drawImage(this.prev_cvs, 0, 0, this.width, this.height);
+        this.render_ctx.drawImage(this.prev_cvs.element, 0, 0, this.width, this.height);
         this.prev_ctx.clearRect(0, 0, this.width, this.height);
         this.EventFired = false;
         this.isDrawing = false;
@@ -147,8 +148,8 @@ export class EditorCanvas implements CanvasBase {
     private isDrawing: boolean = false;
     private isDrawRotate: boolean = true;
     attachCanvas(container: HTMLDivElement) {
-        this.cvs = CANVAS("absolute disable-mouse");
-        this.ctx = this.cvs.getContext("2d") as CanvasRenderingContext2D;
+        this.cvs = new PaintCanvas("absolute disable-mouse");
+        this.ctx = this.cvs.getContext("2d") as PaintContext;
         this.cvs.width = this.width;
         this.cvs.height = this.height;
 
@@ -156,21 +157,21 @@ export class EditorCanvas implements CanvasBase {
         this.backgroundDiv.style.height = `${this.height}px`;
         this.backgroundDiv.style.backgroundColor = "white";
 
-        this.prev_cvs = CANVAS("absolute disable-touch");
+        this.prev_cvs = new PaintCanvas("absolute disable-touch");
         this.prev_ctx = this.prev_cvs.getContext(
             "2d"
-        ) as CanvasRenderingContext2D;
+        ) as PaintContext;
         this.prev_cvs.width = this.width;
         this.prev_cvs.height = this.height;
 
-        this.render_cvs = CANVAS("absolute disable-mouse");
+        this.render_cvs = new PaintCanvas("absolute disable-mouse");
         this.render_ctx = this.render_cvs.getContext(
             "2d"
-        ) as CanvasRenderingContext2D;
+        ) as PaintContext;
         this.render_cvs.width = this.width;
         this.render_cvs.height = this.height;
 
-        let interactCVS = interact(this.prev_cvs, {
+        let interactCVS = interact(this.prev_cvs.element, {
             styleCursor: false
         });
 
@@ -372,8 +373,8 @@ export class EditorCanvas implements CanvasBase {
         window.addEventListener("keyup", this.docKeyupHandler);
 
         this.scaleElement.appendChild(this.backgroundDiv);
-        this.scaleElement.appendChild(this.cvs);
-        this.scaleElement.appendChild(this.prev_cvs);
+        this.scaleElement.appendChild(this.cvs.element);
+        this.scaleElement.appendChild(this.prev_cvs.element);
         this.scrollDiv.appendChild(this.scaleElement);
         container.appendChild(this.scrollDiv);
 
@@ -459,7 +460,7 @@ export class EditorCanvas implements CanvasBase {
         }
         this.isPointOut = undefined;
         this.ctx.clearRect(0, 0, this.width, this.height);
-        this.ctx.drawImage(this.render_cvs, 0, 0, this.width, this.height);
+        this.ctx.drawImage(this.render_cvs.element, 0, 0, this.width, this.height);
     };
 
     private drawWithTouch = false;

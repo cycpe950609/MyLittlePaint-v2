@@ -1,4 +1,5 @@
 import { DrawBase } from "../editorUI/canvas";
+import { PaintContext } from "./canvas";
 
 export class CircleCVSFunc extends DrawBase
 {
@@ -11,7 +12,7 @@ export class CircleCVSFunc extends DrawBase
     BorderWidth = 4;
     ContentColor = 'rgb(0,0,255)';
     CanFilled = false;
-    DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) =>
+    DrawFunction = (Ctx: PaintContext,width: number, height: number) =>
     { 
         if(this.ifDrawing)
         {
@@ -49,7 +50,7 @@ export class TriangleCVSFunc extends DrawBase
     BorderWidth = 4;
     ContentColor = 'rgb(255,0,255)';
     CanFilled=false;
-    DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number,angle: number) =>
+    DrawFunction = (Ctx: PaintContext,width: number, height: number,angle: number) =>
     { 
         if(this.ifDrawing)
         {
@@ -94,7 +95,7 @@ export class RectangleCVSFunc extends DrawBase
     BorderWidth= 4;
     ContentColor= 'rgb(0,0,255)';
     CanFilled=false;
-    DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number, angle: number) =>
+    DrawFunction = (Ctx: PaintContext,width: number, height: number, angle: number) =>
     { 
         if(this.ifDrawing)
         {
@@ -107,7 +108,7 @@ export class RectangleCVSFunc extends DrawBase
             let newDelta = this.rotatedDelta(radian);
             let new_dx = newDelta[0];
             let new_dy = newDelta[1];
-            
+
             Ctx.moveTo(...this.rotatedPoint(this.LastX,this.LastY,radian));
             Ctx.lineTo(...this.rotatedPoint(this.LastX + new_dx,this.LastY,radian));
             Ctx.lineTo(...this.rotatedPoint(this.LastX + new_dx,this.LastY + new_dy,radian));

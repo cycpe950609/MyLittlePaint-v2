@@ -1,4 +1,5 @@
 import { DrawBase } from "../editorUI/canvas";
+import { PaintContext } from "./canvas";
 
 class LineCVSFunc extends DrawBase{
     Name = 'Line';
@@ -8,7 +9,7 @@ class LineCVSFunc extends DrawBase{
     CursorName ='crosshair';
     BrushColor = 'rgb(0,255,0)';
     BrushWidth = 10;
-    DrawFunction = (Ctx: CanvasRenderingContext2D,width: number, height: number) => 
+    DrawFunction = (Ctx: PaintContext,width: number, height: number) => 
     { 
         
         if(this.ifDrawing)

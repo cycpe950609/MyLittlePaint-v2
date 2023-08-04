@@ -1,4 +1,5 @@
 import { DrawBase } from "../editorUI/canvas";
+import { PaintContext } from "./canvas";
 
 class EraserCVSFunc extends DrawBase {
     Name = 'Eraser';
@@ -8,7 +9,7 @@ class EraserCVSFunc extends DrawBase {
     CursorName = 'eraser';
     BrushWidth = 10;
     BrushColor = 'white';
-    DrawFunction = (Ctx: CanvasRenderingContext2D) =>
+    DrawFunction = (Ctx: PaintContext) =>
     { 
         if(this.ifDrawing)
         {

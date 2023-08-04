@@ -1,4 +1,5 @@
 import { DrawBase } from "../editorUI/canvas";
+import { PaintContext } from "./canvas";
 declare class LineCVSFunc extends DrawBase {
     Name: string;
     HistoryName: string;
@@ -7,7 +8,7 @@ declare class LineCVSFunc extends DrawBase {
     CursorName: string;
     BrushColor: string;
     BrushWidth: number;
-    DrawFunction: (Ctx: CanvasRenderingContext2D, width: number, height: number) => void;
+    DrawFunction: (Ctx: PaintContext, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export default LineCVSFunc;

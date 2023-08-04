@@ -1,4 +1,5 @@
 import { DrawBase } from "../editorUI/canvas";
+import { PaintContext } from "./canvas";
 declare class EraserCVSFunc extends DrawBase {
     Name: string;
     HistoryName: string;
@@ -7,7 +8,7 @@ declare class EraserCVSFunc extends DrawBase {
     CursorName: string;
     BrushWidth: number;
     BrushColor: string;
-    DrawFunction: (Ctx: CanvasRenderingContext2D) => void;
+    DrawFunction: (Ctx: PaintContext) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export default EraserCVSFunc;

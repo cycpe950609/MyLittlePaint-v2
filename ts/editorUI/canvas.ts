@@ -1,3 +1,5 @@
+import { PaintCanvas, PaintContext } from "../editor/canvas";
+
 export type PaintEvent = {
     X: number;
     Y: number;
@@ -17,7 +19,7 @@ export interface CanvasInterface {
     PointerUp?:     (e: PaintEvent) => void;
     PointerOut?:    (e: PaintEvent) => void;
     DrawFunction: (
-        ctx: CanvasRenderingContext2D,
+        ctx: PaintContext,
         width: number, 
         height: number,
         rotate: number,
@@ -75,7 +77,7 @@ export class DrawBase implements CanvasInterface {
         let newY = originX*Math.sin(radian) + originY*Math.cos(radian);
         return [newX + this.LastX, newY + this.LastY];
     }
-    public DrawFunction(ctx: CanvasRenderingContext2D, width: number, height: number,rotate: number) {};
+    public DrawFunction(ctx: PaintContext, width: number, height: number,rotate: number) {};
     public CompositeOperation: GlobalCompositeOperation = <GlobalCompositeOperation>"source-over";
 };
 export class NoOPCVSFunc extends DrawBase{};
