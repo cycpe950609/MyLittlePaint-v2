@@ -693,27 +693,25 @@ export class EditorCanvas implements CanvasBase {
     };
     private docKeydownHandler = (ev: KeyboardEvent) => {
         // console.log("docKeydown", ev.key);
-        if (ev.key === "Control") this.isCtlKeyDown = true;
-        if (ev.key === "Shift") this.isShiftDown = true;
-        if (ev.key === "Alt") this.isAltDown = true;
+        if (ev.key === "Control") { ev.preventDefault(); this.isCtlKeyDown = true; }
+        if (ev.key === "Shift") { ev.preventDefault(); this.isShiftDown = true; }
+        if (ev.key === "Alt") { ev.preventDefault(); this.isAltDown = true; }
         if (ev.key === "+" && this.isCtlKeyDown && !this.isShiftDown && !this.isAltDown)
-            this.scaleTo(this.scaleFactor + 0.1);
+        { ev.preventDefault(); this.scaleTo(this.scaleFactor + 0.1);}
         if (ev.key === "-" && this.isCtlKeyDown && !this.isShiftDown && !this.isAltDown)
-            this.scaleTo(this.scaleFactor - 0.1);
+        { ev.preventDefault(); this.scaleTo(this.scaleFactor - 0.1);}
         if (ev.key === "0" && this.isCtlKeyDown && !this.isShiftDown && !this.isAltDown)
-            this.scaleTo(1.0);
+        { ev.preventDefault(); this.scaleTo(1.0);}
         if (ev.key === "z" && this.isCtlKeyDown && !this.isShiftDown && !this.isAltDown)
-            this.undo();
+        { ev.preventDefault(); this.undo();}
         if (ev.key === "y" && this.isCtlKeyDown && !this.isShiftDown && !this.isAltDown)
-            this.redo();
-        ev.preventDefault();
+        { ev.preventDefault(); this.redo();}
     };
     private docKeyupHandler = (ev: KeyboardEvent) => {
         // console.log("docKeyup", ev.key);
-        if (ev.key === "Control") this.isCtlKeyDown = false;
-        if (ev.key === "Shift") this.isShiftDown = false;
-        if (ev.key === "Alt") this.isAltDown = false;
-        ev.preventDefault();
+        if (ev.key === "Control") { ev.preventDefault(); this.isCtlKeyDown = false;}
+        if (ev.key === "Shift") { ev.preventDefault(); this.isShiftDown = false;}
+        if (ev.key === "Alt") { ev.preventDefault(); this.isAltDown = false;}
     };
 }
 
