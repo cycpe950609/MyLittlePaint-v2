@@ -1,3 +1,7 @@
+import Konva from "konva";
+import { ShapeConfig } from "konva/lib/Shape";
+import { CircleConfig } from "konva/lib/shapes/Circle";
+import { PathConfig } from "konva/lib/shapes/Path";
 import { DrawBase } from "../editorUI/canvas";
 import { PaintContext } from "./canvas";
 
@@ -12,27 +16,37 @@ export class CircleCVSFunc extends DrawBase
     BorderWidth = 4;
     ContentColor = 'rgb(0,0,255)';
     CanFilled = false;
-    DrawFunction = (Ctx: PaintContext,width: number, height: number) =>
+    DrawFunction = (Ctx: Konva.Layer,width: number, height: number) =>
     { 
+
+        let circle = Ctx.find('.prev-circle')
+        let polygon = undefined;
+        if(circle.length > 0){
+            polygon = circle[0]
+        }
+        else {
+            polygon = new Konva.Circle({
+                name: "prev-circle"
+            } as CircleConfig);
+            Ctx.add(polygon)
+        }
+
+
         if(this.ifDrawing)
         {
-            Ctx.clearRect(0, 0, width, height);
-            Ctx.strokeStyle = this.BorderBrush;
-            Ctx.lineWidth = this.BorderWidth;
-            Ctx.beginPath();
+            // Ctx.destroyChildren();
 
             //Get radius
             let dx = this.NextX - this.LastX;
             let dy = this.NextY - this.LastY;
             let dst = Math.sqrt(dx * dx + dy * dy);
 
-            Ctx.arc(this.LastX, this.LastY, dst, 0, 2*Math.PI);
-            if(this.CanFilled)
-            {
-                Ctx.fillStyle = this.ContentColor;
-                Ctx.fill();
-            }
-            Ctx.stroke();
+            polygon.setAttr('x',this.LastX)
+            polygon.setAttr('y',this.LastY)
+            polygon.setAttr('radius',dst)
+            polygon.setAttr("fill", this.CanFilled ?  this.ContentColor : 'transparent')
+            polygon.setAttr("stroke", this.BorderBrush)
+            polygon.setAttr("strokeWidth", this.BorderWidth)
         }
     };
     CompositeOperation = <GlobalCompositeOperation>"source-over"
@@ -50,34 +64,39 @@ export class TriangleCVSFunc extends DrawBase
     BorderWidth = 4;
     ContentColor = 'rgb(255,0,255)';
     CanFilled=false;
-    DrawFunction = (Ctx: PaintContext,width: number, height: number,angle: number) =>
+    DrawFunction = (Ctx: Konva.Layer,width: number, height: number,angle: number) =>
     { 
+        let tri = Ctx.find('.prev-tri')
+        let polygon = undefined;
+        if(tri.length > 0){
+            polygon = tri[0]
+        }
+        else {
+            polygon = new Konva.Path({
+                name: "prev-tri"
+            } as PathConfig);
+            Ctx.add(polygon)
+        }
+
         if(this.ifDrawing)
         {
-
-            Ctx.clearRect(0, 0, width, height);
-            Ctx.strokeStyle = this.BorderBrush;
-            Ctx.lineWidth = this.BorderWidth;
-            Ctx.beginPath();
-
-            //Get radius
             let radian = (-angle) * Math.PI/180;
             let newDelta = this.rotatedDelta(radian);
             let new_dx = newDelta[0];
             let new_dy = newDelta[1];
-            // let new_dy = dx*Math.sin(-radian) + dy*Math.cos(radian);
-            Ctx.moveTo(...this.rotatedPoint(this.LastX+new_dx,this.LastY+new_dy,radian));
-            Ctx.lineTo(...this.rotatedPoint(this.LastX,this.LastY+new_dy,radian));
-            Ctx.lineTo(...this.rotatedPoint((this.LastX + this.LastX+new_dx)/2,this.LastY,radian));
-            Ctx.lineTo(...this.rotatedPoint(this.LastX+new_dx,this.LastY+new_dy,radian));
-            // Ctx.closePath();
-            if(this.CanFilled)
-            {
-                Ctx.fillStyle = this.ContentColor;
-                Ctx.fill();
-            }
-            Ctx.stroke();
-        }        
+
+            // let pt = this.rotatedPoint(this.LastX,this.LastY,radian);
+
+            polygon.setAttr('x',this.LastX);
+            polygon.setAttr('y',this.LastY);
+            let start = this.rotatedPoint(new_dx,new_dy,radian);
+            let pt2   = this.rotatedPoint(0,new_dy,radian);
+            let pt3   = this.rotatedPoint((new_dx)/2,0,radian)
+            polygon.setAttr('data', `M ${start[0]} ${start[1]} L ${pt2[0]} ${pt2[1]} L ${pt3[0]} ${pt3[1]} Z`);
+            polygon.setAttr("fill", this.CanFilled ?  this.ContentColor : 'transparent');
+            polygon.setAttr("stroke", this.BorderBrush)
+            polygon.setAttr("strokeWidth", this.BorderWidth)
+        }    
     };
     CompositeOperation = <GlobalCompositeOperation>"source-over"
 }
@@ -95,33 +114,36 @@ export class RectangleCVSFunc extends DrawBase
     BorderWidth= 4;
     ContentColor= 'rgb(0,0,255)';
     CanFilled=false;
-    DrawFunction = (Ctx: PaintContext,width: number, height: number, angle: number) =>
+    DrawFunction = (Ctx: Konva.Layer,width: number, height: number, angle: number) =>
     { 
+        let rect = Ctx.find('.prev-rect')
+        let polygon = undefined;
+        if(rect.length > 0){
+            polygon = rect[0]
+        }
+        else {
+            polygon = new Konva.Path({
+                name: "prev-rect"
+            } as PathConfig);
+            Ctx.add(polygon)
+        }
+
         if(this.ifDrawing)
         {
-            Ctx.clearRect(0, 0, width , height);
-            Ctx.strokeStyle = this.BorderBrush;
-            Ctx.lineWidth = this.BorderWidth;
-            Ctx.beginPath();
-
             let radian = (-angle) * Math.PI/180;
             let newDelta = this.rotatedDelta(radian);
             let new_dx = newDelta[0];
             let new_dy = newDelta[1];
 
-            Ctx.moveTo(...this.rotatedPoint(this.LastX,this.LastY,radian));
-            Ctx.lineTo(...this.rotatedPoint(this.LastX + new_dx,this.LastY,radian));
-            Ctx.lineTo(...this.rotatedPoint(this.LastX + new_dx,this.LastY + new_dy,radian));
-            Ctx.lineTo(...this.rotatedPoint(this.LastX,this.LastY + new_dy,radian));
-            Ctx.lineTo(...this.rotatedPoint(this.LastX,this.LastY,radian));
-
-            Ctx.closePath();
-            if(this.CanFilled)
-            {
-                Ctx.fillStyle = this.ContentColor;
-                Ctx.fill();
-            }
-            Ctx.stroke();
+            polygon.setAttr('x',this.LastX);
+            polygon.setAttr('y',this.LastY);
+            let rt = this.rotatedPoint(new_dx,0,radian)
+            let rb = this.rotatedPoint(new_dx,new_dy,radian)
+            let lb = this.rotatedPoint(0,new_dy,radian)
+            polygon.setAttr('data', `M 0 0 L ${rt[0]} ${rt[1]} L ${rb[0]} ${rb[1]} L ${lb[0]} ${lb[1]} Z`);
+            polygon.setAttr("fill", this.CanFilled ?  this.ContentColor : 'transparent');
+            polygon.setAttr("stroke", this.BorderBrush)
+            polygon.setAttr("strokeWidth", this.BorderWidth)
         }
     };
     CompositeOperation= <GlobalCompositeOperation>"source-over"

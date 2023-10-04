@@ -18,6 +18,7 @@
     "axios": "^1.4.0",
     "immer": "^10.0.2",
     "interactjs": "^1.10.17",
+    "konva": "^9.2.1",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
     "redux-logger": "^3.0.6",

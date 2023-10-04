@@ -1,3 +1,5 @@
+import Konva from "konva";
+import { LineConfig } from "konva/lib/shapes/Line";
 import { DrawBase } from "../editorUI/canvas";
 import { PaintContext } from "./canvas";
 
@@ -9,25 +11,26 @@ class EraserCVSFunc extends DrawBase {
     CursorName = 'eraser';
     BrushWidth = 10;
     BrushColor = 'white';
-    DrawFunction = (Ctx: PaintContext) =>
+    DrawFunction = (Ctx: Konva.Layer) =>
     { 
         if(this.ifDrawing)
         {
-            let OffsetX = this.NextX;
-            let OffsetY = this.NextY;
-            //console.log('Test');
-            Ctx.strokeStyle = this.BrushColor;//Should same as background
-            Ctx.lineWidth = this.BrushWidth;
-            Ctx.lineJoin = 'round';
-            Ctx.lineCap = 'round';
-            Ctx.beginPath();
-            Ctx.moveTo(this.LastX, this.LastY);
-            Ctx.lineTo(OffsetX, OffsetY);
+            //console.log('Drawing...');
 
-            [this.LastX, this.LastY] = [OffsetX, OffsetY];
-            
-            Ctx.stroke();
+            let lastLine = new Konva.Line({
+                stroke: this.BrushColor,
+                strokeWidth: this.BrushWidth,
+                // round cap for smoother lines
+                lineCap: 'round',
+                lineJoin: 'round',
+                globalCompositeOperation: this.CompositeOperation,
+                // add point twice, so we have some drawings even on a simple click
+                points: [this.LastX, this.LastY, this.NextX, this.NextY],
+                } as LineConfig);
+            Ctx.add(lastLine);
         }
+        
+        [this.LastX, this.LastY] = [this.NextX, this.NextY];
     };
     CompositeOperation = <GlobalCompositeOperation>"destination-out"
 };

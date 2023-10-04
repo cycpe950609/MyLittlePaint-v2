@@ -4853,6 +4853,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"konva@npm:^9.2.1":
+  version: 9.2.1
+  resolution: "konva@npm:9.2.1"
+  checksum: f6813c42732d006d78a289c4954a82b4dcb79e80bf33c5d6b9bc135d268465be6313b2a5df503fd6da18d5ab5deb9c3f96d81f447199f557d36deefe1a702aa9
+  languageName: node
+  linkType: hard
+
 "launch-editor@npm:^2.6.0":
   version: 2.6.0
   resolution: "launch-editor@npm:2.6.0"
@@ -5626,6 +5633,7 @@ __metadata:
     html-loader: ^4.2.0
     immer: ^10.0.2
     interactjs: ^1.10.17
+    konva: ^9.2.1
     leaflet: ^1.9.4
     lodash: ^4.17.21
     prettier: ^2.7.1

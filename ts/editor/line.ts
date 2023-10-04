@@ -1,3 +1,5 @@
+import Konva from "konva";
+import { LineConfig } from "konva/lib/shapes/Line";
 import { DrawBase } from "../editorUI/canvas";
 import { PaintContext } from "./canvas";
 
@@ -9,20 +11,32 @@ class LineCVSFunc extends DrawBase{
     CursorName ='crosshair';
     BrushColor = 'rgb(0,255,0)';
     BrushWidth = 10;
-    DrawFunction = (Ctx: PaintContext,width: number, height: number) => 
+    DrawFunction = (Ctx: Konva.Layer,width: number, height: number) => 
     { 
-        
+
+        let circle = Ctx.find('.prev-line')
+        let polygon = undefined;
+        if(circle.length > 0){
+            polygon = circle[0]
+        }
+        else {
+            polygon = new Konva.Line({
+                name: "prev-line"
+            } as LineConfig);
+            Ctx.add(polygon)
+        }
+
+
         if(this.ifDrawing)
         {
-            //console.log('Drawing...');
-            Ctx.strokeStyle = this.BrushColor;
-            Ctx.lineWidth = this.BrushWidth;
-            Ctx.clearRect(0,0,width,height);
-            Ctx.lineCap = 'round';
-            Ctx.beginPath();
-            Ctx.moveTo(this.LastX, this.LastY);
-            Ctx.lineTo(this.NextX, this.NextY);
-            Ctx.stroke();
+            polygon.setAttr("stroke",  this.BrushColor);
+            polygon.setAttr("strokeWidth",  5);
+            // round cap for smoother lines
+            polygon.setAttr("lineCap",  'round');
+            polygon.setAttr("lineJoin",  'round');
+            polygon.setAttr("globalCompositeOperation",  this.CompositeOperation);
+            // add point twice, so we have some drawings even on a simple click
+            polygon.setAttr("points",  [this.LastX, this.LastY, this.NextX, this.NextY]);
         }
 
     };

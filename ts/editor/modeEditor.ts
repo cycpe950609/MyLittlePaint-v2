@@ -33,6 +33,9 @@ import interact from "interactjs";
 import FunctionInterface from "../editorUI/interface/function";
 import Interact from "@interactjs/types/index";
 import { PaintCanvas, PaintContext } from "./canvas";
+import Konva from "konva";
+import { CircleConfig } from "konva/lib/shapes/Circle";
+import { ShapeConfig } from "konva/lib/Shape";
 
 export class btnCanvas implements FunctionInterface {
     Name: string;
@@ -67,12 +70,16 @@ export class EditorCanvas implements CanvasBase {
     );
     private scaleElement: HTMLDivElement = DIV("absolute w-fit h-fit transform-center")
     private backgroundDiv: HTMLDivElement = DIV("absolute disable-mouse");
-    private cvs!: PaintCanvas;
-    private ctx!: PaintContext;
-    private prev_cvs!: PaintCanvas;
-    private prev_ctx!: PaintContext;
-    private render_cvs!: PaintCanvas;
-    private render_ctx!: PaintContext;
+    private cvs !: HTMLDivElement;
+    private ctx !: Konva.Stage;
+    private prev_ctx!: Konva.Layer;
+    private render_ctx!: Konva.Layer;
+    // private cvs!: PaintCanvas;
+    // private ctx!: PaintContext;
+    // private prev_cvs!: PaintCanvas;
+    // private prev_ctx!: PaintContext;
+    // private render_cvs!: PaintCanvas;
+    // private render_ctx!: PaintContext;
     private draw_func: CanvasInterface = new NoOPCVSFunc();
     private EventFired: boolean = false;
     private isPointOut?: PaintEvent = undefined;
@@ -92,10 +99,10 @@ export class EditorCanvas implements CanvasBase {
     private undo_stk_history = new Array();
     private redo_stk_history = new Array();
     private pushState() {
-        if (this.redo_stk_history.length > 0)
-            this.undo_stk_history.push(this.redo_stk_history.pop());
-        this.redo_stk_history = [];
-        this.redo_stk_history.push(this.render_cvs.toDataURL());
+        // if (this.redo_stk_history.length > 0)
+        //     this.undo_stk_history.push(this.redo_stk_history.pop());
+        // this.redo_stk_history = [];
+        // this.redo_stk_history.push(this.render_ctx.toDataURL());
         // console.log(
         //     "pushState",
         //     this.undo_stk_history.length,
@@ -104,22 +111,21 @@ export class EditorCanvas implements CanvasBase {
     }
 
     private finishDrawing() {
-        // console.log("Finish Drawing ...");
-        this.render_ctx.globalCompositeOperation =
-            this.draw_func.CompositeOperation;
-        this.render_ctx.drawImage(this.prev_cvs.element, 0, 0, this.width, this.height);
-        this.prev_ctx.clearRect(0, 0, this.width, this.height);
+        // console.log("[DEB] Finish Drawing ...");
+        this.prev_ctx.children.forEach((child)=> {
+            this.render_ctx.add(child);
+        })
+        this.prev_ctx.destroyChildren();
         this.EventFired = false;
         this.isDrawing = false;
-        this.ctx.globalCompositeOperation = "source-over";
+        // this.ctx.globalCompositeOperation = "source-over";
         this.isPointOut = undefined;
-        //Add Redo Undo stack
-        if (this.draw_func.HistoryName !== undefined) this.pushState();
+        // //Add Redo Undo stack
+        // if (this.draw_func.HistoryName !== undefined) this.pushState();
     }
     private initCanvas = () => {
-        this.ctx.clearRect(0, 0, this.width, this.height);
-        this.prev_ctx.clearRect(0, 0, this.width, this.height);
-        this.render_ctx.clearRect(0, 0, this.width, this.height);
+        this.prev_ctx.destroyChildren();
+        this.render_ctx.destroyChildren();
         this.undo_stk_history = new Array();
         this.redo_stk_history = new Array();
         this.pushState();
@@ -148,33 +154,29 @@ export class EditorCanvas implements CanvasBase {
     private isDrawing: boolean = false;
     private isDrawRotate: boolean = true;
     attachCanvas(container: HTMLDivElement) {
-        this.cvs = new PaintCanvas("absolute disable-mouse");
-        this.ctx = this.cvs.getContext("2d") as PaintContext;
-        this.cvs.width = this.width;
-        this.cvs.height = this.height;
+        this.cvs = DIV("w-full h-full");
+        this.ctx = new Konva.Stage({
+            container: this.cvs,   // id of container <div>
+            width: this.width,
+            height: this.height,
+        } as Konva.StageConfig);
+
+        this.prev_ctx = new Konva.Layer();
+        this.render_ctx = new Konva.Layer();
+        this.render_ctx.listening(false);
+        this.ctx.add(this.render_ctx);
+        this.ctx.add(this.prev_ctx);
+
+        this.cvs.style.width  = `${this.width}px`;
+        this.cvs.style.height = `${this.height}px`;
 
         this.backgroundDiv.style.width = `${this.width}px`;
         this.backgroundDiv.style.height = `${this.height}px`;
         this.backgroundDiv.style.backgroundColor = "white";
-
-        this.prev_cvs = new PaintCanvas("absolute disable-touch");
-        this.prev_ctx = this.prev_cvs.getContext(
-            "2d"
-        ) as PaintContext;
-        this.prev_cvs.width = this.width;
-        this.prev_cvs.height = this.height;
-
-        this.render_cvs = new PaintCanvas("absolute disable-mouse");
-        this.render_ctx = this.render_cvs.getContext(
-            "2d"
-        ) as PaintContext;
-        this.render_cvs.width = this.width;
-        this.render_cvs.height = this.height;
-
-        let interactCVS = interact(this.prev_cvs.element, {
+        
+        let interactCVS = interact(this.cvs, {
             styleCursor: false
         });
-
         let gestureStart = (e: Interact.GestureEvent) => {
             console.log(`[DEB] isDrawing GestureStart ${isDrawing}`)
             if(isDrawing) return;
@@ -259,11 +261,11 @@ export class EditorCanvas implements CanvasBase {
                     .canDrawWithTouch === false
             ) {
                 // console.log("pointerdown");
-                this.prev_cvs.style.touchAction = "auto";
+                this.cvs.style.touchAction = "auto";
                 isDrawing = false;
                 return;
             }
-            this.prev_cvs.style.touchAction = "none";
+            this.cvs.style.touchAction = "none";
             e.preventDefault();
             e.stopPropagation();
             let mouseEvent: PaintEvent = {
@@ -318,10 +320,10 @@ export class EditorCanvas implements CanvasBase {
                     .canDrawWithTouch === false
             ) {
                 // console.log("pointerup");
-                this.prev_cvs.style.touchAction = "none";
+                this.cvs.style.touchAction = "none";
                 return;
             }
-            this.prev_cvs.style.touchAction = "none";
+            this.cvs.style.touchAction = "none";
             e.preventDefault();
             e.stopPropagation();
             let mouseEvent: PaintEvent = {
@@ -373,8 +375,8 @@ export class EditorCanvas implements CanvasBase {
         window.addEventListener("keyup", this.docKeyupHandler);
 
         this.scaleElement.appendChild(this.backgroundDiv);
-        this.scaleElement.appendChild(this.cvs.element);
-        this.scaleElement.appendChild(this.prev_cvs.element);
+        this.scaleElement.appendChild(this.cvs);
+        // this.scaleElement.appendChild(this.prev_cvs.element);
         this.scrollDiv.appendChild(this.scaleElement);
         container.appendChild(this.scrollDiv);
 
@@ -382,10 +384,10 @@ export class EditorCanvas implements CanvasBase {
     }
 
     public enableDrag() {
-        this.prev_cvs.style.touchAction = "auto";
+        this.cvs.style.touchAction = "auto";
     }
     public disableDrag() {
-        this.prev_cvs.style.touchAction = "none";
+        this.cvs.style.touchAction = "none";
     }
 
     public setFunction(func: CanvasInterface) {
@@ -432,10 +434,10 @@ export class EditorCanvas implements CanvasBase {
         if (func.CursorName === undefined) return;
         if (browerCursor.includes(func.CursorName)) {
             console.log(`CursorName ${func.CursorName} in list`);
-            this.prev_cvs.style.cursor = func.CursorName;
+            this.cvs.style.cursor = func.CursorName;
         } else {
             console.log(`CursorName ${func.CursorName} not in list`);
-            this.prev_cvs.style.cursor =
+            this.cvs.style.cursor =
                 "url(img/cursor/" + func.CursorName + ".cur), auto";
         }
     }
@@ -459,8 +461,8 @@ export class EditorCanvas implements CanvasBase {
             requestAnimationFrame(this.render);
         }
         this.isPointOut = undefined;
-        this.ctx.clearRect(0, 0, this.width, this.height);
-        this.ctx.drawImage(this.render_cvs.element, 0, 0, this.width, this.height);
+        // this.ctx.clearRect(0, 0, this.width, this.height);
+        // this.ctx.drawImage(this.render_cvs.element, 0, 0, this.width, this.height);
     };
 
     private drawWithTouch = false;
@@ -485,6 +487,7 @@ export class EditorCanvas implements CanvasBase {
 
             let img = new Image();
 
+            /*
             img.onload = () => {
                 this.ctx.clearRect(0, 0, this.width, this.height);
                 this.prev_ctx.clearRect(0, 0, this.width, this.height);
@@ -508,6 +511,7 @@ export class EditorCanvas implements CanvasBase {
                 URL.revokeObjectURL(src);
                 dia.close();
             };
+            */
 
             let src = URL.createObjectURL(fileList[0]);
             img.src = src;
@@ -527,8 +531,8 @@ export class EditorCanvas implements CanvasBase {
             let img = new Image();
             img.src = undo_img;
             img.onload = () => {
-                this.render_ctx.clearRect(0, 0, this.width, this.height);
-                this.render_ctx.drawImage(img, 0, 0);
+                // this.render_ctx.clearRect(0, 0, this.width, this.height);
+                // this.render_ctx.drawImage(img, 0, 0);
                 this.render();
             };
         }
@@ -545,8 +549,8 @@ export class EditorCanvas implements CanvasBase {
             let img = new Image();
             img.src = this.redo_stk_history[this.redo_stk_history.length - 1];
             img.onload = () => {
-                this.render_ctx.clearRect(0, 0, this.width, this.height);
-                this.render_ctx.drawImage(img, 0, 0);
+                // this.render_ctx.clearRect(0, 0, this.width, this.height);
+                // this.render_ctx.drawImage(img, 0, 0);
                 this.render();
             };
         }
@@ -569,7 +573,7 @@ export class EditorCanvas implements CanvasBase {
         };
         let btnOK = BUTTON("w-full mx-2rem", "OK");
         btnOK.onclick = () => {
-            console.log(`Clear ${this.width}, ${this.height}`, this.ctx);
+            // console.log(`Clear ${this.width}, ${this.height}`, this.ctx);
             this.initCanvas();
             dia.close();
         };
@@ -722,8 +726,8 @@ class modeEditor implements ModeFunction {
 
     MenuToolbarLeft = [
         new btnUpload(),
-        new btnUndo(),
-        new btnRedo(),
+        // new btnUndo(),
+        // new btnRedo(),
         new btnClear(),
         new btnCanvas(new EraserCVSFunc())
     ];

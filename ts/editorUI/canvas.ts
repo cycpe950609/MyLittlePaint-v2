@@ -1,3 +1,4 @@
+import Konva from "konva";
 import { PaintCanvas, PaintContext } from "../editor/canvas";
 
 export type PaintEvent = {
@@ -19,7 +20,7 @@ export interface CanvasInterface {
     PointerUp?:     (e: PaintEvent) => void;
     PointerOut?:    (e: PaintEvent) => void;
     DrawFunction: (
-        ctx: PaintContext,
+        ctx: Konva.Layer,
         width: number, 
         height: number,
         rotate: number,
@@ -71,13 +72,14 @@ export class DrawBase implements CanvasInterface {
         return [new_dx,new_dy];
     }
     protected rotatedPoint(x: number, y: number,radian: number):[number, number]{
-        let originX = x - this.LastX;
-        let originY = y - this.LastY;
+        let originX = x;// - this.LastX;
+        let originY = y;// - this.LastY;
         let newX = originX*Math.cos(radian) - originY*Math.sin(radian);
         let newY = originX*Math.sin(radian) + originY*Math.cos(radian);
-        return [newX + this.LastX, newY + this.LastY];
+        // return [newX + this.LastX, newY + this.LastY];
+        return [newX, newY];
     }
-    public DrawFunction(ctx: PaintContext, width: number, height: number,rotate: number) {};
+    public DrawFunction(ctx: Konva.Layer, width: number, height: number,rotate: number) {};
     public CompositeOperation: GlobalCompositeOperation = <GlobalCompositeOperation>"source-over";
 };
 export class NoOPCVSFunc extends DrawBase{};
