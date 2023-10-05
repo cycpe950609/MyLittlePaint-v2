@@ -36,6 +36,7 @@ import { PaintCanvas, PaintContext } from "./canvas";
 import Konva from "konva";
 import { CircleConfig } from "konva/lib/shapes/Circle";
 import { ShapeConfig } from "konva/lib/Shape";
+import LayerMgrSidebar, { LayerManager, Layer } from './layer';
 
 export class btnCanvas implements FunctionInterface {
     Name: string;
@@ -74,12 +75,8 @@ export class EditorCanvas implements CanvasBase {
     private ctx !: Konva.Stage;
     private prev_ctx!: Konva.Layer;
     private render_ctx!: Konva.Layer;
-    // private cvs!: PaintCanvas;
-    // private ctx!: PaintContext;
-    // private prev_cvs!: PaintCanvas;
-    // private prev_ctx!: PaintContext;
-    // private render_cvs!: PaintCanvas;
-    // private render_ctx!: PaintContext;
+    private render_layer!: Layer;
+    private LayerManager : LayerManager;
     private draw_func: CanvasInterface = new NoOPCVSFunc();
     private EventFired: boolean = false;
     private isPointOut?: PaintEvent = undefined;
@@ -94,6 +91,8 @@ export class EditorCanvas implements CanvasBase {
         this.height = height;
         this.scaleTip = window.editorUI.Statusbar.addTip("", true);
         this.refreshScaleTip(0,1);
+        this.LayerManager = new LayerManager();
+        this.render_layer = this.LayerManager.Layer;
     }
     update?: ((time: number) => void) | undefined;
     private undo_stk_history = new Array();
@@ -113,7 +112,7 @@ export class EditorCanvas implements CanvasBase {
     private finishDrawing() {
         // console.log("[DEB] Finish Drawing ...");
         this.prev_ctx.children.forEach((child)=> {
-            this.render_ctx.add(child);
+            this.render_layer.add(child);
         })
         this.prev_ctx.destroyChildren();
         this.EventFired = false;
@@ -125,7 +124,7 @@ export class EditorCanvas implements CanvasBase {
     }
     private initCanvas = () => {
         this.prev_ctx.destroyChildren();
-        this.render_ctx.destroyChildren();
+        this.render_layer.clear();
         this.undo_stk_history = new Array();
         this.redo_stk_history = new Array();
         this.pushState();
@@ -163,9 +162,10 @@ export class EditorCanvas implements CanvasBase {
 
         this.prev_ctx = new Konva.Layer();
         this.render_ctx = new Konva.Layer();
-        this.render_ctx.listening(false);
         this.ctx.add(this.render_ctx);
         this.ctx.add(this.prev_ctx);
+
+        this.render_ctx.add(this.render_layer.ctx);
 
         this.cvs.style.width  = `${this.width}px`;
         this.cvs.style.height = `${this.height}px`;
@@ -746,7 +746,11 @@ class modeEditor implements ModeFunction {
         new btnCanvas(new TriangleCVSFunc()),
         new btnCanvas(new RectangleCVSFunc())
     ];
-
+    
+    RightToolbarTop = [
+        new LayerMgrSidebar(),
+    ];
+    
     StartMode() {}
     EndMode() {}
 }

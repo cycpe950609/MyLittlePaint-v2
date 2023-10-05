@@ -2,6 +2,7 @@ import { CanvasBase, CanvasInterface } from "../editorUI/canvas";
 import ModeFunction from "../editorUI/interface/mode";
 import { btnClear, btnResetRotate, btnResetScale, btnSave, btnToggleTouch, btnUpload } from "./menu";
 import FunctionInterface from "../editorUI/interface/function";
+import LayerMgrSidebar from './layer';
 export declare class btnCanvas implements FunctionInterface {
     Name: string;
     ImgName?: string | undefined;
@@ -24,6 +25,8 @@ export declare class EditorCanvas implements CanvasBase {
     private ctx;
     private prev_ctx;
     private render_ctx;
+    private render_layer;
+    private LayerManager;
     private draw_func;
     private EventFired;
     private isPointOut?;
@@ -77,6 +80,7 @@ declare class modeEditor implements ModeFunction {
     MenuToolbarLeft: (btnUpload | btnClear | btnCanvas)[];
     MenuToolbarRight: (btnResetScale | btnResetRotate | btnToggleTouch | btnSave)[];
     LeftToolbarTop: btnCanvas[];
+    RightToolbarTop: LayerMgrSidebar[];
     StartMode(): void;
     EndMode(): void;
 }

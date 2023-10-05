@@ -1682,13 +1682,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/geojson@npm:*":
-  version: 7946.0.10
-  resolution: "@types/geojson@npm:7946.0.10"
-  checksum: 12c407c2dc93ecb26c08af533ee732f1506a9b29456616ba7ba1d525df96206c28ddf44a528f6a5415d7d22893e9d967420940a9c095ee5e539c1eba5fefc1f4
-  languageName: node
-  linkType: hard
-
 "@types/glob@npm:^7.1.1":
   version: 7.2.0
   resolution: "@types/glob@npm:7.2.0"
@@ -1728,15 +1721,6 @@ __metadata:
   version: 7.0.12
   resolution: "@types/json-schema@npm:7.0.12"
   checksum: 00239e97234eeb5ceefb0c1875d98ade6e922bfec39dd365ec6bd360b5c2f825e612ac4f6e5f1d13601b8b30f378f15e6faa805a3a732f4a1bbe61915163d293
-  languageName: node
-  linkType: hard
-
-"@types/leaflet@npm:^1.9.3":
-  version: 1.9.3
-  resolution: "@types/leaflet@npm:1.9.3"
-  dependencies:
-    "@types/geojson": "*"
-  checksum: d12042edc3a043d074b4fd3b4c4800f479dfb01db3980d8c1151edbc70b23ca9e84ab7da72ce0d1c36c040f89ba1421bd36d9d9796ec3704a0d3c942985a87ae
   languageName: node
   linkType: hard
 
@@ -4870,13 +4854,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"leaflet@npm:^1.9.4":
-  version: 1.9.4
-  resolution: "leaflet@npm:1.9.4"
-  checksum: bfc79f17a247b37b92d84b3c78702501603392d6589fde606de4a825d11f1609d90225388834f2e0709dac327e52dcd4b4b9cc9fd3d590060c5b1e53b84fa6c6
-  languageName: node
-  linkType: hard
-
 "levn@npm:^0.4.1":
   version: 0.4.1
   resolution: "levn@npm:0.4.1"
@@ -5615,7 +5592,6 @@ __metadata:
     "@babel/register": ^7.18.6
     "@reduxjs/toolkit": ^1.9.0
     "@types/axios": ^0.14.0
-    "@types/leaflet": ^1.9.3
     "@types/lodash": ^4.14.189
     "@types/node": ^20.4.5
     "@types/redux-logger": ^3.0.9
@@ -5634,7 +5610,6 @@ __metadata:
     immer: ^10.0.2
     interactjs: ^1.10.17
     konva: ^9.2.1
-    leaflet: ^1.9.4
     lodash: ^4.17.21
     prettier: ^2.7.1
     redux-logger: ^3.0.6
