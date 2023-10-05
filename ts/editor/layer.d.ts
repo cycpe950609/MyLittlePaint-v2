@@ -27,6 +27,6 @@ declare class LayerMgrSidebar implements SidebarInterface {
     Tip: string;
     Visible: boolean;
     Title: () => string;
-    Body: () => HTMLSpanElement;
+    Body: () => import("snabbdom").VNode;
 }
 export default LayerMgrSidebar;

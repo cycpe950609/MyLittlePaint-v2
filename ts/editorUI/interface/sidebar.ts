@@ -1,5 +1,7 @@
 // import { CanvasBase } from "../canvas";
 
+import { VNode, h } from "snabbdom";
+
 /* Sidebar */
 export default interface SidebarInterface {
     Name: string; // Tips of ToolButton
@@ -8,7 +10,7 @@ export default interface SidebarInterface {
     HistoryName?: string; // Undefined if dont want to store in redo/undo hostory
     Visible: boolean;
     Title: () => string;
-    Body: () => DocumentFragment | HTMLElement;
+    Body: () => VNode;
 }
 
 export class NoOPSidebar implements SidebarInterface {
@@ -23,8 +25,6 @@ export class NoOPSidebar implements SidebarInterface {
     Visible = true;
     Title = () => "NoOpSidebar Example";
     Body = () => {
-        const sp = document.createElement("span");
-        sp.innerText = this.showedText;
-        return sp;
+        return h("span", this.showedText);
     };
 }

@@ -99,8 +99,8 @@ const renderTipComponent = (tip: string) => {
     );
 }
 const renderStatusPart = (partListName: string,partList: StatusbarStateType) => {
-    rendered[partListName] = true;
     return Object.keys(partList).map((key:string)=>{
+        rendered[partListName] = true;
         return partList[key].showed ? renderTipComponent(partList[key].tip) : document.createElement("span");
     })
 }

@@ -17,9 +17,9 @@ export const bootstrap = async (props: MenubarPropsType) => {
     rendered[`menubar_${props.side}_perm`]  = false; 
 }
 const renderMenuPart = (partListName: string, partList: ToolbarStateType<any>) => {
-    rendered[partListName] = true;
     return DIV("meanu-perm",
         Object.keys(partList).map((key:string) => {
+            rendered[partListName] = true;
             return createFunctionInterfaceButton(partList[key]);
         })
     );
@@ -68,7 +68,7 @@ export const mount = async (props: MenubarPropsType) => {
             )
         )
         {
-            // console.log(`[DEB] MenuBox ${props.side} rerendered`);
+            // console.log(`MenuBox ${props.side} rerendered`);
             
             render(props.side);
         }

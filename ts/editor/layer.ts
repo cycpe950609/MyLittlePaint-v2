@@ -1,5 +1,6 @@
 import Konva from "konva";
 import { GroupConfig } from "konva/lib/Group";
+import { toVNode } from "snabbdom";
 import { v4 as uuidv4 } from "uuid";
 import SidebarInterface from '../editorUI/interface/sidebar'
 
@@ -85,7 +86,7 @@ class LayerMgrSidebar implements SidebarInterface {
     Body = () => {
         const sp = document.createElement("span");
         sp.innerText = "Layer";
-        return sp;
+        return toVNode(sp);
     };
 }
 

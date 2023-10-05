@@ -24,6 +24,7 @@
     "redux-thunk": "^2.4.2",
     "single-spa": "^5.9.4",
     "single-spa-layout": "^2.2.0",
+    "snabbdom": "^3.5.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

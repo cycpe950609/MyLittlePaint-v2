@@ -1,3 +1,4 @@
+import { VNode } from "snabbdom";
 export default interface SidebarInterface {
     Name: string;
     ImgName?: string;
@@ -5,7 +6,7 @@ export default interface SidebarInterface {
     HistoryName?: string;
     Visible: boolean;
     Title: () => string;
-    Body: () => DocumentFragment | HTMLElement;
+    Body: () => VNode;
 }
 export declare class NoOPSidebar implements SidebarInterface {
     constructor(visible?: boolean, showText?: string);
@@ -15,5 +16,5 @@ export declare class NoOPSidebar implements SidebarInterface {
     Tip: string;
     Visible: boolean;
     Title: () => string;
-    Body: () => HTMLSpanElement;
+    Body: () => VNode;
 }

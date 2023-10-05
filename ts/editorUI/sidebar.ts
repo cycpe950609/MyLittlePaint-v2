@@ -5,6 +5,25 @@ import EditorUI from "./EditorUI";
 import FunctionInterface from "./interface/function";
 import SidebarInterface from "./interface/sidebar";
 import { DIV, SPAN } from "./util/HTMLElement";
+import {
+    init,
+    classModule,
+    propsModule,
+    styleModule,
+    eventListenersModule,
+    h,
+    toVNode,
+    VNode,
+} from "snabbdom";
+import { HDIV, HSPAN } from "./util/HHTMLElement";
+
+const patchSidebar = init([
+    // Init patch function with chosen modules
+    classModule, // makes it easy to toggle classes
+    propsModule, // for setting properties on DOM elements
+    styleModule, // handles styling on elements with support for animations
+    eventListenersModule, // attaches event listeners
+]);
 
 class Sidebar implements FunctionInterface {
     Name: string;
@@ -61,28 +80,10 @@ let unsubscribe: Unsubscribe;
 export const bootstrap = async () => {
     console.log("[EUI] modeSelector bootstrapping");
 }
-let windowCache: {[key:string]:HTMLDivElement} = {};
-let renderWindow = (uuid:string) => {
+let windowCache: {[key:string]:VNode} = {};
+let renderWindow = (uuid:string): VNode => {
     if(uuid in windowCache && !window.editorUI.CenterCanvas.isUpdate) return windowCache[uuid];
-    let sidebar = DIV("property-bar", [
-        DIV("pd_title", 
-            SPAN("pb_Property_title", "Title~")),
-        DIV("pb_Property_bdy")
-    ]);
 
-    let setTitle = (title: string) => {
-        const sp = sidebar.querySelector(".pd_title > span");
-        if (sp === null) throw new Error("SIDEBAR_INTERNAL_ERROR");
-        (<HTMLSpanElement>sp).innerText = title;
-    }
-
-    let setSidebarBody = (body: DocumentFragment | HTMLElement) => {
-        // console.log(body);
-        const dv = sidebar.querySelector(".pb_Property_bdy");
-        if (dv === null) throw new Error("SIDEBAR_INTERNAL_ERROR");
-        (<HTMLDivElement>dv).innerHTML = "";
-        (<HTMLDivElement>dv).appendChild(body);
-    }
     let sidebarImple = undefined;
     if(uuid in data.getState()['sidebar_top_'].data)
         sidebarImple = data.getState()['sidebar_top_'].data[uuid];
@@ -94,40 +95,44 @@ let renderWindow = (uuid:string) => {
         sidebarImple = data.getState()['sidebar_bottom_perm'].data[uuid];
     if(sidebarImple === undefined) throw new Error("INTERNAL_ERROR: SidebarInterface is not found");
     
-    setTitle(sidebarImple.Title());
-    // setSidebarBody(this.sidebarImple.Body(this.editorUI().CenterCanvas.Canvas));
-    setSidebarBody(sidebarImple.Body());
-    windowCache[uuid] = sidebar;
-    sidebar.style.pointerEvents = 'all';
+    let sidebar = h("div#divcnt.property-bar",
+    { style : {pointerEvents: "auto"} },
+    [
+        HDIV("pd_title", 
+            HSPAN("pb_Property_title", sidebarImple.Title() )),
+        HDIV("pb_Property_bdy", sidebarImple.Body())
+    ]);
     return sidebar
 }
-const renderSidebarPart = (partList: ToolbarStateType<SidebarInterface>) => {
-    return DIV("w-fit h-fit",
+const renderSidebarPart = (partList: ToolbarStateType<SidebarInterface>) : VNode => {
+    return h("div#cnt.w-fit.h-fit",
         Object.keys(partList).map((key:string) => {
             if(partList[key].Visible === false){
                 if(key in windowCache)
                     delete windowCache[key];
-                return document.createElement("div");
+                return h("div");
             }
             
             return renderWindow(key);
         })
     );
 }
+
+let cntSidebar:HTMLDivElement;
+let lastSidebarVNode:VNode;
+
 const render = () => {
-    let cnt = document.getElementById("editorui-sidebar-windows");
-    if(cnt === null) throw new Error(`INTERNAL_ERROR: Container of Sidebar-Window not found`);
+    if(cntSidebar == null) {
+        let cnt = document.getElementById("editorui-sidebar-windows");
+        if(cnt === null) throw new Error(`INTERNAL_ERROR: Container of Sidebar-Window not found`);
+        cntSidebar = cnt as HTMLDivElement;
+        lastSidebarVNode = toVNode(cntSidebar);
+    }
     let dataTop         = data.getState()[`sidebar_top_`].data;
     let dataTopPerm     = data.getState()[`sidebar_top_perm`].data;
     let dataBottom      = data.getState()[`sidebar_bottom_`].data;
     let dataBottomPerm  = data.getState()[`sidebar_bottom_perm`].data;
-    let sidebar = DIV("sidebar",[
-        renderSidebarPart(dataTop         ),
-        renderSidebarPart(dataTopPerm     ),
-        renderSidebarPart(dataBottom      ),
-        renderSidebarPart(dataBottomPerm  ),
-    ])
-    sidebar.id = "editorui-sidebar-windows"
+    
     // <div class="sidebar" id="editorui-sidebar-windows">
     let visiableCount = (partList: ToolbarStateType<SidebarInterface>) => {
         let count = 0;
@@ -140,9 +145,21 @@ const render = () => {
                         visiableCount(dataBottom) + 
                         visiableCount(dataTopPerm) + 
                         visiableCount(dataBottomPerm);
-    // console.log("[EUI] Sidebar pointerEvents : ",windowCount)
-    sidebar.style.pointerEvents = (windowCount > 0) ? "auto" : "none";
-    cnt.parentNode?.replaceChild(sidebar,cnt);
+    
+    let sidebar = h("div#editorui-sidebar-windows.sidebar",
+    {
+        style : {pointerEvents: (windowCount > 0) ? "auto" : "none"}
+    },
+    [
+        renderSidebarPart(dataTop         ),
+        renderSidebarPart(dataTopPerm     ),
+        renderSidebarPart(dataBottom      ),
+        renderSidebarPart(dataBottomPerm  ),
+    ])
+    
+    // console.log("[DEB]", sidebar)
+    patchSidebar(lastSidebarVNode,sidebar);
+    lastSidebarVNode = sidebar;
     window.editorUI.CenterCanvas.isUpdate = false;
 }
 export const mount = async () => {

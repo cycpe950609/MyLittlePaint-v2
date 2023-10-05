@@ -117,9 +117,10 @@ export const bootstrap = async (props: ToolbarPropsType) => {
 }
 
 const renderToolPart = (type:string,partName: string,partListName:string,partList: ToolbarStateType<any>) => {
-    rendered[partListName] = true;
+    console.log("[EUI] ToolbarPart render", partListName, Object.keys(partList).length)
     return DIV(partName,
         Object.keys(partList).map((key:string) => {
+            rendered[partListName] = true;
             return createFunctionInterfaceButton(createFuncList[type](partListName,key,partList[key]));
         })
     );
@@ -169,6 +170,7 @@ const render = (type: string) => {
 export const mount = async (props: ToolbarPropsType) => {
     unsubscribe[props.type] = data.subscribe(() =>
     {
+        // console.log(`[EUI] data updated : toolbar ${props.type}`,data.getState());
         let underscore      = props.type.replace('-','_');
         if(
             (
@@ -180,7 +182,7 @@ export const mount = async (props: ToolbarPropsType) => {
         )
         {
             // console.log(`${props.type} rerendered`);
-            // console.log(`[DEB] ${props.type} before render`, data.getState());
+            
             render(props.type);
         }
         
