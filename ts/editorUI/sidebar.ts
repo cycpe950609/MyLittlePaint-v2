@@ -148,7 +148,7 @@ const render = () => {
     
     let sidebar = h("div#editorui-sidebar-windows.sidebar",
     {
-        style : {pointerEvents: (windowCount > 0) ? "auto" : "none"}
+        style : {pointerEvents: "none"}
     },
     [
         renderSidebarPart(dataTop         ),
