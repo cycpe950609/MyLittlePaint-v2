@@ -16,7 +16,7 @@ export class CircleCVSFunc extends DrawBase
     BorderWidth = 4;
     ContentColor = 'rgb(0,0,255)';
     CanFilled = false;
-    DrawFunction = (Ctx: Konva.Layer,width: number, height: number) =>
+    DrawFunction = (Ctx: Konva.Group,width: number, height: number) =>
     { 
 
         let circle = Ctx.find('.prev-circle')
@@ -64,7 +64,7 @@ export class TriangleCVSFunc extends DrawBase
     BorderWidth = 4;
     ContentColor = 'rgb(255,0,255)';
     CanFilled=false;
-    DrawFunction = (Ctx: Konva.Layer,width: number, height: number,angle: number) =>
+    DrawFunction = (Ctx: Konva.Group,width: number, height: number,angle: number) =>
     { 
         let tri = Ctx.find('.prev-tri')
         let polygon = undefined;
@@ -114,7 +114,7 @@ export class RectangleCVSFunc extends DrawBase
     BorderWidth= 4;
     ContentColor= 'rgb(0,0,255)';
     CanFilled=false;
-    DrawFunction = (Ctx: Konva.Layer,width: number, height: number, angle: number) =>
+    DrawFunction = (Ctx: Konva.Group,width: number, height: number, angle: number) =>
     { 
         let rect = Ctx.find('.prev-rect')
         let polygon = undefined;

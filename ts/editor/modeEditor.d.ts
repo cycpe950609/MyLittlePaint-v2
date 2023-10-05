@@ -21,6 +21,7 @@ export declare class EditorCanvas implements CanvasBase {
     private scrollDiv;
     private scaleElement;
     private backgroundDiv;
+    private cnt;
     private cvs;
     private ctx;
     private prev_ctx;

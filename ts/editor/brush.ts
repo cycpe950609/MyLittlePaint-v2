@@ -12,7 +12,7 @@ class BrushCVSFunc extends DrawBase {
     CursorName = 'brush';
     BrushColor = 'rgb(0,255,0)';
     BrushWidth = 10;
-    DrawFunction = (Ctx: Konva.Layer,width: number, height: number) =>
+    DrawFunction = (Ctx: Konva.Group,width: number, height: number) =>
     { 
         let brush = Ctx.find('.prev-brush')
         let polygon = undefined;

@@ -20,7 +20,7 @@ export interface CanvasInterface {
     PointerUp?:     (e: PaintEvent) => void;
     PointerOut?:    (e: PaintEvent) => void;
     DrawFunction: (
-        ctx: Konva.Layer,
+        ctx: Konva.Group,
         width: number, 
         height: number,
         rotate: number,
@@ -79,7 +79,7 @@ export class DrawBase implements CanvasInterface {
         // return [newX + this.LastX, newY + this.LastY];
         return [newX, newY];
     }
-    public DrawFunction(ctx: Konva.Layer, width: number, height: number,rotate: number) {};
+    public DrawFunction(ctx: Konva.Group, width: number, height: number,rotate: number) {};
     public CompositeOperation: GlobalCompositeOperation = <GlobalCompositeOperation>"source-over";
 };
 export class NoOPCVSFunc extends DrawBase{};

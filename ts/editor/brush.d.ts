@@ -8,7 +8,7 @@ declare class BrushCVSFunc extends DrawBase {
     CursorName: string;
     BrushColor: string;
     BrushWidth: number;
-    DrawFunction: (Ctx: Konva.Layer, width: number, height: number) => void;
+    DrawFunction: (Ctx: Konva.Group, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export default BrushCVSFunc;

@@ -40,36 +40,44 @@ export class LayerManager {
 };
 
 export class Layer {
-    private _layer : Konva.Group;
+    private _render : Konva.Group;
+    private _prev : Konva.Group;
 
     private _id: string;
     constructor(id: string) {
         this._id = id;
-        this._layer = new Konva.Group({
-            name: id,
+        this._render = new Konva.Group({
+            name: `render_${id}`,
         } as GroupConfig);
+        this._prev = new Konva.Group({
+            name: `prev_${id}`,
+        } as GroupConfig);
+
     }
     public get ID() {
         return this._id;
     }
 
     public content(){
-        return this._layer.children;
+        return this._render.children;
     }
     public merge(layer: Layer) {
         layer.content().forEach((item) => {
-            this._layer.add(item);
+            this._render.add(item);
         })
     }
     public add(item: any) {
-        this._layer.add(item);
+        this._render.add(item);
     }
     public clear() {
-        this._layer.destroyChildren();
+        this._render.destroyChildren();
     }
 
-    public get ctx() {
-        return this._layer;
+    public get render() {
+        return this._render;
+    }
+    public get prev() {
+        return this._prev;
     }
 };
 

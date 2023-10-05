@@ -71,10 +71,11 @@ export class EditorCanvas implements CanvasBase {
     );
     private scaleElement: HTMLDivElement = DIV("absolute w-fit h-fit transform-center")
     private backgroundDiv: HTMLDivElement = DIV("absolute disable-mouse");
-    private cvs !: HTMLDivElement;
-    private ctx !: Konva.Stage;
-    private prev_ctx!: Konva.Layer;
-    private render_ctx!: Konva.Layer;
+    private cnt !:HTMLDivElement;
+    private cvs !: Konva.Stage;
+    private ctx !:Konva.Layer;
+    private prev_ctx!: Konva.Group;
+    private render_ctx!: Konva.Group;
     private render_layer!: Layer;
     private LayerManager : LayerManager;
     private draw_func: CanvasInterface = new NoOPCVSFunc();
@@ -112,7 +113,7 @@ export class EditorCanvas implements CanvasBase {
     private finishDrawing() {
         // console.log("[DEB] Finish Drawing ...");
         this.prev_ctx.children.forEach((child)=> {
-            this.render_layer.add(child);
+            this.render_ctx.add(child);
         })
         this.prev_ctx.destroyChildren();
         this.EventFired = false;
@@ -153,28 +154,26 @@ export class EditorCanvas implements CanvasBase {
     private isDrawing: boolean = false;
     private isDrawRotate: boolean = true;
     attachCanvas(container: HTMLDivElement) {
-        this.cvs = DIV("w-full h-full");
-        this.ctx = new Konva.Stage({
-            container: this.cvs,   // id of container <div>
+        this.cnt = DIV("w-full h-full");
+        this.cvs = new Konva.Stage({
+            container: this.cnt,   // id of container <div>
             width: this.width,
             height: this.height,
         } as Konva.StageConfig);
 
-        this.prev_ctx = new Konva.Layer();
-        this.render_ctx = new Konva.Layer();
-        this.ctx.add(this.render_ctx);
-        this.ctx.add(this.prev_ctx);
+        this.ctx = new Konva.Layer(); 
+        this.cvs.add(this.ctx);
+        this.ctx.add(this.render_layer.render);
+        this.ctx.add(this.render_layer.prev);
+        this.prev_ctx = this.render_layer.prev;
+        this.render_ctx = this.render_layer.render;
 
-        this.render_ctx.add(this.render_layer.ctx);
-
-        this.cvs.style.width  = `${this.width}px`;
-        this.cvs.style.height = `${this.height}px`;
 
         this.backgroundDiv.style.width = `${this.width}px`;
         this.backgroundDiv.style.height = `${this.height}px`;
         this.backgroundDiv.style.backgroundColor = "white";
         
-        let interactCVS = interact(this.cvs, {
+        let interactCVS = interact(container, {
             styleCursor: false
         });
         let gestureStart = (e: Interact.GestureEvent) => {
@@ -261,11 +260,11 @@ export class EditorCanvas implements CanvasBase {
                     .canDrawWithTouch === false
             ) {
                 // console.log("pointerdown");
-                this.cvs.style.touchAction = "auto";
+                container.style.touchAction = "auto";
                 isDrawing = false;
                 return;
             }
-            this.cvs.style.touchAction = "none";
+            container.style.touchAction = "none";
             e.preventDefault();
             e.stopPropagation();
             let mouseEvent: PaintEvent = {
@@ -320,10 +319,10 @@ export class EditorCanvas implements CanvasBase {
                     .canDrawWithTouch === false
             ) {
                 // console.log("pointerup");
-                this.cvs.style.touchAction = "none";
+                container.style.touchAction = "none";
                 return;
             }
-            this.cvs.style.touchAction = "none";
+            container.style.touchAction = "none";
             e.preventDefault();
             e.stopPropagation();
             let mouseEvent: PaintEvent = {
@@ -375,7 +374,7 @@ export class EditorCanvas implements CanvasBase {
         window.addEventListener("keyup", this.docKeyupHandler);
 
         this.scaleElement.appendChild(this.backgroundDiv);
-        this.scaleElement.appendChild(this.cvs);
+        this.scaleElement.appendChild(this.cnt);
         // this.scaleElement.appendChild(this.prev_cvs.element);
         this.scrollDiv.appendChild(this.scaleElement);
         container.appendChild(this.scrollDiv);
@@ -384,10 +383,10 @@ export class EditorCanvas implements CanvasBase {
     }
 
     public enableDrag() {
-        this.cvs.style.touchAction = "auto";
+        this.cnt.style.touchAction = "auto";
     }
     public disableDrag() {
-        this.cvs.style.touchAction = "none";
+        this.cnt.style.touchAction = "none";
     }
 
     public setFunction(func: CanvasInterface) {
@@ -434,10 +433,10 @@ export class EditorCanvas implements CanvasBase {
         if (func.CursorName === undefined) return;
         if (browerCursor.includes(func.CursorName)) {
             console.log(`CursorName ${func.CursorName} in list`);
-            this.cvs.style.cursor = func.CursorName;
+            this.cnt.style.cursor = func.CursorName;
         } else {
             console.log(`CursorName ${func.CursorName} not in list`);
-            this.cvs.style.cursor =
+            this.cnt.style.cursor =
                 "url(img/cursor/" + func.CursorName + ".cur), auto";
         }
     }
@@ -495,8 +494,8 @@ export class EditorCanvas implements CanvasBase {
                 console.log(img.width);
                 console.log(img.height);
 
-                this.cvs.width = img.width;
-                this.cvs.height = img.height;
+                container.width = img.width;
+                container.height = img.height;
                 this.ctx.drawImage(img, 0, 0, img.width, img.height);
 
                 this.prev_cvs.width = img.width;

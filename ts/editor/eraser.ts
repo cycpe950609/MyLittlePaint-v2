@@ -11,7 +11,7 @@ class EraserCVSFunc extends DrawBase {
     CursorName = 'eraser';
     BrushWidth = 10;
     BrushColor = 'white';
-    DrawFunction = (Ctx: Konva.Layer) =>
+    DrawFunction = (Ctx: Konva.Group) =>
     { 
         if(this.ifDrawing)
         {

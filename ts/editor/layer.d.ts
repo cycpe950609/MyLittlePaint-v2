@@ -10,7 +10,8 @@ export declare class LayerManager {
     get Layer(): Layer;
 }
 export declare class Layer {
-    private _layer;
+    private _render;
+    private _prev;
     private _id;
     constructor(id: string);
     get ID(): string;
@@ -18,7 +19,8 @@ export declare class Layer {
     merge(layer: Layer): void;
     add(item: any): void;
     clear(): void;
-    get ctx(): import("konva/lib/Group").Group;
+    get render(): import("konva/lib/Group").Group;
+    get prev(): import("konva/lib/Group").Group;
 }
 declare class LayerMgrSidebar implements SidebarInterface {
     constructor(visible?: boolean);

@@ -8,7 +8,7 @@ declare class EraserCVSFunc extends DrawBase {
     CursorName: string;
     BrushWidth: number;
     BrushColor: string;
-    DrawFunction: (Ctx: Konva.Layer) => void;
+    DrawFunction: (Ctx: Konva.Group) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export default EraserCVSFunc;

@@ -10,7 +10,7 @@ export declare class CircleCVSFunc extends DrawBase {
     BorderWidth: number;
     ContentColor: string;
     CanFilled: boolean;
-    DrawFunction: (Ctx: Konva.Layer, width: number, height: number) => void;
+    DrawFunction: (Ctx: Konva.Group, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export declare class TriangleCVSFunc extends DrawBase {
@@ -23,7 +23,7 @@ export declare class TriangleCVSFunc extends DrawBase {
     BorderWidth: number;
     ContentColor: string;
     CanFilled: boolean;
-    DrawFunction: (Ctx: Konva.Layer, width: number, height: number, angle: number) => void;
+    DrawFunction: (Ctx: Konva.Group, width: number, height: number, angle: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
 export declare class RectangleCVSFunc extends DrawBase {
@@ -36,6 +36,6 @@ export declare class RectangleCVSFunc extends DrawBase {
     BorderWidth: number;
     ContentColor: string;
     CanFilled: boolean;
-    DrawFunction: (Ctx: Konva.Layer, width: number, height: number, angle: number) => void;
+    DrawFunction: (Ctx: Konva.Group, width: number, height: number, angle: number) => void;
     CompositeOperation: GlobalCompositeOperation;
 }
