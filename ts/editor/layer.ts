@@ -1,20 +1,43 @@
 import Konva from "konva";
 import { GroupConfig } from "konva/lib/Group";
-import { toVNode } from "snabbdom";
+import { KonvaEventListener } from "konva/lib/Node";
+import { h, toVNode } from "snabbdom";
 import { v4 as uuidv4 } from "uuid";
 import SidebarInterface from '../editorUI/interface/sidebar'
+import { HBUTTON, HDIV, HSPAN, HTABLE, HTD, HTR } from "../editorUI/util/HHTMLElement";
+import { EditorCanvas } from "./modeEditor";
+
+class LayerInfo {
+    public Snapshot?: Konva.Image;
+    public Name : string = "";
+    public ID : string = "";
+}
 
 export class LayerManager {
     private layerList = new Map<string, Layer>();
     private defaultLayer: string;
 
-    constructor() {
+    private cvs !: Konva.Stage;
+    private ctx : Konva.Layer;
+
+    constructor(containerr: HTMLDivElement,width: number,height: number) {
+        this.cvs = new Konva.Stage({
+            container: containerr,   // id of container <div>
+            width:  width,
+            height: height,
+        } as Konva.StageConfig);
+        this.ctx = new Konva.Layer(); 
+        this.cvs.add(this.ctx);
+
         this.defaultLayer = this.addLayer();
     }
 
     private addLayer() {
         const newID = uuidv4() as string;
-        this.layerList.set(newID, new Layer(newID));
+        let newLayer = new Layer(newID, `Layer ${this.layerList.size + 1}`)
+        this.layerList.set(newID, newLayer);
+        this.ctx.add(newLayer.prev);
+        this.ctx.add(newLayer.render);
         return newID;
     }
 
@@ -23,19 +46,31 @@ export class LayerManager {
         // TODO : Layers order
         return id;
     }
-    private getLayer(id: string) {
-        if(!this.layerList.has(id))
-            throw new Error(`Layer ${id} not exist`);
-        return this.layerList.get(id) as Layer;
-    }
-    
+
     public changeTo(id: string) {
         if(!this.layerList.has(id))
             throw new Error(`Layer ${id} not exist`);
         this.defaultLayer = id;
     }
+
+    public get Canvas() : Konva.Stage {
+        return this.cvs;
+    }
+
     public get Layer() : Layer {
-        return this.getLayer(this.defaultLayer);
+        let id = this.defaultLayer;
+        if(!this.layerList.has(id))
+            throw new Error(`Layer ${id} not exist`);
+        return this.layerList.get(id) as Layer;
+    }
+
+    public get LayerList() : LayerInfo[] {
+        let rtv : LayerInfo[] = [];
+        this.layerList.forEach(layer => rtv.push({
+            Name: layer.Name,
+            ID: layer.ID,
+        }));
+        return rtv;
     }
 };
 
@@ -44,8 +79,10 @@ export class Layer {
     private _prev : Konva.Group;
 
     private _id: string;
-    constructor(id: string) {
+    private _name: string;
+    constructor(id: string, name: string) {
         this._id = id;
+        this._name = name;
         this._render = new Konva.Group({
             name: `render_${id}`,
         } as GroupConfig);
@@ -56,6 +93,9 @@ export class Layer {
     }
     public get ID() {
         return this._id;
+    }
+    public get Name() {
+        return this._name;
     }
 
     public content(){
@@ -92,9 +132,43 @@ class LayerMgrSidebar implements SidebarInterface {
     Visible = true;
     Title = () => "Layer";
     Body = () => {
-        const sp = document.createElement("span");
-        sp.innerText = "Layer";
-        return toVNode(sp);
+        if (this.Visible) {
+            // let pointsList = (cvs as LabelCanvas).AllNodes;
+            let layersList = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.LayerList;
+
+            const createList = (classNames: string, idx: number, layer: LayerInfo) => {
+                let btnEdit = HBUTTON("edit_btn mt-20px px-0", "Modify", (e: MouseEvent) => {
+                    (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
+                });
+            
+                return HTR(classNames, [
+                    HTD(`${idx}`.padStart(6)),
+                    HTD('Preview'),
+                    HTD(layer.Name),
+                    HTD(btnEdit)
+                ])
+            }
+            let edittedLayer = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.Layer.ID;
+            let newTableBody = layersList.map((layer: LayerInfo, idx: number) => {
+                if(layer.ID === edittedLayer)
+                {
+                    return createList("editted-layer",idx,layer);
+                }
+                else
+                {
+                    return createList("normal-layer",idx,layer);
+                }
+            })
+            return HTABLE("w-full b-none align-right", [
+                HTR("layers-header", [
+                    HTD('Index'),
+                    HTD('Preview'),
+                    HTD('Name'),
+                    HTD('Modify'),
+                ])
+            ],newTableBody);
+        }
+        return h("div");
     };
 }
 

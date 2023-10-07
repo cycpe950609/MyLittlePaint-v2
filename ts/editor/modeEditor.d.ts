@@ -2,7 +2,7 @@ import { CanvasBase, CanvasInterface } from "../editorUI/canvas";
 import ModeFunction from "../editorUI/interface/mode";
 import { btnClear, btnResetRotate, btnResetScale, btnSave, btnToggleTouch, btnUpload } from "./menu";
 import FunctionInterface from "../editorUI/interface/function";
-import LayerMgrSidebar from './layer';
+import LayerMgrSidebar, { LayerManager } from './layer';
 export declare class btnCanvas implements FunctionInterface {
     Name: string;
     ImgName?: string | undefined;
@@ -22,12 +22,8 @@ export declare class EditorCanvas implements CanvasBase {
     private scaleElement;
     private backgroundDiv;
     private cnt;
-    private cvs;
-    private ctx;
-    private prev_ctx;
-    private render_ctx;
     private render_layer;
-    private LayerManager;
+    LayerManager: LayerManager;
     private draw_func;
     private EventFired;
     private isPointOut?;

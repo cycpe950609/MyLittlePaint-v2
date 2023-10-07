@@ -72,12 +72,12 @@ export class EditorCanvas implements CanvasBase {
     private scaleElement: HTMLDivElement = DIV("absolute w-fit h-fit transform-center")
     private backgroundDiv: HTMLDivElement = DIV("absolute disable-mouse");
     private cnt !:HTMLDivElement;
-    private cvs !: Konva.Stage;
-    private ctx !:Konva.Layer;
-    private prev_ctx!: Konva.Group;
-    private render_ctx!: Konva.Group;
+    // private cvs !: Konva.Stage;
+    // private ctx !:Konva.Layer;
+    // private prev_ctx = () => this.LayerManager.Layer.prev;
+    // private render_ctx = () => this.LayerManager.Layer.render;
     private render_layer!: Layer;
-    private LayerManager : LayerManager;
+    public LayerManager : LayerManager;
     private draw_func: CanvasInterface = new NoOPCVSFunc();
     private EventFired: boolean = false;
     private isPointOut?: PaintEvent = undefined;
@@ -92,8 +92,15 @@ export class EditorCanvas implements CanvasBase {
         this.height = height;
         this.scaleTip = window.editorUI.Statusbar.addTip("", true);
         this.refreshScaleTip(0,1);
-        this.LayerManager = new LayerManager();
+        this.cnt = DIV("w-full h-full");
+        this.LayerManager = new LayerManager(this.cnt, width, height);
         this.render_layer = this.LayerManager.Layer;
+
+        //NOTE : Testing
+        this.LayerManager.addLayerAfter();
+        this.LayerManager.addLayerAfter();
+        this.LayerManager.addLayerAfter();
+        this.LayerManager.addLayerAfter();
     }
     update?: ((time: number) => void) | undefined;
     private undo_stk_history = new Array();
@@ -102,7 +109,7 @@ export class EditorCanvas implements CanvasBase {
         // if (this.redo_stk_history.length > 0)
         //     this.undo_stk_history.push(this.redo_stk_history.pop());
         // this.redo_stk_history = [];
-        // this.redo_stk_history.push(this.render_ctx.toDataURL());
+        // this.redo_stk_history.push(this.LayerManager.Layer.render.toDataURL());
         // console.log(
         //     "pushState",
         //     this.undo_stk_history.length,
@@ -112,10 +119,10 @@ export class EditorCanvas implements CanvasBase {
 
     private finishDrawing() {
         // console.log("[DEB] Finish Drawing ...");
-        this.prev_ctx.children.forEach((child)=> {
-            this.render_ctx.add(child);
+        this.LayerManager.Layer.prev.children.forEach((child)=> {
+            this.LayerManager.Layer.render.add(child);
         })
-        this.prev_ctx.destroyChildren();
+        this.LayerManager.Layer.prev.destroyChildren();
         this.EventFired = false;
         this.isDrawing = false;
         // this.ctx.globalCompositeOperation = "source-over";
@@ -124,7 +131,7 @@ export class EditorCanvas implements CanvasBase {
         // if (this.draw_func.HistoryName !== undefined) this.pushState();
     }
     private initCanvas = () => {
-        this.prev_ctx.destroyChildren();
+        this.LayerManager.Layer.prev.destroyChildren();
         this.render_layer.clear();
         this.undo_stk_history = new Array();
         this.redo_stk_history = new Array();
@@ -154,21 +161,7 @@ export class EditorCanvas implements CanvasBase {
     private isDrawing: boolean = false;
     private isDrawRotate: boolean = true;
     attachCanvas(container: HTMLDivElement) {
-        this.cnt = DIV("w-full h-full");
-        this.cvs = new Konva.Stage({
-            container: this.cnt,   // id of container <div>
-            width: this.width,
-            height: this.height,
-        } as Konva.StageConfig);
-
-        this.ctx = new Konva.Layer(); 
-        this.cvs.add(this.ctx);
-        this.ctx.add(this.render_layer.render);
-        this.ctx.add(this.render_layer.prev);
-        this.prev_ctx = this.render_layer.prev;
-        this.render_ctx = this.render_layer.render;
-
-
+        
         this.backgroundDiv.style.width = `${this.width}px`;
         this.backgroundDiv.style.height = `${this.height}px`;
         this.backgroundDiv.style.backgroundColor = "white";
@@ -446,14 +439,14 @@ export class EditorCanvas implements CanvasBase {
     render = () => {
         if (this.EventFired) {
             let angle = this.isDrawRotate ? this.angleScale.angle : 0;
-            this.draw_func.DrawFunction(this.prev_ctx, this.width, this.height,angle);
+            this.draw_func.DrawFunction(this.LayerManager.Layer.prev, this.width, this.height,angle);
             if(this.isPointOut !== undefined){
                 if (this.draw_func.PointerOut !== undefined) {
                     this.draw_func.PointerOut(this.isPointOut);
                     this.isPointOut = undefined;
                     requestAnimationFrame(this.render);
                 }
-                this.draw_func.DrawFunction(this.prev_ctx, this.width, this.height,angle);
+                this.draw_func.DrawFunction(this.LayerManager.Layer.prev, this.width, this.height,angle);
                 this.isPointOut = undefined;
             }
             if (this.draw_func.CanFinishDrawing) this.finishDrawing();
@@ -489,7 +482,7 @@ export class EditorCanvas implements CanvasBase {
             /*
             img.onload = () => {
                 this.ctx.clearRect(0, 0, this.width, this.height);
-                this.prev_ctx.clearRect(0, 0, this.width, this.height);
+                this.LayerManager.Layer.prev.clearRect(0, 0, this.width, this.height);
 
                 console.log(img.width);
                 console.log(img.height);
@@ -530,8 +523,8 @@ export class EditorCanvas implements CanvasBase {
             let img = new Image();
             img.src = undo_img;
             img.onload = () => {
-                // this.render_ctx.clearRect(0, 0, this.width, this.height);
-                // this.render_ctx.drawImage(img, 0, 0);
+                // this.LayerManager.Layer.render.clearRect(0, 0, this.width, this.height);
+                // this.LayerManager.Layer.render.drawImage(img, 0, 0);
                 this.render();
             };
         }
@@ -548,8 +541,8 @@ export class EditorCanvas implements CanvasBase {
             let img = new Image();
             img.src = this.redo_stk_history[this.redo_stk_history.length - 1];
             img.onload = () => {
-                // this.render_ctx.clearRect(0, 0, this.width, this.height);
-                // this.render_ctx.drawImage(img, 0, 0);
+                // this.LayerManager.Layer.render.clearRect(0, 0, this.width, this.height);
+                // this.LayerManager.Layer.render.drawImage(img, 0, 0);
                 this.render();
             };
         }
