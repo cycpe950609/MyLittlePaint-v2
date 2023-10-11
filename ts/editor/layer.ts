@@ -20,6 +20,8 @@ export class LayerManager {
     private cvs !: Konva.Stage;
     private ctx : Konva.Layer;
 
+    private id2zIndex : Map<string, number> = new Map<string, number>(); //
+
     constructor(containerr: HTMLDivElement,width: number,height: number) {
         this.cvs = new Konva.Stage({
             container: containerr,   // id of container <div>
@@ -30,6 +32,7 @@ export class LayerManager {
         this.cvs.add(this.ctx);
 
         this.defaultLayer = this.addLayer();
+        this.id2zIndex.set(this.defaultLayer, 0);
     }
 
     private addLayer() {
@@ -43,7 +46,20 @@ export class LayerManager {
 
     public addLayerAfter() {
         const id = this.addLayer();
-        // TODO : Layers order
+        const currentLayerZindex = this.id2zIndex.get(this.defaultLayer);
+        if(currentLayerZindex === undefined) throw new Error("INTERNAL_ERROR: ZIndex of layer is missing.");
+        // Update zIndex
+        this.id2zIndex.forEach((zIndex:number, layer_id: string) => {
+            if(zIndex >= currentLayerZindex)
+                this.id2zIndex.set(layer_id, zIndex+1);
+        });
+        this.id2zIndex.set(id,currentLayerZindex);
+        this.layerList.forEach((layer: Layer, layer_id: string) => {
+            let newZindex = this.id2zIndex.get(layer_id);
+            if(newZindex === undefined) throw new Error("INTERNAL_ERROR: ZIndex of layer is missing.");
+            layer.zIndex = newZindex;
+        })
+        this.defaultLayer = id;
         return id;
     }
 
@@ -98,6 +114,14 @@ export class Layer {
     public get Name() {
         return this._name;
     }
+
+    public get zIndex() {
+        return (this._render.zIndex as unknown as number)/2;
+    }
+    public set zIndex(zIndex: number) {
+        this._render.setZIndex(zIndex*2);
+        this._prev.setZIndex(zIndex*2+1);
+    };
 
     public content(){
         return this._render.children;

@@ -10,6 +10,7 @@ export declare class LayerManager {
     private defaultLayer;
     private cvs;
     private ctx;
+    private id2zIndex;
     constructor(containerr: HTMLDivElement, width: number, height: number);
     private addLayer;
     addLayerAfter(): string;
@@ -26,6 +27,8 @@ export declare class Layer {
     constructor(id: string, name: string);
     get ID(): string;
     get Name(): string;
+    get zIndex(): number;
+    set zIndex(zIndex: number);
     content(): (import("konva/lib/Group").Group | import("konva/lib/Shape").Shape<import("konva/lib/Shape").ShapeConfig>)[];
     merge(layer: Layer): void;
     private _previewImage;
