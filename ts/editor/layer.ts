@@ -148,7 +148,7 @@ class LayerMgrSidebar implements SidebarInterface {
         this.Visible = visible;
     }
     Name = "LayerMgrSidebar";
-    ImgName = "brush";
+    ImgName = "layer";
     Tip = "Layer Manager";
     Visible = true;
     Title = () => "Layer";
