@@ -81,7 +81,7 @@ export const bootstrap = async () => {
     console.log("[EUI] modeSelector bootstrapping");
 }
 let windowCache: {[key:string]:VNode} = {};
-let renderWindow = (uuid:string): VNode => {
+let renderWindow = async (uuid:string): Promise<VNode> => {
     if(uuid in windowCache && !window.editorUI.CenterCanvas.isUpdate) return windowCache[uuid];
 
     let sidebarImple = undefined;
@@ -96,32 +96,32 @@ let renderWindow = (uuid:string): VNode => {
     if(sidebarImple === undefined) throw new Error("INTERNAL_ERROR: SidebarInterface is not found");
     
     let sidebar = h("div#divcnt.property-bar",
-    { style : {pointerEvents: "auto"} },
+    { style : {pointerEvents: "all"} },
     [
         HDIV("pd_title", 
             HSPAN("pb_Property_title", sidebarImple.Title() )),
-        HDIV("pb_Property_bdy", sidebarImple.Body())
+        HDIV("pb_Property_bdy", await Promise.resolve( sidebarImple.Body() ))
     ]);
     return sidebar
 }
-const renderSidebarPart = (partList: ToolbarStateType<SidebarInterface>) : VNode => {
+const renderSidebarPart = async (partList: ToolbarStateType<SidebarInterface>) : Promise<VNode> => {
     return h("div#cnt.w-fit.h-fit",
-        Object.keys(partList).map((key:string) => {
+        await Promise.all(Object.keys(partList).map(async (key:string) => {
             if(partList[key].Visible === false){
                 if(key in windowCache)
                     delete windowCache[key];
                 return h("div");
             }
             
-            return renderWindow(key);
-        })
+            return await renderWindow(key);
+        }))
     );
 }
 
 let cntSidebar:HTMLDivElement;
 let lastSidebarVNode:VNode;
 
-const render = () => {
+const render = async () => {
     if(cntSidebar == null) {
         let cnt = document.getElementById("editorui-sidebar-windows");
         if(cnt === null) throw new Error(`INTERNAL_ERROR: Container of Sidebar-Window not found`);
@@ -151,10 +151,10 @@ const render = () => {
         style : {pointerEvents: "none"}
     },
     [
-        renderSidebarPart(dataTop         ),
-        renderSidebarPart(dataTopPerm     ),
-        renderSidebarPart(dataBottom      ),
-        renderSidebarPart(dataBottomPerm  ),
+        await renderSidebarPart(dataTop         ),
+        await renderSidebarPart(dataTopPerm     ),
+        await renderSidebarPart(dataBottom      ),
+        await renderSidebarPart(dataBottomPerm  ),
     ])
     
     // console.log("[DEB]", sidebar)

@@ -6,7 +6,7 @@ export default interface SidebarInterface {
     HistoryName?: string;
     Visible: boolean;
     Title: () => string;
-    Body: () => VNode;
+    Body: () => VNode | Promise<VNode>;
 }
 export declare class NoOPSidebar implements SidebarInterface {
     constructor(visible?: boolean, showText?: string);

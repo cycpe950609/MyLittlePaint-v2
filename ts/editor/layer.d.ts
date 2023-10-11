@@ -1,7 +1,7 @@
 import Konva from "konva";
 import SidebarInterface from '../editorUI/interface/sidebar';
 declare class LayerInfo {
-    Snapshot?: Konva.Image;
+    Snapshot: string;
     Name: string;
     ID: string;
 }
@@ -28,6 +28,10 @@ export declare class Layer {
     get Name(): string;
     content(): (import("konva/lib/Group").Group | import("konva/lib/Shape").Shape<import("konva/lib/Shape").ShapeConfig>)[];
     merge(layer: Layer): void;
+    private _previewImage;
+    private _isPreview;
+    get Preview(): string;
+    flush(): void;
     add(item: any): void;
     clear(): void;
     get render(): import("konva/lib/Group").Group;
@@ -40,6 +44,6 @@ declare class LayerMgrSidebar implements SidebarInterface {
     Tip: string;
     Visible: boolean;
     Title: () => string;
-    Body: () => import("snabbdom").VNode;
+    Body: () => Promise<import("snabbdom").VNode>;
 }
 export default LayerMgrSidebar;

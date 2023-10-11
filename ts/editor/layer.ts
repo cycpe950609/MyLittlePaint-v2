@@ -8,7 +8,7 @@ import { HBUTTON, HDIV, HSPAN, HTABLE, HTD, HTR } from "../editorUI/util/HHTMLEl
 import { EditorCanvas } from "./modeEditor";
 
 class LayerInfo {
-    public Snapshot?: Konva.Image;
+    public Snapshot : string = "";
     public Name : string = "";
     public ID : string = "";
 }
@@ -67,6 +67,7 @@ export class LayerManager {
     public get LayerList() : LayerInfo[] {
         let rtv : LayerInfo[] = [];
         this.layerList.forEach(layer => rtv.push({
+            Snapshot : layer.Preview,
             Name: layer.Name,
             ID: layer.ID,
         }));
@@ -102,15 +103,35 @@ export class Layer {
         return this._render.children;
     }
     public merge(layer: Layer) {
+        this._isPreview = false;
         layer.content().forEach((item) => {
             this._render.add(item);
         })
     }
+    private _previewImage: string = "";
+    private _isPreview: boolean = false;
+    public get Preview() {
+        if(!this._isPreview)
+        {
+            this._previewImage = this._render.toDataURL();
+            this._isPreview = true;
+        }
+        return this._previewImage;
+    }
+    public flush() {
+        this._isPreview = false;
+        this._prev.children.forEach((item) => {
+            this._render.add(item);
+        })
+        this._prev.destroyChildren();
+    }
     public add(item: any) {
+        this._isPreview = false;
         this._render.add(item);
     }
     public clear() {
         this._render.destroyChildren();
+        this._isPreview = false;
     }
 
     public get render() {
@@ -131,40 +152,45 @@ class LayerMgrSidebar implements SidebarInterface {
     Tip = "Layer Manager";
     Visible = true;
     Title = () => "Layer";
-    Body = () => {
+    Body = async () => {
         if (this.Visible) {
             // let pointsList = (cvs as LabelCanvas).AllNodes;
             let layersList = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.LayerList;
 
-            const createList = (classNames: string, idx: number, layer: LayerInfo) => {
-                let btnEdit = HBUTTON("edit_btn mt-20px px-0", "Modify", (e: MouseEvent) => {
+            const createList = async (classNames: string, idx: number, layer: LayerInfo) => {
+                let btnEdit = HBUTTON("edit_btn mt-20px px-0", "..", (e: MouseEvent) => {
                     (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
                 });
-            
+                let toImage = (img: string) => {
+                    return h('img.w-full', { style:{ width: `96px`, height: `54px`}, props: {src: img}})
+                    // TODO: set width and height from canvas size programmatically
+                }
                 return HTR(classNames, [
                     HTD(`${idx}`.padStart(6)),
-                    HTD('Preview'),
+                    HTD(toImage(layer.Snapshot)),
                     HTD(layer.Name),
                     HTD(btnEdit)
                 ])
             }
             let edittedLayer = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.Layer.ID;
-            let newTableBody = layersList.map((layer: LayerInfo, idx: number) => {
-                if(layer.ID === edittedLayer)
-                {
-                    return createList("editted-layer",idx,layer);
-                }
-                else
-                {
-                    return createList("normal-layer",idx,layer);
-                }
-            })
+            let newTableBody = await Promise.all(
+                layersList.map((layer: LayerInfo, idx: number) => {
+                    if(layer.ID === edittedLayer)
+                    {
+                        return createList("editted-layer",idx,layer);
+                    }
+                    else
+                    {
+                        return createList("normal-layer",idx,layer);
+                    }
+                })
+            );
             return HTABLE("w-full b-none align-right", [
                 HTR("layers-header", [
                     HTD('Index'),
                     HTD('Preview'),
                     HTD('Name'),
-                    HTD('Modify'),
+                    HTD('..'),
                 ])
             ],newTableBody);
         }

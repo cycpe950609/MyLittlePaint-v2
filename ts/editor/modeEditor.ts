@@ -119,10 +119,7 @@ export class EditorCanvas implements CanvasBase {
 
     private finishDrawing() {
         // console.log("[DEB] Finish Drawing ...");
-        this.LayerManager.Layer.prev.children.forEach((child)=> {
-            this.LayerManager.Layer.render.add(child);
-        })
-        this.LayerManager.Layer.prev.destroyChildren();
+        this.LayerManager.Layer.flush();
         this.EventFired = false;
         this.isDrawing = false;
         // this.ctx.globalCompositeOperation = "source-over";
