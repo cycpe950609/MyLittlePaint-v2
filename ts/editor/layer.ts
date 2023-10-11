@@ -185,19 +185,23 @@ class LayerMgrSidebar implements SidebarInterface {
             let layersList = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.LayerList;
 
             const createList = async (classNames: string, idx: number, layer: LayerInfo) => {
-                let btnEdit = HBUTTON("edit_btn mt-20px px-0", "..", (e: MouseEvent) => {
-                    (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
-                });
+                // let btnEdit = HBUTTON("edit_btn mt-20px px-0", "..", (e: MouseEvent) => {
+                //     (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
+                // });
                 let toImage = (img: string) => {
                     return h('img', { style:{ maxWidth: `96px`, maxHeight: `54px`}, props: {src: img}})
                     // TODO: set width and height from canvas size programmatically
                 }
-                return HTR(classNames, [
-                    HTD(`${idx}`.padStart(6)),
-                    HTD(toImage(layer.Snapshot)),
-                    HTD(layer.Name),
-                    HTD(btnEdit)
-                ])
+                return HTR(classNames, 
+                    [
+                        HTD(`${idx}`.padStart(6)),
+                        HTD(toImage(layer.Snapshot)),
+                        HTD(layer.Name),
+                    ],
+                    (e: MouseEvent) => {
+                        (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
+                    }
+                )
             }
             let edittedLayer = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.Layer.ID;
             let newTableBody = await Promise.all(
@@ -217,7 +221,7 @@ class LayerMgrSidebar implements SidebarInterface {
                     HTD('Index'),
                     HTD('Preview'),
                     HTD('Name'),
-                    HTD('..'),
+                    // HTD('..'),
                 ])
             ],newTableBody);
         }

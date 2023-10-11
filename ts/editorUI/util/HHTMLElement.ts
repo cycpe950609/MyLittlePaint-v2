@@ -26,13 +26,14 @@ export const HTABLE = (
 
 export const HTR = (
     className: string,
-    children?: VNode | VNode[]
+    children?: VNode | VNode[],
+    clickHandler?: any
 ) => {
     let ids = "tr#trcnt";
     if(className.split(' ').length > 0)
         className.split(' ').map((clsNme : string) => ids += `.${clsNme}`)
     if (children === undefined) return h(ids);
-    return h(ids, children);
+    return clickHandler !== undefined ? h(ids, {on: {click: clickHandler}}, children ) : h(ids, children);
 }
 
 export const HTD = (
