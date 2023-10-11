@@ -1,5 +1,5 @@
 import { Unsubscribe } from "@reduxjs/toolkit";
-import { ModeInfo, data } from "./data";
+import { ModeInfo, editorUIData } from "./data";
 import { DIV, LABEL } from "./util/HTMLElement";
 import { NoOPFunc } from "./interface/function";
 import { NoOPCanvas } from "./canvas";
@@ -10,7 +10,7 @@ export const bootstrap = async (props: ModeInfo) => {
     console.log(`[EUI] Mode ${props.modeName} bootstrapping`);
 }
 export const mount = async (props: ModeInfo) => {
-    unsubscribe[props.modeName] = data.subscribe(() =>
+    unsubscribe[props.modeName] = editorUIData.subscribe(() =>
     {
         // console.log("[EUI] data updated");
     });

@@ -5,7 +5,7 @@ import Toolbar, { ToolbarInterface, ToolbarPart } from './toolbar';
 // import SidebarInterface from './interface/sidebar';
 import ModeFunction, { modeNoop } from './interface/mode';
 import { DIV, LABEL, SPAN } from './util/HTMLElement';
-import {ModeInfo, data, modeAdd, modeDisable, modeEnable, modeRemove, modeSetRoot, modeToggle} from './data';
+import {ModeInfo, editorUIData, modeAdd, modeDisable, modeEnable, modeRemove, modeSetRoot, modeToggle} from './data';
 import SidebarInterface from './interface/sidebar';
 import Sidebar from './sidebar';
 import { CanvasBase, NoOPCanvas } from './canvas';
@@ -35,21 +35,21 @@ class ModeManger {
     }
 
     enable(modeName: string) {
-        data.dispatch(modeEnable(modeName));
+        editorUIData.dispatch(modeEnable(modeName));
     }
     disable(modeName: string) {
-        data.dispatch(modeDisable(modeName));
+        editorUIData.dispatch(modeDisable(modeName));
     }
     toggle(modeName: string) {
-        data.dispatch(modeToggle(modeName));
+        editorUIData.dispatch(modeToggle(modeName));
     }
 
     add(modeName: string, modeFunc: ModeFunction, enabled?: boolean) {
-        if (modeName in data.getState()["mode"].data) throw new Error("Mode " + modeName + " exist");
-        if (!(modeName in data.getState()["mode"].data)) {
+        if (modeName in editorUIData.getState()["mode"].data) throw new Error("Mode " + modeName + " exist");
+        if (!(modeName in editorUIData.getState()["mode"].data)) {
             let modeNameHash = `#/${modeName}`;
 
-            data.dispatch(modeAdd({
+            editorUIData.dispatch(modeAdd({
                 def: modeFunc,
                 enable: enabled !== undefined ? enabled : modeFunc.Enable,
                 modeName: modeName,
@@ -62,17 +62,17 @@ class ModeManger {
                 enable: enabled !== undefined ? enabled : modeFunc.Enable,
                 modeName: modeName,
             };
-            if(data.getState().mode.root === "")
-                data.dispatch(modeSetRoot(modeNameHash));
+            if(editorUIData.getState().mode.root === "")
+                editorUIData.dispatch(modeSetRoot(modeNameHash));
             singleSpa.registerApplication({
                 name: `mode_${modeName}`, // 子应用名
                 app: () => import("./mode"), // 如何加载你的子应用
                 // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
                 activeWhen: (url:Location) => {
-                    console.log("[EUI] Url hash" , url.hash,modeNameHash,modeNameHash in data.getState()['mode'].data);
+                    console.log("[EUI] Url hash" , url.hash,modeNameHash,modeNameHash in editorUIData.getState()['mode'].data);
                     return url.hash === `#/${modeName}` && 
-                    modeNameHash in data.getState()['mode'].data &&
-                    (data.getState()['mode'].data[modeNameHash] as ModeInfo).enable === true
+                    modeNameHash in editorUIData.getState()['mode'].data &&
+                    (editorUIData.getState()['mode'].data[modeNameHash] as ModeInfo).enable === true
                 }, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
                 customProps : modeInfo
             });
@@ -81,7 +81,7 @@ class ModeManger {
         console.log("[EUI] Add mode " + modeName);
     }
     remove(name: string) {
-        data.dispatch(modeRemove(name));
+        editorUIData.dispatch(modeRemove(name));
     }
 
     changeFunction(next_func: FunctionInterface) {
@@ -102,8 +102,8 @@ class ModeManger {
         let modeNameHash = `#/${modeName}`;
         // console.log(modeNameHash in data.getState()["mode"].data && data.getState()["mode"].data[modeNameHash].enable !== true)
         if (
-            modeNameHash in data.getState()["mode"].data &&
-            data.getState()["mode"].data[modeNameHash].enable !== true
+            modeNameHash in editorUIData.getState()["mode"].data &&
+            editorUIData.getState()["mode"].data[modeNameHash].enable !== true
         )
             return;
         console.log(`[MOD] Change mode to ${modeName} 2`);
@@ -233,8 +233,8 @@ class EditorUI {
             app: () => import("./errorPage"), // 如何加载你的子应用
             // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             activeWhen: (url:Location) => {
-                let isNotExistPath = !(url.hash in data.getState()["mode"].data);
-                let isDisableMode = (url.hash in data.getState()["mode"].data && data.getState()["mode"].data[url.hash].enable === false)
+                let isNotExistPath = !(url.hash in editorUIData.getState()["mode"].data);
+                let isDisableMode = (url.hash in editorUIData.getState()["mode"].data && editorUIData.getState()["mode"].data[url.hash].enable === false)
                 return isNotExistPath || isDisableMode;
             }, //(url) => true, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
         })

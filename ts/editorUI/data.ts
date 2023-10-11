@@ -60,8 +60,8 @@ let modeManagerSlice: Slice = createSlice({
             if (modeName in state) {
                 const mode = state.data[modeName];
                 if (mode === undefined) throw new Error("MODEMGR_INTERNAL_ERROR");
-                if (mode.enable === true) data.dispatch(modeManagerSlice.actions.disable(modeName));
-                else data.dispatch(modeManagerSlice.actions.enable(modeName));
+                if (mode.enable === true) editorUIData.dispatch(modeManagerSlice.actions.disable(modeName));
+                else editorUIData.dispatch(modeManagerSlice.actions.enable(modeName));
             }
         },
         add: (state, action: PayloadAction<ModeInfo>) => {
@@ -171,7 +171,7 @@ export const editorUIActions = {
     statusbar_right_: statusRightSlice.actions,
 } as {[key:string]:CaseReducerActions<SliceCaseReducers<any>, string>}
 
-export const data: Store = configureStore({
+export const editorUIData: Store = configureStore({
     reducer: {
         mode: modeManagerSlice.reducer,
         menubar_left_: menuLeftSlice.reducer,

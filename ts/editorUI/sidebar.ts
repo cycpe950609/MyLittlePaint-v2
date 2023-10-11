@@ -1,6 +1,6 @@
 import { Unsubscribe } from "@reduxjs/toolkit";
 import { CanvasBase } from "./canvas";
-import { ToolbarStateType, data, editorUIActions } from "./data";
+import { ToolbarStateType, editorUIData, editorUIActions } from "./data";
 import EditorUI from "./EditorUI";
 import FunctionInterface from "./interface/function";
 import SidebarInterface from "./interface/sidebar";
@@ -47,21 +47,21 @@ class Sidebar implements FunctionInterface {
     }
 
     showSidebar() {
-        let curSideInterface = data.getState()[this.listName].data[this.interfaceUUID];
+        let curSideInterface = editorUIData.getState()[this.listName].data[this.interfaceUUID];
         if(curSideInterface.Visible === true) return;
         curSideInterface.Visible = true;
-        data.dispatch(editorUIActions[this.listName].update({id:this.interfaceUUID,new_func:curSideInterface}))
+        editorUIData.dispatch(editorUIActions[this.listName].update({id:this.interfaceUUID,new_func:curSideInterface}))
     }
 
     hiddenSidebar() {
-        let curSideInterface = data.getState()[this.listName].data[this.interfaceUUID];
+        let curSideInterface = editorUIData.getState()[this.listName].data[this.interfaceUUID];
         if(curSideInterface.Visible === false) return;
         curSideInterface.Visible = false;
-        data.dispatch(editorUIActions[this.listName].update({id:this.interfaceUUID,new_func:curSideInterface}))
+        editorUIData.dispatch(editorUIActions[this.listName].update({id:this.interfaceUUID,new_func:curSideInterface}))
     }
 
     toggleSidebar() {
-        let curSideInterface = data.getState()[this.listName].data[this.interfaceUUID];
+        let curSideInterface = editorUIData.getState()[this.listName].data[this.interfaceUUID];
         let isShowSidebar = !curSideInterface.Visible;
         if (isShowSidebar === true) this.showSidebar();
         else this.hiddenSidebar();
@@ -85,14 +85,14 @@ let renderWindow = async (uuid:string): Promise<VNode> => {
     if(uuid in windowCache && !window.editorUI.CenterCanvas.isUpdate) return windowCache[uuid];
 
     let sidebarImple = undefined;
-    if(uuid in data.getState()['sidebar_top_'].data)
-        sidebarImple = data.getState()['sidebar_top_'].data[uuid];
-    else if(uuid in data.getState()['sidebar_top_perm'].data)
-        sidebarImple = data.getState()['sidebar_top_perm'].data[uuid];
-        else if(uuid in data.getState()['sidebar_bottom_'].data)
-        sidebarImple = data.getState()['sidebar_bottom_'].data[uuid];
-    else if(uuid in data.getState()['sidebar_bottom_perm'].data)
-        sidebarImple = data.getState()['sidebar_bottom_perm'].data[uuid];
+    if(uuid in editorUIData.getState()['sidebar_top_'].data)
+        sidebarImple = editorUIData.getState()['sidebar_top_'].data[uuid];
+    else if(uuid in editorUIData.getState()['sidebar_top_perm'].data)
+        sidebarImple = editorUIData.getState()['sidebar_top_perm'].data[uuid];
+        else if(uuid in editorUIData.getState()['sidebar_bottom_'].data)
+        sidebarImple = editorUIData.getState()['sidebar_bottom_'].data[uuid];
+    else if(uuid in editorUIData.getState()['sidebar_bottom_perm'].data)
+        sidebarImple = editorUIData.getState()['sidebar_bottom_perm'].data[uuid];
     if(sidebarImple === undefined) throw new Error("INTERNAL_ERROR: SidebarInterface is not found");
     
     let sidebar = h("div#divcnt.property-bar",
@@ -128,10 +128,10 @@ const render = async () => {
         cntSidebar = cnt as HTMLDivElement;
         lastSidebarVNode = toVNode(cntSidebar);
     }
-    let dataTop         = data.getState()[`sidebar_top_`].data;
-    let dataTopPerm     = data.getState()[`sidebar_top_perm`].data;
-    let dataBottom      = data.getState()[`sidebar_bottom_`].data;
-    let dataBottomPerm  = data.getState()[`sidebar_bottom_perm`].data;
+    let dataTop         = editorUIData.getState()[`sidebar_top_`].data;
+    let dataTopPerm     = editorUIData.getState()[`sidebar_top_perm`].data;
+    let dataBottom      = editorUIData.getState()[`sidebar_bottom_`].data;
+    let dataBottomPerm  = editorUIData.getState()[`sidebar_bottom_perm`].data;
     
     // <div class="sidebar" id="editorui-sidebar-windows">
     let visiableCount = (partList: ToolbarStateType<SidebarInterface>) => {
@@ -163,7 +163,7 @@ const render = async () => {
     window.editorUI.CenterCanvas.isUpdate = false;
 }
 export const mount = async () => {
-    unsubscribe = data.subscribe(() =>
+    unsubscribe = editorUIData.subscribe(() =>
     {
         console.log("[EUI] Sidebar-Window updated");
         render();

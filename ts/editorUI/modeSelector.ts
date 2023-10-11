@@ -1,5 +1,5 @@
 import { Unsubscribe } from "@reduxjs/toolkit";
-import { ModeInfo, data, editorUIActions } from "./data";
+import { ModeInfo, editorUIData, editorUIActions } from "./data";
 import { DIV, LABEL } from "./util/HTMLElement";
 
 let unsubscribe: Unsubscribe;
@@ -13,11 +13,11 @@ const render = () => {
     editMenuMiddle.innerHTML = '';
     let tmpMEM = DIV("buttongroup");
     editMenuMiddle.appendChild(tmpMEM)
-    if (Object.keys(data.getState()["mode"].data).length > 0) {
+    if (Object.keys(editorUIData.getState()["mode"].data).length > 0) {
         tmpMEM.innerHTML = "";
-        Object.keys(data.getState()["mode"].data).forEach((key) => {
+        Object.keys(editorUIData.getState()["mode"].data).forEach((key) => {
             //prettier-ignore
-            let val = data.getState().mode.data[key]
+            let val = editorUIData.getState().mode.data[key]
             const btn = LABEL("buttongroup-item");
             const btnName = val.def.ModeSelectorText;
             if(btnName === undefined) return;
@@ -48,12 +48,12 @@ const render = () => {
     }
 }
 export const mount = async () => {
-    unsubscribe = data.subscribe(() =>
+    unsubscribe = editorUIData.subscribe(() =>
     {
-        if(data.getState()["mode"].action !== "")
+        if(editorUIData.getState()["mode"].action !== "")
         {
             // console.log("modeSelector rerendered");
-            data.dispatch(editorUIActions.mode.rendered(null));
+            editorUIData.dispatch(editorUIActions.mode.rendered(null));
             render();
         }
     });

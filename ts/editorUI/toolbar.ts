@@ -1,7 +1,7 @@
 import EditorUI from "./EditorUI";
 import { v4 as uuidv4 } from "uuid";
 import { Unsubscribe } from "@reduxjs/toolkit";
-import { ToolbarStateType, data, editorUIActions } from "./data";
+import { ToolbarStateType, editorUIData, editorUIActions } from "./data";
 import { DIV, LABEL, SPAN } from "./util/HTMLElement";
 import FunctionInterface from "./interface/function";
 import createFunctionInterfaceButton from "./util/createFunctionInterfaceButton";
@@ -26,7 +26,7 @@ export class ToolbarPart<ButtonInfoType> {
     clear() {
         console.log(`[EUI] Toolbar ${this.name} clear`);
         // console.log(Object.id(this) + " is cleared");
-        data.dispatch(editorUIActions[this.name].clear(undefined));
+        editorUIData.dispatch(editorUIActions[this.name].clear(undefined));
     }
 
     addButtonList(funcList?: ButtonInfoType[]): string[] {
@@ -38,13 +38,13 @@ export class ToolbarPart<ButtonInfoType> {
 
     addButton(func: ButtonInfoType): string {
         const btnID = uuidv4();
-        data.dispatch(editorUIActions[this.name].add({id:btnID,func: func}));
+        editorUIData.dispatch(editorUIActions[this.name].add({id:btnID,func: func}));
         return btnID;
     }
 
     removeButton(id: string): boolean {
-        if (id in data.getState()[this.name]) {
-            data.dispatch(editorUIActions[this.name].remove(id));
+        if (id in editorUIData.getState()[this.name]) {
+            editorUIData.dispatch(editorUIActions[this.name].remove(id));
             return true;
         }
         return false;
@@ -52,10 +52,10 @@ export class ToolbarPart<ButtonInfoType> {
 
     size() {
         // console.log(this.button);
-        return Object.keys(data.getState()[this.name]).length;
+        return Object.keys(editorUIData.getState()[this.name]).length;
     }
     hasChildren() {
-        return Object.keys(data.getState()[this.name]).length > 0;
+        return Object.keys(editorUIData.getState()[this.name]).length > 0;
     }
 }
 class Toolbar<ButtonInfoType> {
@@ -132,10 +132,10 @@ const render = (type: string) => {
     if(cnt === null) throw new Error(`INTERNAL_ERROR: Container of ${type} not found`);
 
     let underscore      = type.replace('-','_');
-    let dataTop         = data.getState()[`${underscore}_top_`].data;
-    let dataTopPerm     = data.getState()[`${underscore}_top_perm`].data;
-    let dataBottom      = data.getState()[`${underscore}_bottom_`].data;
-    let dataBottomPerm  = data.getState()[`${underscore}_bottom_perm`].data;
+    let dataTop         = editorUIData.getState()[`${underscore}_top_`].data;
+    let dataTopPerm     = editorUIData.getState()[`${underscore}_top_perm`].data;
+    let dataBottom      = editorUIData.getState()[`${underscore}_bottom_`].data;
+    let dataBottomPerm  = editorUIData.getState()[`${underscore}_bottom_perm`].data;
     // <div class="toolbar-vertical" style="display: flex;">
     //      <div class="toolbar-perm"></div>
     //      <div class="toolbar-top">
@@ -168,16 +168,16 @@ const render = (type: string) => {
     cnt.parentNode?.replaceChild(toolbar,cnt);
 }
 export const mount = async (props: ToolbarPropsType) => {
-    unsubscribe[props.type] = data.subscribe(() =>
+    unsubscribe[props.type] = editorUIData.subscribe(() =>
     {
         // console.log(`[EUI] data updated : toolbar ${props.type}`,data.getState());
         let underscore      = props.type.replace('-','_');
         if(
             (
-                rendered[`${underscore}_top_`]          === false && data.getState()[`${underscore}_top_`].action !== ""         ||
-                rendered[`${underscore}_top_perm`]      === false && data.getState()[`${underscore}_top_perm`].action !== ""     ||
-                rendered[`${underscore}_bottom_`]       === false && data.getState()[`${underscore}_bottom_`].action !== ""      ||
-                rendered[`${underscore}_bottom_perm`]   === false && data.getState()[`${underscore}_bottom_perm`].action !== ""  
+                rendered[`${underscore}_top_`]          === false && editorUIData.getState()[`${underscore}_top_`].action !== ""         ||
+                rendered[`${underscore}_top_perm`]      === false && editorUIData.getState()[`${underscore}_top_perm`].action !== ""     ||
+                rendered[`${underscore}_bottom_`]       === false && editorUIData.getState()[`${underscore}_bottom_`].action !== ""      ||
+                rendered[`${underscore}_bottom_perm`]   === false && editorUIData.getState()[`${underscore}_bottom_perm`].action !== ""  
             )
         )
         {
@@ -192,9 +192,9 @@ export const mount = async (props: ToolbarPropsType) => {
             `${underscore}_bottom_`,
             `${underscore}_bottom_perm`,
         ].forEach((name) => {
-            if(data.getState()[name].action !== "" && rendered[name] === true){
+            if(editorUIData.getState()[name].action !== "" && rendered[name] === true){
                 rendered[name] = false;
-                data.dispatch(editorUIActions[name].rendered(null));
+                editorUIData.dispatch(editorUIActions[name].rendered(null));
             }
         })
 

@@ -1,4 +1,4 @@
-import { data } from "./data";
+import { editorUIData } from "./data";
 import { DIV, SPAN } from "./util/HTMLElement";
 import Alert from "./util/alert";
 import * as singleSpa from 'single-spa';
@@ -22,7 +22,7 @@ export const mount = async () => {
     cvs.style.color = "red";
     cnt.appendChild(cvs);
     setTimeout(() => {
-        singleSpa.navigateToUrl(data.getState().mode.root)
+        singleSpa.navigateToUrl(editorUIData.getState().mode.root)
     },1000);
 }
 export const unmount = async () => {

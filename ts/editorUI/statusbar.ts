@@ -1,5 +1,5 @@
 import { Unsubscribe } from "@reduxjs/toolkit";
-import { StatusBarStateType as StatusbarStateType, data, editorUIActions } from "./data";
+import { StatusBarStateType as StatusbarStateType, editorUIData, editorUIActions } from "./data";
 import { DIV, SPAN } from "./util/HTMLElement";
 
 export class TipComponent {
@@ -9,7 +9,7 @@ export class TipComponent {
         this.idx = idx;
         this.side = side;
         console.log(`[EUI] ${idx} tip component created`);
-        data.dispatch(editorUIActions[`statusbar_${this.side}_`].update(
+        editorUIData.dispatch(editorUIActions[`statusbar_${this.side}_`].update(
             {
                 id:this.idx,
                 new_func:{
@@ -20,7 +20,7 @@ export class TipComponent {
         ));
     }
     public updateTip(tip: string) {
-        data.dispatch(editorUIActions[`statusbar_${this.side}_`].update(
+        editorUIData.dispatch(editorUIActions[`statusbar_${this.side}_`].update(
             {
                 id:this.idx,
                 new_func:{
@@ -31,11 +31,11 @@ export class TipComponent {
         ));
     }
     public hide() {
-        data.dispatch(editorUIActions[`statusbar_${this.side}_`].update(
+        editorUIData.dispatch(editorUIActions[`statusbar_${this.side}_`].update(
             {
                 id:this.idx,
                 new_func:{
-                    tip: data.getState()[`statusbar_${this.side}_`][this.idx].tip,
+                    tip: editorUIData.getState()[`statusbar_${this.side}_`][this.idx].tip,
                     showed: false,
                 }
             }
@@ -43,11 +43,11 @@ export class TipComponent {
         
     }
     public show() {
-        data.dispatch(editorUIActions[`statusbar_${this.side}_`].update(
+        editorUIData.dispatch(editorUIActions[`statusbar_${this.side}_`].update(
             {
                 id:this.idx,
                 new_func:{
-                    tip: data.getState()[`statusbar_${this.side}_`][this.idx].tip,
+                    tip: editorUIData.getState()[`statusbar_${this.side}_`][this.idx].tip,
                     showed: true,
                 }
             }
@@ -63,11 +63,11 @@ class StatusBar {
     private __createTipComponent__(defaultTip: string,right: boolean = false){
         if(right)
         {
-            let count = Object.keys(data.getState()[`statusbar_right_`].data).length;
+            let count = Object.keys(editorUIData.getState()[`statusbar_right_`].data).length;
             return new TipComponent(defaultTip,"right",count+1);
         }
         else {
-            let count = Object.keys(data.getState()[`statusbar_left_`].data).length;
+            let count = Object.keys(editorUIData.getState()[`statusbar_left_`].data).length;
             return new TipComponent(defaultTip,"left",count+1);
         }
     }
@@ -76,8 +76,8 @@ class StatusBar {
     }
 
     public clear(): void {
-        data.dispatch(editorUIActions[`statusbar_left_`].clear(undefined));
-        data.dispatch(editorUIActions[`statusbar_right_`].clear(undefined));
+        editorUIData.dispatch(editorUIActions[`statusbar_left_`].clear(undefined));
+        editorUIData.dispatch(editorUIActions[`statusbar_right_`].clear(undefined));
     }
 }
 
@@ -110,16 +110,16 @@ const render = (side: string) => {
     if(statusbarCNT === null) throw new Error("INTERNAL_ERROR: Cannot find container of editorui-menubar-middle");
     statusbarCNT.innerHTML = '';
     // console.log("[DEB] Statusbar data : ",data.getState()[`statusbar_${side}_`]);
-    let sidebar = DIV(name,renderStatusPart(`statusbar_${side}_`,data.getState()[`statusbar_${side}_`].data));
+    let sidebar = DIV(name,renderStatusPart(`statusbar_${side}_`,editorUIData.getState()[`statusbar_${side}_`].data));
     sidebar.id = name;
     statusbarCNT.parentNode?.replaceChild(sidebar,statusbarCNT);
 }
 export const mount = async (props: StatusbarPropsType) => {
-    unsubscribe[props.side] = data.subscribe(() =>
+    unsubscribe[props.side] = editorUIData.subscribe(() =>
     {
         if(
             (
-                rendered[`statusbar_${props.side}_`]    === false && data.getState()[`statusbar_${props.side}_`].action !== ""
+                rendered[`statusbar_${props.side}_`]    === false && editorUIData.getState()[`statusbar_${props.side}_`].action !== ""
             )
         )
         {
@@ -132,10 +132,10 @@ export const mount = async (props: StatusbarPropsType) => {
             `statusbar_${props.side}_`,
         ].forEach((name) => {
             // console.log(`[DEB] ${data.getState()[name].action}, ${rendered[name]}`)
-            if(data.getState()[name].action !== "" && rendered[name] === true){
+            if(editorUIData.getState()[name].action !== "" && rendered[name] === true){
                 rendered[name] = false;
                 // console.log(`[DEB] Statusbar ${name} rendered`)
-                data.dispatch(editorUIActions[name].rendered(null));
+                editorUIData.dispatch(editorUIActions[name].rendered(null));
             }
         })
     });

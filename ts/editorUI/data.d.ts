@@ -17,4 +17,4 @@ export type StatusBarStateType = ToolbarStateType<StatusTipInfo>;
 export declare const editorUIActions: {
     [key: string]: CaseReducerActions<SliceCaseReducers<any>, string>;
 };
-export declare const data: Store;
+export declare const editorUIData: Store;

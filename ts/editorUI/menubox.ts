@@ -1,5 +1,5 @@
 import { Unsubscribe } from "@reduxjs/toolkit";
-import { ToolbarStateType, data, editorUIActions } from "./data";
+import { ToolbarStateType, editorUIData, editorUIActions } from "./data";
 import { DIV } from "./util/HTMLElement";
 import createFunctionInterfaceButton from "./util/createFunctionInterfaceButton";
 
@@ -30,8 +30,8 @@ const render = (side: string) => {
     let cnt = document.getElementById(name);
     if(cnt === null) throw new Error(`INTERNAL_ERROR: Container of menubar ${side} part not found`);
     
-    let dataMode    = data.getState()[`menubar_${side}_`].data;
-    let dataPerm    = data.getState()[`menubar_${side}_perm`].data;
+    let dataMode    = editorUIData.getState()[`menubar_${side}_`].data;
+    let dataPerm    = editorUIData.getState()[`menubar_${side}_perm`].data;
     cnt.innerHTML = ""
     if(
         Object.keys(dataMode).length +
@@ -59,12 +59,12 @@ const render = (side: string) => {
     cnt.parentNode?.replaceChild(toolbar,cnt);
 }
 export const mount = async (props: MenubarPropsType) => {
-    unsubscribe[props.side] = data.subscribe(() =>
+    unsubscribe[props.side] = editorUIData.subscribe(() =>
     {
         if(
             (
-                rendered[`menubar_${props.side}_perm`]  === false && data.getState()[`menubar_${props.side}_perm`].action !== ""         ||
-                rendered[`menubar_${props.side}_`]      === false && data.getState()[`menubar_${props.side}_`].action !== "" 
+                rendered[`menubar_${props.side}_perm`]  === false && editorUIData.getState()[`menubar_${props.side}_perm`].action !== ""         ||
+                rendered[`menubar_${props.side}_`]      === false && editorUIData.getState()[`menubar_${props.side}_`].action !== "" 
             )
         )
         {
@@ -77,9 +77,9 @@ export const mount = async (props: MenubarPropsType) => {
             `menubar_${props.side}_perm`,
             `menubar_${props.side}_`
         ].forEach((name) => {
-            if(data.getState()[name].action !== "" && rendered[name] === true){
+            if(editorUIData.getState()[name].action !== "" && rendered[name] === true){
                 rendered[name] = false;
-                data.dispatch(editorUIActions[name].rendered(null));
+                editorUIData.dispatch(editorUIActions[name].rendered(null));
             }
         })
     });
