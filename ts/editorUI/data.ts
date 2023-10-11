@@ -144,6 +144,7 @@ let sideTopPermSlice: Slice = createToolbarPartSlice<SidebarInterface>("sidebar_
 let sideBottomSlice: Slice = createToolbarPartSlice<SidebarInterface>("sidebar_bottom");
 let sideBottomPermSlice: Slice = createToolbarPartSlice<SidebarInterface>("sidebar_bottom_perm");
 
+let sideWindowSlice: Slice = createToolbarPartSlice<null>("sidebar_window");
 
 export type StatusTipInfo = {
     tip: string,
@@ -167,6 +168,7 @@ export const editorUIActions = {
     sidebar_top_perm: sideTopPermSlice.actions,
     sidebar_bottom_: sideBottomSlice.actions,
     sidebar_bottom_perm: sideBottomPermSlice.actions,
+    sidebar_window: sideWindowSlice.actions,
     statusbar_left_: statusLeftSlice.actions,
     statusbar_right_: statusRightSlice.actions,
 } as {[key:string]:CaseReducerActions<SliceCaseReducers<any>, string>}
@@ -186,6 +188,7 @@ export const editorUIData: Store = configureStore({
         sidebar_top_perm: sideTopPermSlice.reducer,
         sidebar_bottom_: sideBottomSlice.reducer,
         sidebar_bottom_perm: sideBottomPermSlice.reducer,
+        sidebar_window: sideWindowSlice.reducer,
         statusbar_left_: statusLeftSlice.reducer,
         statusbar_right_: statusRightSlice.reducer,
     },

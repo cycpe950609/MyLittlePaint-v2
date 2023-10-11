@@ -81,15 +81,19 @@ export const bootstrap = async () => {
     console.log("[EUI] modeSelector bootstrapping");
 }
 let windowCache: {[key:string]:VNode} = {};
-let renderWindow = async (uuid:string): Promise<VNode> => {
-    if(uuid in windowCache && !window.editorUI.CenterCanvas.isUpdate) return windowCache[uuid];
+let renderWindow = async (uuid:string, windowName: string): Promise<VNode> => {
+    if(uuid in windowCache && 
+        !window.editorUI.CenterCanvas.isUpdate && 
+        !(editorUIData.getState()['sidebar_window'].action === `sidebar_window.${windowName}.update`) 
+    ) 
+        return windowCache[uuid];
 
     let sidebarImple = undefined;
     if(uuid in editorUIData.getState()['sidebar_top_'].data)
         sidebarImple = editorUIData.getState()['sidebar_top_'].data[uuid];
     else if(uuid in editorUIData.getState()['sidebar_top_perm'].data)
         sidebarImple = editorUIData.getState()['sidebar_top_perm'].data[uuid];
-        else if(uuid in editorUIData.getState()['sidebar_bottom_'].data)
+    else if(uuid in editorUIData.getState()['sidebar_bottom_'].data)
         sidebarImple = editorUIData.getState()['sidebar_bottom_'].data[uuid];
     else if(uuid in editorUIData.getState()['sidebar_bottom_perm'].data)
         sidebarImple = editorUIData.getState()['sidebar_bottom_perm'].data[uuid];
@@ -113,7 +117,7 @@ const renderSidebarPart = async (partList: ToolbarStateType<SidebarInterface>) :
                 return h("div");
             }
             
-            return await renderWindow(key);
+            return await renderWindow(key, partList[key].Name);
         }))
     );
 }

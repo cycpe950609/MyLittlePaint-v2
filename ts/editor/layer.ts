@@ -3,6 +3,7 @@ import { GroupConfig } from "konva/lib/Group";
 import { KonvaEventListener } from "konva/lib/Node";
 import { h, toVNode } from "snabbdom";
 import { v4 as uuidv4 } from "uuid";
+import { editorUIActions, editorUIData } from "../editorUI/data";
 import SidebarInterface from '../editorUI/interface/sidebar'
 import { HBUTTON, HDIV, HSPAN, HTABLE, HTD, HTR } from "../editorUI/util/HHTMLElement";
 import { EditorCanvas } from "./modeEditor";
@@ -67,6 +68,7 @@ export class LayerManager {
         if(!this.layerList.has(id))
             throw new Error(`Layer ${id} not exist`);
         this.defaultLayer = id;
+        editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "LayerMgrSidebar", new_func: null}));
     }
 
     public get Canvas() : Konva.Stage {
@@ -148,6 +150,7 @@ export class Layer {
             this._render.add(item);
         })
         this._prev.destroyChildren();
+        editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "LayerMgrSidebar", new_func: null}));
     }
     public add(item: any) {
         this._isPreview = false;
