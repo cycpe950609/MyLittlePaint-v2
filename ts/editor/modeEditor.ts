@@ -163,7 +163,7 @@ export class EditorCanvas implements CanvasBase {
         this.backgroundDiv.style.height = `${this.height}px`;
         this.backgroundDiv.style.backgroundColor = "white";
         
-        let interactCVS = interact(container, {
+        let interactCVS = interact(this.cnt, {
             styleCursor: false
         });
         let gestureStart = (e: Interact.GestureEvent) => {

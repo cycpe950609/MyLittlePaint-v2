@@ -186,7 +186,7 @@ class LayerMgrSidebar implements SidebarInterface {
                     (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
                 });
                 let toImage = (img: string) => {
-                    return h('img.w-full', { style:{ width: `96px`, height: `54px`}, props: {src: img}})
+                    return h('img', { style:{ maxWidth: `96px`, maxHeight: `54px`}, props: {src: img}})
                     // TODO: set width and height from canvas size programmatically
                 }
                 return HTR(classNames, [
