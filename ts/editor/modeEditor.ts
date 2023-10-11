@@ -545,14 +545,29 @@ export class EditorCanvas implements CanvasBase {
         }
     };
     public save() {
+        let btnOK = BUTTON("ok_btn", "OK")
+        let txtName = TEXT("txt")
         let dia = new Dialog(
             "Enter the name of image",
             DIV("w-fit flex flex-row", [
-                TEXT("txt"),
+                txtName,
                 SPAN("whitespace", "  .png "),
-                BUTTON("ok_btn", "OK")
+                btnOK
             ])
         );
+        btnOK.onclick = () => {
+            // function from https://stackoverflow.com/a/15832662/512042
+            let downloadURI = (uri: string, name: string) => {
+                var link = document.createElement('a');
+                link.download = name;
+                link.href = uri;
+                // document.body.appendChild(link);
+                link.click();
+                // document.body.removeChild(link);
+            }
+            downloadURI(this.LayerManager.Canvas.toDataURL(), txtName.value);
+            dia.close();
+        };
         dia.show();
     }
     public clear() {
