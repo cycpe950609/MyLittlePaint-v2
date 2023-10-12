@@ -144,7 +144,6 @@ export class PathDraw extends PolygonBase {
             let operationParser = (operator: string,var1Str: string,var2Str: string) : string => {
                 let varname1 = var1Str.slice(2, var1Str.length-1);
                 let varname2 = var2Str.slice(2, var2Str.length-1);
-                console.log("[DEB] varname : ",varname1);
                 let ptX = null, ptY = null;
 
                 let oper2value = (varname: string) => {
@@ -189,7 +188,6 @@ export class PathDraw extends PolygonBase {
                         break;
                 }
             }
-            console.log("[DEB] DrawPath : ", drawPath);
 
             polygon.setAttr('x',this.LastX);
             polygon.setAttr('y',this.LastY);
