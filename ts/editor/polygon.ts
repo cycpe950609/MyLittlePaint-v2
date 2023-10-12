@@ -2,9 +2,9 @@ import Konva from "konva";
 import { ShapeConfig } from "konva/lib/Shape";
 import { CircleConfig } from "konva/lib/shapes/Circle";
 import { PathConfig } from "konva/lib/shapes/Path";
-import { DrawBase } from "../editorUI/canvas";
 import { PaintContext } from "./canvas";
-
+import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType, DrawBase } from "../editorUI/canvas";
+import { editorUIActions, editorUIData } from "../editorUI/data";
 export class CircleCVSFunc extends DrawBase
 {
     Name = 'Circle';
@@ -50,6 +50,40 @@ export class CircleCVSFunc extends DrawBase
         }
     };
     CompositeOperation = <GlobalCompositeOperation>"source-over"
+    get Settings () {
+        let rtv: CanvasInterfaceSettings = {
+            Name : "Circle",
+            Settings : new Map<string, CanvasSettingEntry<any>>([
+                ["BorderBrush" , {
+                    type: CanvasSettingType.Color,
+                    label: "Border Color",
+                    value: this.BorderBrush
+                }],
+                ["BorderWidth", {
+                    type: CanvasSettingType.Number,
+                    label: "Border Width",
+                    info: [1,64], // min,max
+                    value: this.BorderWidth
+                }]
+            ])
+        };
+        return rtv;
+    }
+    set Settings (setting: CanvasInterfaceSettings) {
+        if(setting.Settings === undefined)
+            throw new Error("INTENAL_ERROR: Settings are missing");
+        let refreshWindow = false;
+        if(setting.Settings.get("BorderBrush") !== undefined) {
+            this.BorderBrush = setting.Settings.get("BorderBrush")?.value;
+            refreshWindow = true;
+        }
+        if(setting.Settings.get("BorderWidth") !== undefined) {
+            this.BorderWidth = setting.Settings.get("BorderWidth")?.value;
+            refreshWindow = true;
+        }
+        if(refreshWindow)
+            editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "SettingsPage", new_func: null}));
+    }
 }
 
 /* Triangle */
@@ -99,6 +133,40 @@ export class TriangleCVSFunc extends DrawBase
         }    
     };
     CompositeOperation = <GlobalCompositeOperation>"source-over"
+    get Settings () {
+        let rtv: CanvasInterfaceSettings = {
+            Name : "Brush",
+            Settings : new Map<string, CanvasSettingEntry<any>>([
+                ["BorderBrush" , {
+                    type: CanvasSettingType.Color,
+                    label: "Brush Color",
+                    value: this.BorderBrush
+                }],
+                ["BorderWidth", {
+                    type: CanvasSettingType.Number,
+                    label: "Brush Width",
+                    info: [1,64], // min,max
+                    value: this.BorderWidth
+                }]
+            ])
+        };
+        return rtv;
+    }
+    set Settings (setting: CanvasInterfaceSettings) {
+        if(setting.Settings === undefined)
+            throw new Error("INTENAL_ERROR: Settings are missing");
+        let refreshWindow = false;
+        if(setting.Settings.get("BorderBrush") !== undefined) {
+            this.BorderBrush = setting.Settings.get("BorderBrush")?.value;
+            refreshWindow = true;
+        }
+        if(setting.Settings.get("BorderWidth") !== undefined) {
+            this.BorderWidth = setting.Settings.get("BorderWidth")?.value;
+            refreshWindow = true;
+        }
+        if(refreshWindow)
+            editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "SettingsPage", new_func: null}));
+    }
 }
 
 
@@ -147,4 +215,38 @@ export class RectangleCVSFunc extends DrawBase
         }
     };
     CompositeOperation= <GlobalCompositeOperation>"source-over"
+    get Settings () {
+        let rtv: CanvasInterfaceSettings = {
+            Name : "Brush",
+            Settings : new Map<string, CanvasSettingEntry<any>>([
+                ["BorderBrush" , {
+                    type: CanvasSettingType.Color,
+                    label: "Brush Color",
+                    value: this.BorderBrush
+                }],
+                ["BorderWidth", {
+                    type: CanvasSettingType.Number,
+                    label: "Brush Width",
+                    info: [1,64], // min,max
+                    value: this.BorderWidth
+                }]
+            ])
+        };
+        return rtv;
+    }
+    set Settings (setting: CanvasInterfaceSettings) {
+        if(setting.Settings === undefined)
+            throw new Error("INTENAL_ERROR: Settings are missing");
+        let refreshWindow = false;
+        if(setting.Settings.get("BorderBrush") !== undefined) {
+            this.BorderBrush = setting.Settings.get("BorderBrush")?.value;
+            refreshWindow = true;
+        }
+        if(setting.Settings.get("BorderWidth") !== undefined) {
+            this.BorderWidth = setting.Settings.get("BorderWidth")?.value;
+            refreshWindow = true;
+        }
+        if(refreshWindow)
+            editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "SettingsPage", new_func: null}));
+    }
 }

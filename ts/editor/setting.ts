@@ -36,14 +36,14 @@ class SettingPageSidebar implements SidebarInterface {
         if(setting.Name === undefined || setting.Settings == undefined)
             return HDIV("w-full","Empty Setting Page");
         let settingList: VNode[] = [];
-        setting.Settings.forEach((setting) => {
+        setting.Settings.forEach((setting, settingName: string) => {
             switch (setting.type) {
                 case CanvasSettingType.Number:
                     if(setting.info === undefined || (setting.info as number[]).length !== 2) throw new Error("INTERNAL_ERROR: Setting info has wrong type");
                     settingList.push(HHorizonRanger(setting.label,setting.info[0],setting.info[1],setting.value,(ev: Event)=>{
                         let newSet: CanvasInterfaceSettings = {
                             Settings: new Map<string,CanvasSettingEntry<any>>([
-                                ["BrushWidth", {
+                                [settingName, {
                                     type: setting.type,
                                     label:setting.label,
                                     info: setting.info,

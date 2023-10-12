@@ -57,7 +57,7 @@ class BrushCVSFunc extends DrawBase {
                 ["BrushWidth", {
                     type: CanvasSettingType.Number,
                     label: "Brush Width",
-                    info: [1,128], // min,max
+                    info: [1,64], // min,max
                     value: this.BrushWidth
                 }]
             ])

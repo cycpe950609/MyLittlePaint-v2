@@ -1,5 +1,5 @@
 import Konva from "konva";
-import { DrawBase } from "../editorUI/canvas";
+import { CanvasInterfaceSettings, DrawBase } from "../editorUI/canvas";
 declare class LineCVSFunc extends DrawBase {
     Name: string;
     HistoryName: string;
@@ -10,5 +10,7 @@ declare class LineCVSFunc extends DrawBase {
     BrushWidth: number;
     DrawFunction: (Ctx: Konva.Group, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
+    get Settings(): CanvasInterfaceSettings;
+    set Settings(setting: CanvasInterfaceSettings);
 }
 export default LineCVSFunc;

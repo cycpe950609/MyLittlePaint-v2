@@ -98,7 +98,7 @@ export class DrawBase implements CanvasInterface {
     }
     public DrawFunction(ctx: Konva.Group, width: number, height: number,rotate: number) {};
     public CompositeOperation: GlobalCompositeOperation = <GlobalCompositeOperation>"source-over";
-    public set Settings(setting:CanvasInterfaceSettings) {}; 
+    public set Settings(setting:CanvasInterfaceSettings) { console.log("[DEB] Testing") }; 
     public get Settings() { return {} as CanvasInterfaceSettings; }; 
 };
 export class NoOPCVSFunc extends DrawBase{};

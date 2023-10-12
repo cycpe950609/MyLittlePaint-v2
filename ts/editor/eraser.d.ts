@@ -1,5 +1,5 @@
 import Konva from "konva";
-import { DrawBase } from "../editorUI/canvas";
+import { CanvasInterfaceSettings, DrawBase } from "../editorUI/canvas";
 declare class EraserCVSFunc extends DrawBase {
     Name: string;
     HistoryName: string;
@@ -8,7 +8,9 @@ declare class EraserCVSFunc extends DrawBase {
     CursorName: string;
     BrushWidth: number;
     BrushColor: string;
-    DrawFunction: (Ctx: Konva.Group) => void;
+    DrawFunction: (Ctx: Konva.Group, width: number, height: number) => void;
     CompositeOperation: GlobalCompositeOperation;
+    get Settings(): CanvasInterfaceSettings;
+    set Settings(setting: CanvasInterfaceSettings);
 }
 export default EraserCVSFunc;
