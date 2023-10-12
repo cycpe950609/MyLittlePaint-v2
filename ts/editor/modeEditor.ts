@@ -2,7 +2,8 @@ import {
     CanvasBase,
     CanvasInterface,
     NoOPCVSFunc,
-    PaintEvent
+    PaintEvent,
+    CanvasInterfaceSettings,
 } from "../editorUI/canvas";
 import Dialog from "../editorUI/dialog";
 import ModeFunction from "../editorUI/interface/mode";
@@ -37,6 +38,9 @@ import Konva from "konva";
 import { CircleConfig } from "konva/lib/shapes/Circle";
 import { ShapeConfig } from "konva/lib/Shape";
 import LayerMgrSidebar, { LayerManager, Layer } from './layer';
+import SettingPageSidebar from "./setting";
+import { editorUIActions, editorUIData } from "../editorUI/data";
+
 
 export class btnCanvas implements FunctionInterface {
     Name: string;
@@ -429,6 +433,7 @@ export class EditorCanvas implements CanvasBase {
             this.cnt.style.cursor =
                 "url(img/cursor/" + func.CursorName + ".cur), auto";
         }
+        editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "SettingsPage", new_func: null}));
     }
     resizeCanvas = (e?: UIEvent) => {};
     removeCanvas = () => {};
@@ -721,6 +726,16 @@ export class EditorCanvas implements CanvasBase {
         if (ev.key === "Shift") { ev.preventDefault(); this.isShiftDown = false;}
         if (ev.key === "Alt") { ev.preventDefault(); this.isAltDown = false;}
     };
+
+    public get settings (){
+        if(this.draw_func.Settings === undefined)
+            return {} as CanvasInterfaceSettings;
+        return this.draw_func.Settings;
+    } 
+    public set settings (setting: CanvasInterfaceSettings) {
+        if(this.draw_func.Settings !== undefined)
+            this.draw_func.Settings = setting;
+    }
 }
 
 class modeEditor implements ModeFunction {
@@ -753,6 +768,7 @@ class modeEditor implements ModeFunction {
     
     RightToolbarTop = [
         new LayerMgrSidebar(),
+        new SettingPageSidebar(),
     ];
     
     StartMode() {}

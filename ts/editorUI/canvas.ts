@@ -26,7 +26,24 @@ export interface CanvasInterface {
         rotate: number,
     ) => void;
     CompositeOperation: GlobalCompositeOperation;
+    Settings?: CanvasInterfaceSettings; 
 }
+
+export enum CanvasSettingType {
+    Number,
+    Color,
+}
+export type CanvasSettingEntry<DATATYPE> = {
+    type: CanvasSettingType;
+    label: string;
+    info?: any; // Infomation of the setting, e.g. value range
+    value: DATATYPE;
+} 
+export type CanvasInterfaceSettings = {
+    Name?: string;
+    ImgName?: string;
+    Settings?: Map<string,CanvasSettingEntry<any>>;
+};
 
 export class DrawBase implements CanvasInterface {
     Name: string = "base";
@@ -81,6 +98,8 @@ export class DrawBase implements CanvasInterface {
     }
     public DrawFunction(ctx: Konva.Group, width: number, height: number,rotate: number) {};
     public CompositeOperation: GlobalCompositeOperation = <GlobalCompositeOperation>"source-over";
+    public set Settings(setting:CanvasInterfaceSettings) {}; 
+    public get Settings() { return {} as CanvasInterfaceSettings; }; 
 };
 export class NoOPCVSFunc extends DrawBase{};
 export interface CanvasBase {
@@ -91,6 +110,7 @@ export interface CanvasBase {
     removeCanvas: () => void;
     render: () => void;
     update?: (time: DOMHighResTimeStamp) => void; //Use in animateion
+    settings?: CanvasInterfaceSettings;
     isUpdate: boolean;
 }
 

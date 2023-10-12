@@ -18,7 +18,23 @@ export interface CanvasInterface {
     PointerOut?: (e: PaintEvent) => void;
     DrawFunction: (ctx: Konva.Group, width: number, height: number, rotate: number) => void;
     CompositeOperation: GlobalCompositeOperation;
+    Settings?: CanvasInterfaceSettings;
 }
+export declare enum CanvasSettingType {
+    Number = 0,
+    Color = 1
+}
+export type CanvasSettingEntry<DATATYPE> = {
+    type: CanvasSettingType;
+    label: string;
+    info?: any;
+    value: DATATYPE;
+};
+export type CanvasInterfaceSettings = {
+    Name?: string;
+    ImgName?: string;
+    Settings?: Map<string, CanvasSettingEntry<any>>;
+};
 export declare class DrawBase implements CanvasInterface {
     Name: string;
     private _canfinishDrawing;
@@ -37,6 +53,8 @@ export declare class DrawBase implements CanvasInterface {
     protected rotatedPoint(x: number, y: number, radian: number): [number, number];
     DrawFunction(ctx: Konva.Group, width: number, height: number, rotate: number): void;
     CompositeOperation: GlobalCompositeOperation;
+    set Settings(setting: CanvasInterfaceSettings);
+    get Settings(): CanvasInterfaceSettings;
 }
 export declare class NoOPCVSFunc extends DrawBase {
 }
@@ -48,6 +66,7 @@ export interface CanvasBase {
     removeCanvas: () => void;
     render: () => void;
     update?: (time: DOMHighResTimeStamp) => void;
+    settings?: CanvasInterfaceSettings;
     isUpdate: boolean;
 }
 export declare class NoOPCanvas implements CanvasBase {

@@ -106,6 +106,7 @@ let renderWindow = async (uuid:string, windowName: string): Promise<VNode> => {
             HSPAN("pb_Property_title", sidebarImple.Title() )),
         HDIV("pb_Property_bdy", await Promise.resolve( sidebarImple.Body() ))
     ]);
+    windowCache[windowName] = sidebar;
     return sidebar
 }
 const renderSidebarPart = async (partList: ToolbarStateType<SidebarInterface>) : Promise<VNode> => {

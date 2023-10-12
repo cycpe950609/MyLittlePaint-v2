@@ -1,8 +1,9 @@
-import { CanvasBase, CanvasInterface } from "../editorUI/canvas";
+import { CanvasBase, CanvasInterface, CanvasInterfaceSettings } from "../editorUI/canvas";
 import ModeFunction from "../editorUI/interface/mode";
 import { btnClear, btnResetRotate, btnResetScale, btnSave, btnToggleTouch, btnUpload } from "./menu";
 import FunctionInterface from "../editorUI/interface/function";
 import LayerMgrSidebar, { LayerManager } from './layer';
+import SettingPageSidebar from "./setting";
 export declare class btnCanvas implements FunctionInterface {
     Name: string;
     ImgName?: string | undefined;
@@ -70,6 +71,8 @@ export declare class EditorCanvas implements CanvasBase {
     private cvsMouseWheelHandler;
     private docKeydownHandler;
     private docKeyupHandler;
+    get settings(): CanvasInterfaceSettings;
+    set settings(setting: CanvasInterfaceSettings);
 }
 declare class modeEditor implements ModeFunction {
     Enable: boolean;
@@ -77,7 +80,7 @@ declare class modeEditor implements ModeFunction {
     MenuToolbarLeft: (btnUpload | btnClear | btnCanvas)[];
     MenuToolbarRight: (btnResetScale | btnResetRotate | btnToggleTouch | btnSave)[];
     LeftToolbarTop: btnCanvas[];
-    RightToolbarTop: LayerMgrSidebar[];
+    RightToolbarTop: (LayerMgrSidebar | SettingPageSidebar)[];
     StartMode(): void;
     EndMode(): void;
 }

@@ -1,6 +1,7 @@
 import Konva from "konva";
 import { Line, LineConfig } from "konva/lib/shapes/Line";
-import { DrawBase } from "../editorUI/canvas";
+import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType, DrawBase } from "../editorUI/canvas";
+import { editorUIActions, editorUIData } from "../editorUI/data";
 import { PaintContext } from "./canvas";
 
 class BrushCVSFunc extends DrawBase {
@@ -44,6 +45,40 @@ class BrushCVSFunc extends DrawBase {
     };
     
     CompositeOperation  = <GlobalCompositeOperation>"source-over";
+    get Settings () {
+        let rtv: CanvasInterfaceSettings = {
+            Name : "Brush",
+            Settings : new Map<string, CanvasSettingEntry<any>>([
+                ["BrushColor" , {
+                    type: CanvasSettingType.Color,
+                    label: "Brush Color",
+                    value: this.BrushColor
+                }],
+                ["BrushWidth", {
+                    type: CanvasSettingType.Number,
+                    label: "Brush Width",
+                    info: [1,128], // min,max
+                    value: this.BrushWidth
+                }]
+            ])
+        };
+        return rtv;
+    }
+    set Settings (setting: CanvasInterfaceSettings) {
+        if(setting.Settings === undefined)
+            throw new Error("INTENAL_ERROR: Settings are missing");
+        let refreshWindow = false;
+        if(setting.Settings.get("BrushColor") !== undefined) {
+            this.BrushColor = setting.Settings.get("BrushColor")?.value;
+            refreshWindow = true;
+        }
+        if(setting.Settings.get("BrushWidth") !== undefined) {
+            this.BrushWidth = setting.Settings.get("BrushWidth")?.value;
+            refreshWindow = true;
+        }
+        if(refreshWindow)
+            editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "SettingsPage", new_func: null}));
+    }
 };
 
 export default BrushCVSFunc;
