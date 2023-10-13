@@ -1,6 +1,6 @@
 import { h, VNode } from "snabbdom";
 import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType } from "../editorUI/canvas";
-import EditorUI from "../editorUI/EditorUI";
+// import EditorUI from "../editorUI/EditorUI";
 import SidebarInterface from "../editorUI/interface/sidebar";
 import { HDIV, HSPAN } from "../editorUI/util/HHTMLElement";
 import { EditorCanvas } from "./modeEditor";

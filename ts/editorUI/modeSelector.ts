@@ -1,5 +1,5 @@
 import { Unsubscribe } from "@reduxjs/toolkit";
-import { ModeInfo, editorUIData, editorUIActions } from "./data";
+import { editorUIData, editorUIActions } from "./data";
 import { DIV, LABEL } from "./util/HTMLElement";
 
 let unsubscribe: Unsubscribe;

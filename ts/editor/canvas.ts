@@ -64,7 +64,7 @@ export class PaintContext {
     public closePath = () => { this.render_ctx.closePath(); };
     public arc = (x: number, y: number, radius: number, startAngle: number, endAngle: number, counterclockwise?: boolean) => { 
         this.render_ctx.arc(x,y,radius,startAngle,endAngle,counterclockwise);
-     };
+    };
     public fill = () => { this.render_ctx.fill(); };
     public stroke = () => { this.render_ctx.stroke(); };
 

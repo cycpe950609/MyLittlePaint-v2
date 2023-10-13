@@ -1,16 +1,16 @@
 import { CanvasBase, CanvasInterface, CanvasInterfaceSettings } from "../editorUI/canvas";
-import ModeFunction from "../editorUI/interface/mode";
+import { ModeFunction, FunctionInterface } from "../editorUI";
 import { btnClear, btnResetRotate, btnResetScale, btnSave, btnToggleTouch, btnUpload } from "./menu";
-import FunctionInterface from "../editorUI/interface/function";
 import LayerMgrSidebar, { LayerManager } from './layer';
 import SettingPageSidebar from "./setting";
 export declare class btnCanvas implements FunctionInterface {
     Name: string;
     ImgName?: string | undefined;
     Tip?: string | (() => string) | undefined;
-    private draw_func;
-    constructor(func: CanvasInterface);
-    StartFunction: (cvs: CanvasBase) => boolean;
+    private loadModule;
+    constructor(name: string, imgName: string, tip: string, loadModule: () => Promise<CanvasInterface>);
+    private draw_func?;
+    StartFunction: (cvs: CanvasBase) => Promise<boolean>;
 }
 declare global {
     interface Touch {

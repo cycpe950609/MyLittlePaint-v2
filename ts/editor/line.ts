@@ -1,6 +1,6 @@
 import Konva from "konva";
 import { LineConfig } from "konva/lib/shapes/Line";
-import { PaintContext } from "./canvas";
+// import { PaintContext } from "./canvas";
 import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType, DrawBase } from "../editorUI/canvas";
 import { editorUIActions, editorUIData } from "../editorUI/data";
 

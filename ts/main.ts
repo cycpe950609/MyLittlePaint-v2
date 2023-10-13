@@ -1,23 +1,22 @@
-import { CanvasBase } from "./editorUI/canvas";
-import Dialog from "./editorUI/dialog";
-import EditorUI from "./editorUI/EditorUI";
-import FunctionInterface from "./editorUI/interface/function";
-export let frontendUI: EditorUI;//Remain for no build errors only
+import "./publicPath";
 import data from "./storage";
 export { data };
 
+
 import addID2Object from "./ObjectID";
-import Alert from "./editorUI/util/alert";
-import axios from 'axios';
-import modeEditor from "./editor/modeEditor";
+// import modeEditor from "./editor/modeEditor";
 import { enableMapSet } from 'immer'
 enableMapSet()
 
 addID2Object();
 
 document.addEventListener("DOMContentLoaded", async () => {
-    window.editorUI = new EditorUI();
-    window.editorUI.Mode.add("editor", new modeEditor());
+    // __webpack_public_path__ = process.env.ASSET_PATH as string;
+    let eui = await import( /* webpackChunkName: "editorUI" */ './editorUI/');
+    let editor = await import( /* webpackChunkName: "modeEditor" */ './editor/modeEditor');
+    // console.log("[DEB] dynamic loaded : ", typeof eui, eui.default)
+    window.editorUI = new eui.default();
+    window.editorUI.Mode.add("editor", new editor.default());
     window.editorUI.Mount("editorUI_container");
     window.editorUI.Mode.changeTo("editor");
 });

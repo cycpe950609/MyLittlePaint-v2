@@ -1,11 +1,11 @@
 import Konva from "konva";
 import { GroupConfig } from "konva/lib/Group";
-import { KonvaEventListener } from "konva/lib/Node";
-import { h, toVNode } from "snabbdom";
+// import { KonvaEventListener } from "konva/lib/Node";
+import { h } from "snabbdom";
 import { v4 as uuidv4 } from "uuid";
 import { editorUIActions, editorUIData } from "../editorUI/data";
 import SidebarInterface from '../editorUI/interface/sidebar'
-import { HBUTTON, HDIV, HSPAN, HTABLE, HTD, HTR } from "../editorUI/util/HHTMLElement";
+import { HTABLE, HTD, HTR } from "../editorUI/util/HHTMLElement";
 import { EditorCanvas } from "./modeEditor";
 
 class LayerInfo {

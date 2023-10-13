@@ -1,10 +1,10 @@
 import { Unsubscribe } from "@reduxjs/toolkit";
-import { CanvasBase } from "./canvas";
+// import { CanvasBase } from "./canvas";
 import { ToolbarStateType, editorUIData, editorUIActions } from "./data";
-import EditorUI from "./EditorUI";
+// import EditorUI from "./EditorUI";
 import FunctionInterface from "./interface/function";
 import SidebarInterface from "./interface/sidebar";
-import { DIV, SPAN } from "./util/HTMLElement";
+// import { DIV, SPAN } from "./util/HTMLElement";
 import {
     init,
     classModule,

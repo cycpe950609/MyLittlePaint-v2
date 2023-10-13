@@ -1,8 +1,8 @@
-import EditorUI from "./EditorUI";
+// import EditorUI from "./EditorUI";
 import { v4 as uuidv4 } from "uuid";
 import { Unsubscribe } from "@reduxjs/toolkit";
 import { ToolbarStateType, editorUIData, editorUIActions } from "./data";
-import { DIV, LABEL, SPAN } from "./util/HTMLElement";
+import { DIV } from "./util/HTMLElement";
 import FunctionInterface from "./interface/function";
 import createFunctionInterfaceButton from "./util/createFunctionInterfaceButton";
 

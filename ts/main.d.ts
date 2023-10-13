@@ -1,4 +1,3 @@
-import EditorUI from "./editorUI/EditorUI";
-export declare let frontendUI: EditorUI;
+import "./publicPath";
 import data from "./storage";
 export { data };

@@ -27,7 +27,7 @@ export interface FunctionInterface {
     ImgName?: string;
     Tip?: string | (() => string); // Tip showed on StatusBar
     HistoryName?: string; // Undefined if dont want to store in redo/undo hostory
-    StartFunction: (cvs: CanvasBase) => boolean; // triggered when click ToolButton of this function
+    StartFunction: (cvs: CanvasBase) => boolean | Promise<boolean>; // triggered when click ToolButton of this function
     EndFunction?: (cvs: CanvasBase) => void; // triggered when click ToolButton of OTHER function
 }
 

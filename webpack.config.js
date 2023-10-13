@@ -8,6 +8,8 @@ const __dirname = path.dirname(__filename);
 
 import RemarkHTML from "remark-html";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import CompressionPlugin from 'compression-webpack-plugin';
+import webpack from "webpack";
 
 const module = {
     entry: {
@@ -22,6 +24,7 @@ const module = {
     },
     output: {
         filename: "js/[name].bundle.js",
+        chunkFilename: "js/[name].chunk.js",
         publicPath: "public/",
         path: path.resolve(__dirname, "public/")
     },
@@ -33,7 +36,11 @@ const module = {
                 { from: "css", to: "css" },
                 { from: "img", to: "img" }
             ]
-        })
+        }),
+        new CompressionPlugin(),
+        new webpack.DefinePlugin({
+            'process.env.ASSET_PATH': JSON.stringify(`./`),
+        }),
         // new CleanWebpackPlugin({
         //     dangerouslyAllowCleanPatternsOutsideProject: true,
         //     dry: false
@@ -85,7 +92,7 @@ const module = {
             }
         ]
     },
-    resolve: { extensions: [".ts", ".js"] }
+    resolve: { extensions: [".ts", ".js"] },
 };
 
 export default module;

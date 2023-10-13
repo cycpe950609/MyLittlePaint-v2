@@ -7,7 +7,7 @@ import {
     SliceCaseReducers,
     Store} from "@reduxjs/toolkit";
 import thunkMiddleware from "redux-thunk";
-import logger from "redux-logger";
+// import logger from "redux-logger";
 import FunctionInterface from "./interface/function";
 import SidebarInterface from "./interface/sidebar";
 import ModeFunction from "./interface/mode";

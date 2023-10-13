@@ -2,7 +2,7 @@ import Konva from "konva";
 import { Line, LineConfig } from "konva/lib/shapes/Line";
 import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType, DrawBase } from "../editorUI/canvas";
 import { editorUIActions, editorUIData } from "../editorUI/data";
-import { PaintContext } from "./canvas";
+// import { PaintContext } from "./canvas";
 
 class BrushCVSFunc extends DrawBase {
 

@@ -1,8 +1,8 @@
 import { Unsubscribe } from "@reduxjs/toolkit";
 import { ModeInfo, editorUIData } from "./data";
-import { DIV, LABEL } from "./util/HTMLElement";
+// import { DIV, LABEL } from "./util/HTMLElement";
 import { NoOPFunc } from "./interface/function";
-import { NoOPCanvas } from "./canvas";
+// import { NoOPCanvas } from "./canvas";
 
 let unsubscribe: {[key:string]:Unsubscribe} = {};
 

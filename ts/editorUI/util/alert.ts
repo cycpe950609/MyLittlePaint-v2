@@ -1,5 +1,5 @@
 import Dialog from "../dialog"
-import { BUTTON, DIV, LABEL, SPAN } from "./HTMLElement"
+import { BUTTON, DIV, LABEL } from "./HTMLElement"
 
 const Alert = (msg: string) => {
     

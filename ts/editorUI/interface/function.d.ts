@@ -21,7 +21,7 @@ export interface FunctionInterface {
     ImgName?: string;
     Tip?: string | (() => string);
     HistoryName?: string;
-    StartFunction: (cvs: CanvasBase) => boolean;
+    StartFunction: (cvs: CanvasBase) => boolean | Promise<boolean>;
     EndFunction?: (cvs: CanvasBase) => void;
 }
 export default FunctionInterface;

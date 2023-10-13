@@ -1,6 +1,6 @@
 import { editorUIData } from "./data";
 import { DIV, SPAN } from "./util/HTMLElement";
-import Alert from "./util/alert";
+// import Alert from "./util/alert";
 import * as singleSpa from 'single-spa';
 
 export const bootstrap = async () => {}

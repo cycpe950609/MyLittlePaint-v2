@@ -1,10 +1,9 @@
 import * as singleSpa from 'single-spa';
 import editoruiTemplate from "./editorui.html"
 import FunctionInterface, { NoOPFunc } from './interface/function';
-import Toolbar, { ToolbarInterface, ToolbarPart } from './toolbar';
+import Toolbar, { ToolbarPart } from './toolbar';
 // import SidebarInterface from './interface/sidebar';
-import ModeFunction, { modeNoop } from './interface/mode';
-import { DIV, LABEL, SPAN } from './util/HTMLElement';
+import ModeFunction from './interface/mode';
 import {ModeInfo, editorUIData, modeAdd, modeDisable, modeEnable, modeRemove, modeSetRoot, modeToggle} from './data';
 import SidebarInterface from './interface/sidebar';
 import Sidebar from './sidebar';
@@ -66,7 +65,7 @@ class ModeManger {
                 editorUIData.dispatch(modeSetRoot(modeNameHash));
             singleSpa.registerApplication({
                 name: `mode_${modeName}`, // 子应用名
-                app: () => import("./mode"), // 如何加载你的子应用
+                app: () => import(/* webpackChunkName: "eui-mode-mount" */"./mode"), // 如何加载你的子应用
                 // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
                 activeWhen: (url:Location) => {
                     console.log("[EUI] Url hash" , url.hash,modeNameHash,modeNameHash in editorUIData.getState()['mode'].data);
@@ -167,7 +166,7 @@ class EditorUI {
         this.Toolbar = new Toolbar<FunctionInterface>("toolbar","",(listName: string,key: string,func: FunctionInterface) => func);
         singleSpa.registerApplication({
             name: 'toolbar_left', // 子应用名
-            app: () => import("./toolbar"), // 如何加载你的子应用
+            app: () => import(/* webpackChunkName: "eui-toolbar" */"./toolbar"), // 如何加载你的子应用
             // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             activeWhen: '/', //(url) => true, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             customProps: {type: "toolbar"}
@@ -176,14 +175,14 @@ class EditorUI {
         this.Sidebar = new Toolbar<SidebarInterface>("sidebar","",(listName: string,key: string,func: SidebarInterface) => { console.log("[EUI] Create sidebar funcInterface"); return new Sidebar(listName,key,func)});
         singleSpa.registerApplication({
             name: 'toolbar_right', // 子应用名
-            app: () => import("./toolbar"), // 如何加载你的子应用
+            app: () => import(/* webpackChunkName: "eui-toolbar" */"./toolbar"), // 如何加载你的子应用
             // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             activeWhen: '/', //(url) => true, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             customProps: {type: "sidebar"}
         })
         singleSpa.registerApplication({
             name: 'sidebar_window', // 子应用名
-            app: () => import("./sidebar"), // 如何加载你的子应用
+            app: () => import(/* webpackChunkName: "eui-sidebar" */"./sidebar"), // 如何加载你的子应用
             // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             activeWhen: '/', //(url) => true, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
         })
@@ -191,14 +190,14 @@ class EditorUI {
         this.Statusbar = new StatusBar();
         singleSpa.registerApplication({
             name: 'statusbar_left', // 子应用名
-            app: () => import("./statusbar"), // 如何加载你的子应用
+            app: () => import(/* webpackChunkName: "eui-statusbar" */"./statusbar"), // 如何加载你的子应用
             // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             activeWhen: '/', //(url) => true, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             customProps: {side: "left"}
         })
         singleSpa.registerApplication({
             name: 'statusbar_right', // 子应用名
-            app: () => import("./statusbar"), // 如何加载你的子应用
+            app: () => import(/* webpackChunkName: "eui-statusbar" */"./statusbar"), // 如何加载你的子应用
             // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             activeWhen: '/', //(url) => true, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             customProps: {side: "right"}
@@ -207,14 +206,14 @@ class EditorUI {
         this.Menubar = new Menubar();
         singleSpa.registerApplication({
             name: 'menubar_left', // 子应用名
-            app: () => import("./menubox"), // 如何加载你的子应用
+            app: () => import(/* webpackChunkName: "eui-menubar" */"./menubox"), // 如何加载你的子应用
             // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             activeWhen: '/', //(url) => true, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             customProps: {side: "left"}
         })
         singleSpa.registerApplication({
             name: 'menubar_right', // 子应用名
-            app: () => import("./menubox"), // 如何加载你的子应用
+            app: () => import(/* webpackChunkName: "eui-menubar" */"./menubox"), // 如何加载你的子应用
             // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             activeWhen: '/', //(url) => true, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             customProps: {side: "right"}
@@ -223,14 +222,14 @@ class EditorUI {
         this.Mode = new ModeManger();
         singleSpa.registerApplication({
             name: 'mode_selector', // 子应用名
-            app: () => import("./modeSelector"), // 如何加载你的子应用
+            app: () => import(/* webpackChunkName: "eui-modeselector" */"./modeSelector"), // 如何加载你的子应用
             // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             activeWhen: '/', //(url) => true, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
         })
 
         singleSpa.registerApplication({
             name: 'error_handler_page', // 子应用名
-            app: () => import("./errorPage"), // 如何加载你的子应用
+            app: () => import(/* webpackChunkName: "eui-error" */"./errorPage"), // 如何加载你的子应用
             // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
             activeWhen: (url:Location) => {
                 let isNotExistPath = !(url.hash in editorUIData.getState()["mode"].data);

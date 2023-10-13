@@ -1,5 +1,5 @@
 import Konva from "konva";
-import { PaintCanvas, PaintContext } from "../editor/canvas";
+// import { PaintCanvas, PaintContext } from "../editor/canvas";
 
 export type PaintEvent = {
     X: number;

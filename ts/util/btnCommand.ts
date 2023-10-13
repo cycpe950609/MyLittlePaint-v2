@@ -3,7 +3,6 @@ import Dialog from "../editorUI/dialog";
 import FunctionInterface from "../editorUI/interface/function";
 import { BUTTON, DIV, TEXT } from "../editorUI/util/HTMLElement";
 import Alert from "../editorUI/util/alert";
-import { frontendUI } from "../main";
 import axios from "axios";
 
 class btnCommand implements FunctionInterface {

@@ -6,19 +6,18 @@ import {
     CanvasInterfaceSettings,
 } from "../editorUI/canvas";
 import Dialog from "../editorUI/dialog";
-import ModeFunction from "../editorUI/interface/mode";
+// import ModeFunction from "../editorUI/interface/mode";
+import { ModeFunction, FunctionInterface } from "../editorUI";
 import {
     BUTTON,
-    CANVAS,
     DIV,
-    LABEL,
     SPAN,
     TEXT
 } from "../editorUI/util/HTMLElement";
-import BrushCVSFunc from "./brush";
-import EraserCVSFunc from "./eraser";
-import LineCVSFunc from "./line";
-import { CircleCVSFunc, RectangleCVSFunc, TriangleCVSFunc } from "./polygon";
+// import BrushCVSFunc from "./brush";
+// import EraserCVSFunc from "./eraser";
+// import LineCVSFunc from "./line";
+// import { CircleCVSFunc, RectangleCVSFunc, TriangleCVSFunc } from "./polygon";
 import {
     btnClear,
     btnRedo,
@@ -31,12 +30,8 @@ import {
 } from "./menu";
 import { TipComponent } from "../editorUI/statusbar";
 import interact from "interactjs";
-import FunctionInterface from "../editorUI/interface/function";
+// import FunctionInterface from "../editorUI/interface/function";
 import Interact from "@interactjs/types/index";
-import { PaintCanvas, PaintContext } from "./canvas";
-import Konva from "konva";
-import { CircleConfig } from "konva/lib/shapes/Circle";
-import { ShapeConfig } from "konva/lib/Shape";
 import LayerMgrSidebar, { LayerManager, Layer } from './layer';
 import SettingPageSidebar from "./setting";
 import { editorUIActions, editorUIData } from "../editorUI/data";
@@ -47,15 +42,18 @@ export class btnCanvas implements FunctionInterface {
     ImgName?: string | undefined;
     Tip?: string | (() => string) | undefined;
 
-    private draw_func: CanvasInterface;
-    constructor(func: CanvasInterface) {
-        this.Name = func.Name;
-        this.ImgName = func.ImgName;
-        this.Tip = func.Tip;
-        this.draw_func = func;
+    private loadModule: () => Promise<CanvasInterface>;
+    constructor(name: string, imgName: string, tip: string, loadModule: () => Promise<CanvasInterface>) {
+        this.Name = name;
+        this.ImgName = imgName;
+        this.Tip = tip;
+        this.loadModule = loadModule;
     }
 
-    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+    private draw_func?: CanvasInterface;
+    StartFunction = async (cvs: CanvasBase) => {
+        if(this.draw_func == undefined)
+            this.draw_func = await this.loadModule();
         cvs.setFunction(this.draw_func);
         return true;
     };
@@ -748,7 +746,8 @@ class modeEditor implements ModeFunction {
         // new btnUndo(),
         // new btnRedo(),
         new btnClear(),
-        new btnCanvas(new EraserCVSFunc())
+        // new btnCanvas(new EraserCVSFunc()),
+        new btnCanvas('Eraser','eraser','Eraser', async() => new (await import(/* webpackChunkName: "paint-eraser" */"./eraser")).default()),
     ];
 
     MenuToolbarRight = [
@@ -759,11 +758,11 @@ class modeEditor implements ModeFunction {
     ];
 
     LeftToolbarTop = [
-        new btnCanvas(new BrushCVSFunc()),
-        new btnCanvas(new LineCVSFunc()),
-        new btnCanvas(new CircleCVSFunc()),
-        new btnCanvas(new TriangleCVSFunc()),
-        new btnCanvas(new RectangleCVSFunc())
+        new btnCanvas('Brush','brush','Brush',async() =>                new (await import(/* webpackChunkName: "paint-brush" */"./brush")).default() ),
+        new btnCanvas('Line','line','Line',async() =>                   new (await import(/* webpackChunkName: "paint-line" */"./line")).default() ),
+        new btnCanvas('Circle','circle','Circle',async() =>             new (await import(/* webpackChunkName: "paint-polygon" */"./polygon")).CircleCVSFunc() ),
+        new btnCanvas('Triangle','triangle','Triangle',async() =>       new (await import(/* webpackChunkName: "paint-polygon" */"./polygon")).TriangleCVSFunc() ),
+        new btnCanvas('Rectangle','rectangle','Rectangle',async() =>    new (await import(/* webpackChunkName: "paint-polygon" */"./polygon")).RectangleCVSFunc() ),
     ];
     
     RightToolbarTop = [
