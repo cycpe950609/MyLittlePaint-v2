@@ -46,6 +46,7 @@
     "compression-webpack-plugin": "^10.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.8.1",
+    "eruda": "^3.0.1",
     "eslint": "^8.19.0",
     "file-loader": "^6.2.0",
     "html-loader": "^4.2.0",

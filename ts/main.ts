@@ -11,6 +11,12 @@ enableMapSet()
 addID2Object();
 
 document.addEventListener("DOMContentLoaded", async () => {
+
+    if (process.env.NODE_ENV === 'development') {
+        let eruda = import(/* webpackChunkName: "eruda" */"eruda");
+        (await eruda).default.init();
+    }
+
     // __webpack_public_path__ = process.env.ASSET_PATH as string;
     let eui = await import( /* webpackChunkName: "editorUI" */ './editorUI/');
     let editor = await import( /* webpackChunkName: "modeEditor" */ './editor/modeEditor');
