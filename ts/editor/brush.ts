@@ -3,6 +3,7 @@ import { Line, LineConfig } from "konva/lib/shapes/Line";
 import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType, DrawBase } from "../editorUI/canvas";
 import { editorUIActions, editorUIData } from "../editorUI/data";
 // import { PaintContext } from "./canvas";
+import { v4 as uuidv4 } from "uuid";
 
 class BrushCVSFunc extends DrawBase {
 
@@ -15,14 +16,14 @@ class BrushCVSFunc extends DrawBase {
     BrushWidth = 10;
     DrawFunction = (Ctx: Konva.Group,width: number, height: number) =>
     { 
-        let brush = Ctx.find('.prev-brush')
+        let brush = Ctx.find(`.${this.shapeID}`)
         let polygon = undefined;
         if(brush.length > 0){
             polygon = brush[0]
         }
         else {
             polygon = new Konva.Line({
-                name: "prev-brush",
+                name: this.shapeID,
                 stroke: this.BrushColor,
                 strokeWidth: this.BrushWidth,
                 // round cap for smoother lines

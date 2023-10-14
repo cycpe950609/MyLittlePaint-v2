@@ -35,6 +35,7 @@ import Interact from "@interactjs/types/index";
 import LayerMgrSidebar, { LayerManager, Layer } from './layer';
 import SettingPageSidebar from "./setting";
 import { editorUIActions, editorUIData } from "../editorUI/data";
+import HistoryManager from "./historyLogger";
 
 
 export class btnCanvas implements FunctionInterface {
@@ -105,36 +106,59 @@ export class EditorCanvas implements CanvasBase {
         this.LayerManager.addLayerAfter();
     }
     update?: ((time: number) => void) | undefined;
-    private undo_stk_history = new Array();
-    private redo_stk_history = new Array();
-    private pushState() {
-        // if (this.redo_stk_history.length > 0)
-        //     this.undo_stk_history.push(this.redo_stk_history.pop());
-        // this.redo_stk_history = [];
-        // this.redo_stk_history.push(this.LayerManager.Layer.render.toDataURL());
-        // console.log(
-        //     "pushState",
-        //     this.undo_stk_history.length,
-        //     this.redo_stk_history.length
-        // );
-    }
 
+    private historyMagr: HistoryManager = new HistoryManager();
+    public undo = () => {// Ctrl-Z
+        let undoLst = this.historyMagr.undo();
+        if(undoLst.length === 0) throw new Error("INTERNEL_ERROR: Undo list is empty");
+        undoLst.forEach((entry) => {
+            if(entry.paintToolName === "noop") return;
+            let polygon = this.LayerManager.Canvas.find(`.${entry.shapeName}`)
+            if(polygon.length === 0) throw new Error("INTERNEL_ERROR: Shape not found");
+            polygon.forEach((shape) => {
+                shape.hide();
+            })
+        })
+        editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "LayerMgrSidebar", new_func: null}));
+    };
+    public redo = () => { // Ctrl-Y
+        let redoLst = this.historyMagr.redo();
+        if(redoLst.length === 0) throw new Error("INTERNEL_ERROR: Redo list is empty");
+        redoLst.forEach((entry) => {
+            if(entry.paintToolName === "noop") return;
+            let polygon = this.LayerManager.Canvas.find(`.${entry.shapeName}`)
+            if(polygon.length === 0) throw new Error("INTERNEL_ERROR: Shape not found");
+            polygon.forEach((shape) => {
+                shape.show();
+            })
+        })
+        editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "LayerMgrSidebar", new_func: null}));
+    };
     private finishDrawing() {
         // console.log("[DEB] Finish Drawing ...");
+        const diff = this.LayerManager.Layer.diff();
+        const neededRemoveShapeLst = this.historyMagr.redoList;//Redo List is a list of HistoryLogEntry<any>[]
+        console.log("[DEB] Needed Remove Shape List: ", neededRemoveShapeLst)
+        neededRemoveShapeLst.forEach((shapeList) => {
+            shapeList.forEach((entry) => {
+                // console.log("[DEB] Needed Remove Shape : ", entry.shapeName)
+                let polygon = this.LayerManager.Canvas.find(`.${entry.shapeName}`)
+                if(polygon.length === 0) throw new Error("INTERNEL_ERROR: Shape not found");
+                polygon.forEach((shape) => {
+                    shape.destroy();
+                })
+            })
+        })
+        this.historyMagr.add(diff);
+
         this.LayerManager.Layer.flush();
         this.EventFired = false;
         this.isDrawing = false;
-        // this.ctx.globalCompositeOperation = "source-over";
         this.isPointOut = undefined;
-        // //Add Redo Undo stack
-        // if (this.draw_func.HistoryName !== undefined) this.pushState();
     }
     private initCanvas = () => {
-        this.LayerManager.Layer.prev.destroyChildren();
+        this.LayerManager.Layer.clear();
         this.render_layer.clear();
-        this.undo_stk_history = new Array();
-        this.redo_stk_history = new Array();
-        this.pushState();
     };
     private angleScale = {
         angle: 0,
@@ -511,42 +535,7 @@ export class EditorCanvas implements CanvasBase {
         let dia = new Dialog("Upload A Image", upload);
         dia.show();
     };
-    public undo = () => {
-        if (this.undo_stk_history.length > 0) {
-            console.log(
-                "Undo",
-                this.undo_stk_history.length,
-                this.redo_stk_history.length
-            );
-            let undo_img = this.undo_stk_history.pop();
-            this.redo_stk_history.push(undo_img);
-            let img = new Image();
-            img.src = undo_img;
-            img.onload = () => {
-                // this.LayerManager.Layer.render.clearRect(0, 0, this.width, this.height);
-                // this.LayerManager.Layer.render.drawImage(img, 0, 0);
-                this.render();
-            };
-        }
-    };
-    public redo = () => {
-        if (this.redo_stk_history.length > 1) {
-            console.log(
-                "Redo",
-                this.undo_stk_history.length,
-                this.redo_stk_history.length
-            );
-            let redo_img = this.redo_stk_history.pop();
-            this.undo_stk_history.push(redo_img);
-            let img = new Image();
-            img.src = this.redo_stk_history[this.redo_stk_history.length - 1];
-            img.onload = () => {
-                // this.LayerManager.Layer.render.clearRect(0, 0, this.width, this.height);
-                // this.LayerManager.Layer.render.drawImage(img, 0, 0);
-                this.render();
-            };
-        }
-    };
+
     public save() {
         let btnOK = BUTTON("ok_btn", "OK")
         let txtName = TEXT("txt")
@@ -743,8 +732,8 @@ class modeEditor implements ModeFunction {
 
     MenuToolbarLeft = [
         new btnUpload(),
-        // new btnUndo(),
-        // new btnRedo(),
+        new btnUndo(),
+        new btnRedo(),
         new btnClear(),
         // new btnCanvas(new EraserCVSFunc()),
         new btnCanvas('Eraser','eraser','Eraser', async() => new (await import(/* webpackChunkName: "paint-eraser" */"./eraser")).default()),

@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import { editorUIActions, editorUIData } from "../editorUI/data";
 import SidebarInterface from '../editorUI/interface/sidebar'
 import { HTABLE, HTD, HTR } from "../editorUI/util/HHTMLElement";
+import { HistoryLogEntry } from "./historyLogger";
 import { EditorCanvas } from "./modeEditor";
 
 class LayerInfo {
@@ -137,12 +138,30 @@ export class Layer {
     private _previewImage: string = "";
     private _isPreview: boolean = false;
     public get Preview() {
-        if(!this._isPreview)
-        {
-            this._previewImage = this._render.toDataURL();
-            this._isPreview = true;
-        }
+        this._previewImage = this._render.toDataURL();
+        // TODO : Add code to rerender the preview after redo/undo
+        // if(!this._isPreview)
+        // {
+        //     this._previewImage = this._render.toDataURL();
+        //     this._isPreview = true;
+        // }
         return this._previewImage;
+    }
+    public diff() : HistoryLogEntry<any>[] {
+        let rtv: HistoryLogEntry<any>[] = [];
+
+        this._prev.children.forEach((item) => {
+            const newLog : HistoryLogEntry<any> = {
+                layerID: this._id,
+                paintToolName: item.className,
+                shapeName: item.name(),
+                data: item.attrs
+            }
+            console.log("[DEB] Diff : ",newLog);
+            rtv.push(newLog);
+        })
+
+        return rtv;
     }
     public flush() {
         this._isPreview = false;
@@ -157,6 +176,7 @@ export class Layer {
         this._render.add(item);
     }
     public clear() {
+        this._prev.destroyChildren();
         this._render.destroyChildren();
         this._isPreview = false;
     }

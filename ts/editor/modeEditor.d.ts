@@ -1,6 +1,6 @@
 import { CanvasBase, CanvasInterface, CanvasInterfaceSettings } from "../editorUI/canvas";
 import { ModeFunction, FunctionInterface } from "../editorUI";
-import { btnClear, btnResetRotate, btnResetScale, btnSave, btnToggleTouch, btnUpload } from "./menu";
+import { btnClear, btnRedo, btnResetRotate, btnResetScale, btnSave, btnToggleTouch, btnUndo, btnUpload } from "./menu";
 import LayerMgrSidebar, { LayerManager } from './layer';
 import SettingPageSidebar from "./setting";
 export declare class btnCanvas implements FunctionInterface {
@@ -33,9 +33,9 @@ export declare class EditorCanvas implements CanvasBase {
     isUpdate: boolean;
     constructor(width: number, height: number);
     update?: ((time: number) => void) | undefined;
-    private undo_stk_history;
-    private redo_stk_history;
-    private pushState;
+    private historyMagr;
+    undo: () => void;
+    redo: () => void;
     private finishDrawing;
     private initCanvas;
     private angleScale;
@@ -53,8 +53,6 @@ export declare class EditorCanvas implements CanvasBase {
     get canDrawWithTouch(): boolean;
     toggleTouch: () => void;
     open: () => void;
-    undo: () => void;
-    redo: () => void;
     save(): void;
     clear(): void;
     get scaleFactor(): number;
@@ -77,7 +75,7 @@ export declare class EditorCanvas implements CanvasBase {
 declare class modeEditor implements ModeFunction {
     Enable: boolean;
     CenterCanvas: EditorCanvas;
-    MenuToolbarLeft: (btnUpload | btnClear | btnCanvas)[];
+    MenuToolbarLeft: (btnUpload | btnUndo | btnRedo | btnClear | btnCanvas)[];
     MenuToolbarRight: (btnResetScale | btnResetRotate | btnToggleTouch | btnSave)[];
     LeftToolbarTop: btnCanvas[];
     RightToolbarTop: (LayerMgrSidebar | SettingPageSidebar)[];

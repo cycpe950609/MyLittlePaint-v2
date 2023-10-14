@@ -56,14 +56,14 @@ export class CircleCVSFunc extends PolygonBase
     DrawFunction = (Ctx: Konva.Group,width: number, height: number) =>
     { 
 
-        let circle = Ctx.find('.prev-circle')
+        let circle = Ctx.find(`.${this.shapeID}`)
         let polygon = undefined;
         if(circle.length > 0){
             polygon = circle[0]
         }
         else {
             polygon = new Konva.Circle({
-                name: "prev-circle"
+                name: this.shapeID
             } as CircleConfig);
             Ctx.add(polygon)
         }
@@ -120,14 +120,14 @@ export class PathDraw extends PolygonBase {
     }
 
     DrawFunction = (Ctx: Konva.Group,width: number, height: number, angle: number) => {
-        let shape = Ctx.find(`.prev-${this.Name}`)
+        let shape = Ctx.find(`.${this.shapeID}`)
         let polygon = undefined;
         if(shape.length > 0){
             polygon = shape[0]
         }
         else {
             polygon = new Konva.Path({
-                name: `prev-${this.Name}`
+                name: this.shapeID
             } as PathConfig);
             Ctx.add(polygon)
         }

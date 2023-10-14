@@ -1,5 +1,6 @@
 import Konva from "konva";
 // import { PaintCanvas, PaintContext } from "../editor/canvas";
+import { v4 as uuidv4 } from "uuid";
 
 export type PaintEvent = {
     X: number;
@@ -56,6 +57,7 @@ export class DrawBase implements CanvasInterface {
     protected NextY = 0;
     protected ifDrawing = false;
     protected ifMouseMove = false;
+    protected shapeID!: string;
 
     public PointerDown(e: PaintEvent){
         [this.LastX, this.LastY] = [e.X, e.Y];
@@ -63,6 +65,7 @@ export class DrawBase implements CanvasInterface {
         this.ifDrawing = true;
         this.ifMouseMove = false;
         this._canfinishDrawing = false;
+        this.shapeID = uuidv4();
     };
     public PointerMove(e: PaintEvent){
         if(!this.ifDrawing) return;

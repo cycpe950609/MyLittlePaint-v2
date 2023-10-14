@@ -45,6 +45,7 @@ export declare class DrawBase implements CanvasInterface {
     protected NextY: number;
     protected ifDrawing: boolean;
     protected ifMouseMove: boolean;
+    protected shapeID: string;
     PointerDown(e: PaintEvent): void;
     PointerMove(e: PaintEvent): void;
     PointerUp(e: PaintEvent): void;

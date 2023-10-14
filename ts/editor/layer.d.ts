@@ -1,5 +1,6 @@
 import Konva from "konva";
 import SidebarInterface from '../editorUI/interface/sidebar';
+import { HistoryLogEntry } from "./historyLogger";
 declare class LayerInfo {
     Snapshot: string;
     Name: string;
@@ -34,6 +35,7 @@ export declare class Layer {
     private _previewImage;
     private _isPreview;
     get Preview(): string;
+    diff(): HistoryLogEntry<any>[];
     flush(): void;
     add(item: any): void;
     clear(): void;
