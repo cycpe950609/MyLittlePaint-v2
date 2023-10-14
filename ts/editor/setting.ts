@@ -2,7 +2,7 @@ import { h, VNode } from "snabbdom";
 import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType } from "../editorUI/canvas";
 // import EditorUI from "../editorUI/EditorUI";
 import SidebarInterface from "../editorUI/interface/sidebar";
-import { HDIV, HSPAN, HTABLE, HTD, HTR } from "../editorUI/util/HHTMLElement";
+import { HDIV, HLABEL, HSPAN, HTABLE, HTD, HTR } from "../editorUI/util/HHTMLElement";
 import { EditorCanvas } from "./modeEditor";
 
 const HHorizonRanger = (min: number, max: number, defValue: number, changeHandler: any) => {
@@ -17,6 +17,17 @@ const HHorizonRanger = (min: number, max: number, defValue: number, changeHandle
         HSPAN("w-fit", defValue.toFixed(0).toString())
     ])
 }
+
+const HToggleSwitch = (value: boolean, changeHandler: any) => {
+    // <label class="switch">
+    //     <input type="checkbox">
+    //     <span class="slider"></span>
+    // </label>
+    return HLABEL("switch",[
+        h('input',{props: { type: "checkbox", checked: value}, on: {change: changeHandler}}),
+        HSPAN("slider","")
+    ])
+};
 
 class SettingPageSidebar implements SidebarInterface {
     Name: string = "SettingsPage"; // Tips of ToolButton
@@ -81,6 +92,29 @@ class SettingPageSidebar implements SidebarInterface {
                                     (window.editorUI.CenterCanvas as EditorCanvas).settings = newSet;
                                 } }
                             }))
+                        ])
+                    );
+                    break;
+                case CanvasSettingType.Boolean:
+                    settingList.push(
+                        HTR("w-full",[
+                            HTD(setting.label),
+                            HTD(
+                                HToggleSwitch(setting.value,(ev: Event) => {
+                                    console.log("[DEB] Boolean : ",(ev.target as HTMLInputElement).value)
+                                    let newSet: CanvasInterfaceSettings = {
+                                        Settings: new Map<string,CanvasSettingEntry<any>>([
+                                            [settingName, {
+                                                type: setting.type,
+                                                label:setting.label,
+                                                info: setting.info,
+                                                value: (ev.target as HTMLInputElement).checked
+                                            }]
+                                        ])
+                                    };
+                                    (window.editorUI.CenterCanvas as EditorCanvas).settings = newSet;
+                                })
+                            )
                         ])
                     );
                     break;

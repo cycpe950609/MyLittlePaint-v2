@@ -25,7 +25,17 @@ export class PolygonBase extends DrawBase {
                     label: "Brush Width",
                     info: [1,64], // min,max
                     value: this.BorderWidth
-                }]
+                }],
+                ["CanFilled" , {
+                    type: CanvasSettingType.Boolean,
+                    label: "Filled the content",
+                    value: this.CanFilled
+                }],
+                ["ContentColor" , {
+                    type: CanvasSettingType.Color,
+                    label: "Filled Color",
+                    value: this.ContentColor
+                }],
             ])
         };
         return rtv;
@@ -40,6 +50,14 @@ export class PolygonBase extends DrawBase {
         }
         if(setting.Settings.get("BorderWidth") !== undefined) {
             this.BorderWidth = setting.Settings.get("BorderWidth")?.value;
+            refreshWindow = true;
+        }
+        if(setting.Settings.get("ContentColor") !== undefined) {
+            this.ContentColor = setting.Settings.get("ContentColor")?.value;
+            refreshWindow = true;
+        }
+        if(setting.Settings.get("CanFilled") !== undefined) {
+            this.CanFilled = setting.Settings.get("CanFilled")?.value;
             refreshWindow = true;
         }
         if(refreshWindow)

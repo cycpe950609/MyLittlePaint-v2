@@ -33,6 +33,7 @@ export interface CanvasInterface {
 export enum CanvasSettingType {
     Number,
     Color,
+    Boolean,
 }
 export type CanvasSettingEntry<DATATYPE> = {
     type: CanvasSettingType;
