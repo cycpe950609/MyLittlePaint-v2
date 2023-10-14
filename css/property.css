@@ -1,13 +1,14 @@
 .sidebar {
     width: calc(var(--propertybox-width) + 20px);
-    /* max-height: calc(100vh - var(--menu-height) - var(--statusbar-height) - 30px); */
-    overflow-y: scroll;
+    height: fit-content;
+    max-height: calc(100vh - var(--menu-height) - var(--statusbar-height) - 40px);
+    overflow-y: auto;
     overflow-x: hidden;
 
     position: fixed;
     right: calc(var(--toolbar-width) + 20px);
     top: calc(var(--menu-height) + 20px);
-    bottom: calc(var(--statusbar-height) + 20px);
+    /* bottom: calc(var(--statusbar-height) + 20px); */
     padding: 0;
 
     pointer-events: none;
