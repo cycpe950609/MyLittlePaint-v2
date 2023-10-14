@@ -12,7 +12,7 @@ class BrushCVSFunc extends DrawBase {
     Tip = 'Brush';
     ImgName = 'brush';
     CursorName = 'brush';
-    BrushColor = 'rgb(0,255,0)';
+    BrushColor = '#00FF00';// 'rgb(0,255,0)';
     BrushWidth = 10;
     DrawFunction = (Ctx: Konva.Group,width: number, height: number) =>
     { 

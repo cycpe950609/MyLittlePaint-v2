@@ -2,12 +2,11 @@ import { h, VNode } from "snabbdom";
 import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType } from "../editorUI/canvas";
 // import EditorUI from "../editorUI/EditorUI";
 import SidebarInterface from "../editorUI/interface/sidebar";
-import { HDIV, HSPAN } from "../editorUI/util/HHTMLElement";
+import { HDIV, HSPAN, HTABLE, HTD, HTR } from "../editorUI/util/HHTMLElement";
 import { EditorCanvas } from "./modeEditor";
 
-const HHorizonRanger = (label: string, min: number, max: number, defValue: number, changeHandler: any) => {
+const HHorizonRanger = (min: number, max: number, defValue: number, changeHandler: any) => {
     return HDIV("w-full flex flex-row",[
-        HSPAN("w-fit", label),
         h('input',{props: {
             type: "range",
             min: min,
@@ -40,26 +39,63 @@ class SettingPageSidebar implements SidebarInterface {
             switch (setting.type) {
                 case CanvasSettingType.Number:
                     if(setting.info === undefined || (setting.info as number[]).length !== 2) throw new Error("INTERNAL_ERROR: Setting info has wrong type");
-                    settingList.push(HHorizonRanger(setting.label,setting.info[0],setting.info[1],setting.value,(ev: Event)=>{
-                        let newSet: CanvasInterfaceSettings = {
-                            Settings: new Map<string,CanvasSettingEntry<any>>([
-                                [settingName, {
-                                    type: setting.type,
-                                    label:setting.label,
-                                    info: setting.info,
-                                    value: parseInt((ev.target as HTMLInputElement).value)
-                                }]
-                            ])
-                        };
-                        (window.editorUI.CenterCanvas as EditorCanvas).settings = newSet;
-                    }));
+                    settingList.push(
+                        HTR("w-full",[
+                            HTD(setting.label),
+                            HTD(HHorizonRanger(setting.info[0],setting.info[1],setting.value,(ev: Event)=>{
+                                let newSet: CanvasInterfaceSettings = {
+                                    Settings: new Map<string,CanvasSettingEntry<any>>([
+                                        [settingName, {
+                                            type: setting.type,
+                                            label:setting.label,
+                                            info: setting.info,
+                                            value: parseInt((ev.target as HTMLInputElement).value)
+                                        }]
+                                    ])
+                                };
+                                (window.editorUI.CenterCanvas as EditorCanvas).settings = newSet;
+                            }))
+                        ])
+                    );
+                    break;
+                case CanvasSettingType.Color:
+                    settingList.push(
+                        HTR("w-full",[
+                            HTD(setting.label),
+                            HTD(h("input",{
+                                props: {
+                                    type: "color",
+                                    value: setting.value,
+                                }, 
+                                on: { change : (ev: Event) => { 
+                                    let newSet: CanvasInterfaceSettings = {
+                                        Settings: new Map<string,CanvasSettingEntry<any>>([
+                                            [settingName, {
+                                                type: setting.type,
+                                                label:setting.label,
+                                                info: setting.info,
+                                                value: (ev.target as HTMLInputElement).value
+                                            }]
+                                        ])
+                                    };
+                                    (window.editorUI.CenterCanvas as EditorCanvas).settings = newSet;
+                                } }
+                            }))
+                        ])
+                    );
                     break;
                 default:
                     settingList.push(HDIV("w-full",`Unsupported Setting Type ${setting.type}`));
                     break;
             }
         })
-        return HDIV("w-full", settingList);
+
+        return HTABLE("w-full b-none align-right", [
+            HTR("layers-header", [
+                HTD('Property'),
+                HTD('Value'),
+            ])
+        ],settingList);
     };
 }
 export default SettingPageSidebar;

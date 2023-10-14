@@ -7,9 +7,9 @@ import Mexp from "math-expression-evaluator";
 
 export class PolygonBase extends DrawBase {
     CursorName ='crosshair';
-    BorderBrush = 'rgb(255,0,0)';
+    BorderBrush = '#FF0000';//'rgb(255,0,0)';
     BorderWidth = 5;
-    ContentColor = 'rgb(0,0,255)';
+    ContentColor = '#0000FF';//'rgb(0,0,255)';
     CanFilled = false;
     get Settings () {
         let rtv: CanvasInterfaceSettings = {
