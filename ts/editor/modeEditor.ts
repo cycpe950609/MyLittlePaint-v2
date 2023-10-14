@@ -157,8 +157,7 @@ export class EditorCanvas implements CanvasBase {
         this.isPointOut = undefined;
     }
     private initCanvas = () => {
-        this.LayerManager.Layer.clear();
-        this.render_layer.clear();
+        this.LayerManager.clear();
     };
     private angleScale = {
         angle: 0,

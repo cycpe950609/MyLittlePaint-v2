@@ -19,6 +19,7 @@ export declare class LayerManager {
     get Canvas(): Konva.Stage;
     get Layer(): Layer;
     get LayerList(): LayerInfo[];
+    clear(): void;
 }
 export declare class Layer {
     private _render;

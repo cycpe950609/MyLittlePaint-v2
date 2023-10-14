@@ -92,6 +92,11 @@ export class LayerManager {
         }));
         return rtv;
     }
+
+    public clear() : void {
+        this.layerList.forEach(layer => layer.clear());
+        editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "LayerMgrSidebar", new_func: null}));
+    };
 };
 
 export class Layer {
