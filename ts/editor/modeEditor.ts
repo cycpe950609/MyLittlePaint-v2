@@ -730,7 +730,7 @@ class modeEditor implements ModeFunction {
     CenterCanvas = new EditorCanvas(1920, 1080);
 
     MenuToolbarLeft = [
-        new btnUpload(),
+        // new btnUpload(),
         new btnUndo(),
         new btnRedo(),
         new btnClear(),

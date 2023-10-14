@@ -196,13 +196,13 @@ export class Layer {
 
 
 class LayerMgrSidebar implements SidebarInterface {
-    constructor(visible = true) {
+    constructor(visible = false) {
         this.Visible = visible;
     }
     Name = "LayerMgrSidebar";
     ImgName = "layer";
     Tip = "Layer Manager";
-    Visible = true;
+    Visible = false;
     Title = () => "Layer";
     Body = async () => {
         if (this.Visible) {

@@ -34,7 +34,7 @@ class SettingPageSidebar implements SidebarInterface {
     ImgName?: string = "brush";
     Tip?: string = "Settings"; // Tip showed on StatusBar
     HistoryName?: string; // Undefined if dont want to store in redo/undo hostory
-    Visible: boolean = true;
+    Visible: boolean = false;
     Title: () => string = () => {
         let name = (window.editorUI.CenterCanvas as EditorCanvas).settings.Name;
         if(name === undefined) return 'Settings';

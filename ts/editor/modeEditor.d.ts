@@ -1,6 +1,6 @@
 import { CanvasBase, CanvasInterface, CanvasInterfaceSettings } from "../editorUI/canvas";
 import { ModeFunction, FunctionInterface } from "../editorUI";
-import { btnClear, btnRedo, btnResetRotate, btnResetScale, btnSave, btnToggleTouch, btnUndo, btnUpload } from "./menu";
+import { btnClear, btnRedo, btnResetRotate, btnResetScale, btnSave, btnToggleTouch, btnUndo } from "./menu";
 import LayerMgrSidebar, { LayerManager } from './layer';
 import SettingPageSidebar from "./setting";
 export declare class btnCanvas implements FunctionInterface {
@@ -75,7 +75,7 @@ export declare class EditorCanvas implements CanvasBase {
 declare class modeEditor implements ModeFunction {
     Enable: boolean;
     CenterCanvas: EditorCanvas;
-    MenuToolbarLeft: (btnUpload | btnUndo | btnRedo | btnClear | btnCanvas)[];
+    MenuToolbarLeft: (btnUndo | btnRedo | btnClear | btnCanvas)[];
     MenuToolbarRight: (btnResetScale | btnResetRotate | btnToggleTouch | btnSave)[];
     LeftToolbarTop: btnCanvas[];
     RightToolbarTop: (LayerMgrSidebar | SettingPageSidebar)[];
