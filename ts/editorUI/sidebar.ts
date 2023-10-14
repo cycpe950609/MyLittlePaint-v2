@@ -153,13 +153,14 @@ const render = async () => {
     
     let sidebar = h("div#editorui-sidebar-windows.sidebar",
     {
-        style : {pointerEvents: "none"}
+        style : {pointerEvents: windowCount > 0 ? "all" : "none"}
     },
     [
         await renderSidebarPart(dataTop         ),
         await renderSidebarPart(dataTopPerm     ),
         await renderSidebarPart(dataBottom      ),
         await renderSidebarPart(dataBottomPerm  ),
+        // h("div#empty-div.w-full.h-full", {style : {pointerEvents: "none"}})
     ])
     
     // console.log("[DEB]", sidebar)

@@ -380,10 +380,7 @@ export class EditorCanvas implements CanvasBase {
                 this.isPointOut = undefined;
             }
         })
-
-        window.addEventListener("wheel", this.cvsMouseWheelHandler, {
-            passive: false
-        });
+        container.addEventListener("wheel", this.cvsMouseWheelHandler);
 
         window.addEventListener("keydown", this.docKeydownHandler);
         window.addEventListener("keyup", this.docKeyupHandler);
