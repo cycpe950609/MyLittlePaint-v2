@@ -31,7 +31,7 @@ const HToggleSwitch = (value: boolean, changeHandler: any) => {
 
 class SettingPageSidebar implements SidebarInterface {
     Name: string = "SettingsPage"; // Tips of ToolButton
-    ImgName?: string = "brush";
+    ImgName?: string = "property";
     Tip?: string = "Settings"; // Tip showed on StatusBar
     HistoryName?: string; // Undefined if dont want to store in redo/undo hostory
     Visible: boolean = false;
