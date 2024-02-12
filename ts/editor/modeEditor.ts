@@ -14,10 +14,6 @@ import {
     SPAN,
     TEXT
 } from "../editorUI/util/HTMLElement";
-// import BrushCVSFunc from "./brush";
-// import EraserCVSFunc from "./eraser";
-// import LineCVSFunc from "./line";
-// import { CircleCVSFunc, RectangleCVSFunc, TriangleCVSFunc } from "./polygon";
 import {
     btnClear,
     btnRedo,
@@ -30,7 +26,6 @@ import {
 } from "./menu";
 import { TipComponent } from "../editorUI/statusbar";
 import interact from "interactjs";
-// import FunctionInterface from "../editorUI/interface/function";
 import Interact from "@interactjs/types/index";
 import LayerMgrSidebar, { LayerManager, Layer } from './layer';
 import SettingPageSidebar from "./setting";

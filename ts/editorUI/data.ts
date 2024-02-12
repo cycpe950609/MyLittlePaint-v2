@@ -5,16 +5,15 @@ import {
     PayloadAction,
     Slice,
     SliceCaseReducers,
-    Store} from "@reduxjs/toolkit";
-import thunkMiddleware from "redux-thunk";
-// import logger from "redux-logger";
+    Store
+} from "@reduxjs/toolkit";
 import FunctionInterface from "./interface/function";
 import SidebarInterface from "./interface/sidebar";
 import ModeFunction from "./interface/mode";
 
 export type ModeInfo = {
-    modeName: string, 
-    enable: boolean, 
+    modeName: string,
+    enable: boolean,
     def: ModeFunction,
 }
 
@@ -26,7 +25,7 @@ let modeManagerSlice: Slice = createSlice({
         data: {}
     },
     reducers: {
-        rendered: (state,action) => {
+        rendered: (state, action) => {
             state.action = "";
         },
         enable: (state, action: PayloadAction<string>) => {
@@ -71,7 +70,7 @@ let modeManagerSlice: Slice = createSlice({
         },
         remove: (state, action: PayloadAction<string>) => {
             let modeName = action.payload
-            if(modeName === state.root) throw new Error("MODEMGR_ERROR: root can't be delete");
+            if (modeName === state.root) throw new Error("MODEMGR_ERROR: root can't be delete");
             if (modeName in state) {
                 delete state.data[modeName]
                 state.action = `mode.${modeName}.removed`;
@@ -85,7 +84,7 @@ let modeManagerSlice: Slice = createSlice({
 
 export const { disable: modeDisable, enable: modeEnable, toggle: modeToggle, add: modeAdd, remove: modeRemove, setRoot: modeSetRoot } = modeManagerSlice.actions;
 
-export type ToolbarStateType<ButtonInfoType> = {[key:string]:ButtonInfoType};
+export type ToolbarStateType<ButtonInfoType> = { [key: string]: ButtonInfoType };
 const createToolbarPartSlice = <ButtonInfoType>(name: string) => {
     return createSlice({
         name: name,
@@ -94,7 +93,7 @@ const createToolbarPartSlice = <ButtonInfoType>(name: string) => {
             data: {} as any
         },
         reducers: {
-            rendered: (state,action) => {
+            rendered: (state, action) => {
                 state.action = "";
             },
             updateAll: (state, action: PayloadAction<ToolbarStateType<ButtonInfoType>>) => {
@@ -105,16 +104,16 @@ const createToolbarPartSlice = <ButtonInfoType>(name: string) => {
                 state.data = action.payload;
                 state.action = `${name}.all.update`;
             },
-            update: (state, action: PayloadAction<{id:string,new_func:ButtonInfoType}>) => {
+            update: (state, action: PayloadAction<{ id: string, new_func: ButtonInfoType }>) => {
                 state.data[action.payload.id] = action.payload.new_func;
                 state.action = `${name}.${action.payload.id}.update`;
             },
-            add: (state, action: PayloadAction<{id:string,func:ButtonInfoType}>) => {
+            add: (state, action: PayloadAction<{ id: string, func: ButtonInfoType }>) => {
                 state.data[action.payload.id] = action.payload.func;
                 state.action = `${name}.${action.payload.id}.add`;
             },
             remove: (state, action: PayloadAction<string>) => {
-                if(action.payload in state){
+                if (action.payload in state) {
                     delete state.data[action.payload]
                     state.action = `${name}.${action.payload}.delete`;
                 }
@@ -171,7 +170,7 @@ export const editorUIActions = {
     sidebar_window: sideWindowSlice.actions,
     statusbar_left_: statusLeftSlice.actions,
     statusbar_right_: statusRightSlice.actions,
-} as {[key:string]:CaseReducerActions<SliceCaseReducers<any>, string>}
+} as { [key: string]: CaseReducerActions<SliceCaseReducers<any>, string> }
 
 export const editorUIData: Store = configureStore({
     reducer: {
@@ -196,6 +195,4 @@ export const editorUIData: Store = configureStore({
         getDefaultMiddleware({
             serializableCheck: false
         })
-            .concat(thunkMiddleware)
-            // .concat(logger)
 });
