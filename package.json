@@ -46,7 +46,7 @@
     "file-loader": "^6.2.0",
     "html-loader": "^5.0.0",
     "prettier": "^3.2.5",
-    "remark": "^15.0.1",
+    "remark": "^14.0.0",
     "remark-html": "^16.0.1",
     "remark-loader": "^6.0.0",
     "style-loader": "^3.3.4",
