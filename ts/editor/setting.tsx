@@ -4,6 +4,7 @@ import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType } from "
 // import EditorUI from "../editorUI/EditorUI";
 import SidebarInterface from "../editorUI/interface/sidebar";
 import { EditorCanvas } from "./modeEditor";
+import { Div, Input, Label, Span, Table, Td, Tr } from "../editorUI/util/Element";
 
 export type HorizonRangerPropType = {
     min: number;
@@ -12,9 +13,9 @@ export type HorizonRangerPropType = {
     changeHandler: any;
 }
 const HorizonRanger: Snabbdom.Component<HorizonRangerPropType> = (props: HorizonRangerPropType) => {
-    return <div id={"divcnt" as any} className="w-full flex flex-row">
-        <input id={"inprgr" as any} type="range" min={props.min} max={props.max} value={props.defValue.toString()} onchange={props.changeHandler} />
-    </div>
+    return <Div className="w-full flex flex-row">
+        <Input type="range" min={props.min} max={props.max} value={props.defValue.toString()} onchange={props.changeHandler} />
+    </Div>
 }
 
 export type ToggleSwitchPropType = {
@@ -22,10 +23,10 @@ export type ToggleSwitchPropType = {
     changeHandler: any;
 }
 const ToggleSwitch: Snabbdom.Component<ToggleSwitchPropType> = (props: ToggleSwitchPropType) => {
-    return <label id={"lblcnt" as any} className="switch">
-        <input id={"divcnt" as any} type="checkbox" checked={props.value} onchange={props.changeHandler} />
-        <span id={"spcnt" as any} className="slider"></span>
-    </label>
+    return <Label className="switch">
+        <Input type="checkbox" checked={props.value} onchange={props.changeHandler} />
+        <Span className="slider"></Span>
+    </Label>
 };
 
 class SettingPageSidebar implements SidebarInterface {
@@ -43,18 +44,18 @@ class SettingPageSidebar implements SidebarInterface {
         let setting = (window.editorUI.CenterCanvas as EditorCanvas).settings;
         console.log(`[DEB] Setting of ${setting.Name}`, setting.Settings);
         if (setting.Name === undefined || setting.Settings == undefined)
-            return <div id={"divcnt" as any} className="w-full">
+            return <Div className="w-full">
                 Empty Setting Page
-            </div>
+            </Div>
         let settingList: VNode[] = [];
         setting.Settings.forEach((setting, settingName: string) => {
             switch (setting.type) {
                 case CanvasSettingType.Number:
                     if (setting.info === undefined || (setting.info as number[]).length !== 2) throw new Error("INTERNAL_ERROR: Setting info has wrong type");
                     settingList.push(
-                        <tr id={"trcnt" as any} className="w-full">
-                            <td id={"tdcnt" as any}>{setting.label}</td>
-                            <td id={"tdcnt" as any}>
+                        <Tr className="w-full">
+                            <Td>{setting.label}</Td>
+                            <Td>
                                 <HorizonRanger
                                     min={setting.info[0]}
                                     max={setting.info[1]}
@@ -73,16 +74,16 @@ class SettingPageSidebar implements SidebarInterface {
                                         (window.editorUI.CenterCanvas as EditorCanvas).settings = newSet;
                                     }
                                     } />
-                            </td>
-                        </tr>
+                            </Td>
+                        </Tr>
                     );
                     break;
                 case CanvasSettingType.Color:
                     settingList.push(
-                        <tr id={"trcnt" as any} className="w-full">
-                            <td id={"tdcnt" as any}>{setting.label}</td>
-                            <td id={"tdcnt" as any}>
-                                <input id={"inprgr" as any}
+                        <Tr className="w-full">
+                            <Td>{setting.label}</Td>
+                            <Td>
+                                <Input
                                     type="color"
                                     value={setting.value}
                                     onchange={
@@ -101,15 +102,15 @@ class SettingPageSidebar implements SidebarInterface {
                                         }
                                     }
                                 />
-                            </td>
-                        </tr>
+                            </Td>
+                        </Tr>
                     );
                     break;
                 case CanvasSettingType.Boolean:
                     settingList.push(
-                        <tr id={"trcnt" as any} className="w-full">
-                            <td id={"tdcnt" as any}>{setting.label}</td>
-                            <td id={"tdcnt" as any}>
+                        <Tr className="w-full">
+                            <Td>{setting.label}</Td>
+                            <Td>
                                 <ToggleSwitch
                                     value={setting.value}
                                     changeHandler={
@@ -129,23 +130,23 @@ class SettingPageSidebar implements SidebarInterface {
                                         }
                                     }
                                 />
-                            </td>
-                        </tr>
+                            </Td>
+                        </Tr>
                     );
                     break;
                 default:
-                    settingList.push(<div id={"divcnt" as any} className="w-full">`Unsupported Setting Type ${setting.type}`</div>);
+                    settingList.push(<Div className="w-full">`Unsupported Setting Type ${setting.type}`</Div>);
                     break;
             }
         })
 
-        return <table id={"tbcnt" as any} className="w-full b-none align-right">
-            <tr id={"trcnt" as any} className="layers-header">
-                <td id={"tdcnt" as any}>Property</td>
-                <td id={"tdcnt" as any}>Value</td>
-            </tr>
+        return <Table className="w-full b-none align-right">
+            <Tr className="layers-header">
+                <Td>Property</Td>
+                <Td>Value</Td>
+            </Tr>
             {settingList}
-        </table>
+        </Table>
     };
 }
 export default SettingPageSidebar;

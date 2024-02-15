@@ -30,7 +30,7 @@ export class btnUndo implements FunctionInterface {
 }
 
 export class btnRedo implements FunctionInterface {
-    Name = "btn_redp";
+    Name = "btn_redo";
     ImgName= "redo";
     Tip = "Redo";
 

@@ -6,6 +6,7 @@ import { editorUIActions, editorUIData } from "../editorUI/data";
 import SidebarInterface from '../editorUI/interface/sidebar'
 import { HistoryLogEntry } from "./historyLogger";
 import { EditorCanvas } from "./modeEditor";
+import { Div, Img, Table, Td, Tr } from "../editorUI/util/Element";
 
 class LayerInfo {
     public Snapshot: string = "";
@@ -212,21 +213,21 @@ class LayerMgrSidebar implements SidebarInterface {
                 //     (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
                 // });
                 let toImage = (img: string) => {
-                    return <img id={"imgcnt" as any} $style={{ maxWidth: `96px`, maxHeight: `54px` }} src={img} />
+                    return <Img $style={{ maxWidth: `96px`, maxHeight: `54px` }} src={img} />
                     // TODO: set width and height from canvas size programmatically
                 }
 
-                return <tr id={"trcnt" as any} className={classNames}
+                return <Tr className={classNames}
                     onclick={
                         (e: MouseEvent) => {
                             (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
                         }
                     }
                 >
-                    <td id={"tdcnt" as any}>{`${idx}`.padStart(6)}</td>
-                    <td id={"tdcnt" as any}>{toImage(layer.Snapshot)}</td>
-                    <td id={"tdcnt" as any}>{layer.Name}</td>
-                </tr>
+                    <Td>{`${idx}`.padStart(6)}</Td>
+                    <Td>{toImage(layer.Snapshot)}</Td>
+                    <Td>{layer.Name}</Td>
+                </Tr>
             }
             let edittedLayer = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.Layer.ID;
             let newTableBody = await Promise.all(
@@ -239,16 +240,16 @@ class LayerMgrSidebar implements SidebarInterface {
                     }
                 })
             );
-            return <table id={"tbcnt" as any} className="w-full b-none align-right">
-                <tr id={"trcnt" as any} className="layers-header">
-                    <td id={"tdcnt" as any}>Index</td>
-                    <td id={"tdcnt" as any}>Preview</td>
-                    <td id={"tdcnt" as any}>Name</td>
-                </tr>
+            return <Table className="w-full b-none align-right">
+                <Tr className="layers-header">
+                    <Td>Index</Td>
+                    <Td>Preview</Td>
+                    <Td>Name</Td>
+                </Tr>
                 {newTableBody}
-            </table>
+            </Table>
         }
-        return <div id={"divcnt" as any}/>;
+        return <Div/>;
     };
 }
 

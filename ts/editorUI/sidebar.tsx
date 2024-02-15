@@ -13,6 +13,7 @@ import {
     toVNode,
     VNode,
 } from "snabbdom";
+import { Div, Span } from "./util/Element";
 
 const patchSidebar = init([
     // Init patch function with chosen modules
@@ -104,36 +105,36 @@ let renderWindow = async (uuid: string, windowName: string): Promise<VNode> => {
     if (sidebarImple === undefined) throw new Error("INTERNAL_ERROR: SidebarInterface is not found");
 
 
-    let sidebar = <div id={"divcnt" as any} className="property-bar"
+    let sidebar = <Div className="property-bar"
         $style={{ pointerEvents: "all" }}
     >
-        <div id={"divcnt" as any} className="pd_title">
-            <span id={"spcnt" as any} className="pb_Property_close">
+        <Div className="pd_title">
+            <Span className="pb_Property_close">
                 {sidebarImple.Title()}
-            </span>
-        </div>
-        <div id={"divcnt" as any} className="pb_Property_bdy">
+            </Span>
+        </Div>
+        <Div className="pb_Property_bdy">
             {await Promise.resolve(sidebarImple.Body())}
-        </div>
-    </div>
+        </Div>
+    </Div>
 
     windowCache[windowName] = sidebar;
     return sidebar
 }
 const renderSidebarPart = async (partList: ToolbarStateType<SidebarInterface>): Promise<VNode> => {
-    return <div id={"divcnt" as any} className="w-fit h-fit">
+    return <Div className="w-fit h-fit">
         {
             await Promise.all(Object.keys(partList).map(async (key: string) => {
                 if (partList[key].Visible === false) {
                     if (key in windowCache)
                         delete windowCache[key];
-                    return <div id={"divcnt" as any} />;
+                    return <Div />;
                 }
 
                 return await renderWindow(key, partList[key].Name);
             }))
         }
-    </div>
+    </Div>
 }
 
 let cntSidebar: HTMLDivElement;
@@ -164,13 +165,13 @@ const render = async () => {
         visiableCount(dataTopPerm) +
         visiableCount(dataBottomPerm);
 
-    let sidebar = <div id={"editorui-sidebar-windows" as any} className="sidebar"
+    let sidebar = <Div Id="editorui-sidebar-windows" className="sidebar"
         $style={{ pointerEvents: windowCount > 0 ? "all" : "none" }}>
         {await renderSidebarPart(dataTop)}
         {await renderSidebarPart(dataTopPerm)}
         {await renderSidebarPart(dataBottom)}
         {await renderSidebarPart(dataBottomPerm)}
-    </div>
+    </Div>
 
     // console.log("[DEB]", sidebar)
     patchSidebar(lastSidebarVNode, sidebar);
