@@ -1,6 +1,6 @@
 // import { CanvasBase } from "../canvas";
 
-import { VNode, h } from "snabbdom";
+import { VNode } from "snabbdom";
 
 /* Sidebar */
 export default interface SidebarInterface {
@@ -25,6 +25,6 @@ export class NoOPSidebar implements SidebarInterface {
     Visible = true;
     Title = () => "NoOpSidebar Example";
     Body = () => {
-        return h("span", this.showedText);
+        return <span id={"spcnt" as any}>{this.showedText}</span>;
     };
 }

@@ -49,7 +49,7 @@ const module = {
     module: {
         rules: [
             {
-                test: /\.ts$/i,
+                test: /\.tsx?$/i,
                 use: [
                     {
                         loader: "babel-loader",
@@ -62,13 +62,24 @@ const module = {
                 test: /\.js$/i,
                 use: {
                     loader: "babel-loader",
-                    options: { presets: ["@babel/preset-env"] }
+                    options: {
+                        presets: ["@babel/preset-env"],
+                        plugins: [
+                            [
+                                "@babel/plugin-transform-react-jsx",
+                                {
+                                    "importSource": "@herp-inc/snabbdom-jsx",
+                                    "runtime": "automatic"
+                                }
+                            ]
+                        ]
+                    }
                 }
             },
             {
                 test: /\.html$/,
                 exclude: /node_modules/,
-                use: {loader: 'html-loader'}
+                use: { loader: 'html-loader' }
             },
             {
                 test: /\.md$/,
@@ -92,7 +103,7 @@ const module = {
             }
         ]
     },
-    resolve: { extensions: [".ts", ".js"] },
+    resolve: { extensions: [".ts", ".tsx", ".js"] },
 };
 
 export default module;

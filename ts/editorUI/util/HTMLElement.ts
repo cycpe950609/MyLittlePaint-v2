@@ -14,73 +14,73 @@ export const DIV = (
     return dv;
 };
 
-export const TABLE = (
-    className: string,
-    thead?: HTMLElement[] | HTMLElement | DocumentFragment,
-    tbody?: HTMLElement[] | HTMLElement | DocumentFragment
-):[HTMLTableElement,HTMLTableSectionElement] => {
-    const tb = document.createElement("table");
-    className.split(' ').map((clsNme : string)=>tb.classList.add(clsNme))
-    const head = document.createElement('thead');
-    if (thead !== undefined)
-    {
-        if (thead instanceof HTMLElement || thead instanceof DocumentFragment)
-        {
-            head.appendChild(thead);
-        }
-        else
-        {
-            thead.map((child) => {
-                head.appendChild(child);
-            });
-        }
-    }
-    tb.appendChild(head);
-    const body = document.createElement("tbody");
-    tb.appendChild(body);
-    if (tbody === undefined) return [tb,body];
-    if (tbody instanceof HTMLElement || tbody instanceof DocumentFragment)
-        body.appendChild(tbody);
-    else
-        tbody.map((child) => {
-            body.appendChild(child);
-        });
-    return [tb,body];
-};
+// export const TABLE = (
+//     className: string,
+//     thead?: HTMLElement[] | HTMLElement | DocumentFragment,
+//     tbody?: HTMLElement[] | HTMLElement | DocumentFragment
+// ):[HTMLTableElement,HTMLTableSectionElement] => {
+//     const tb = document.createElement("table");
+//     className.split(' ').map((clsNme : string)=>tb.classList.add(clsNme))
+//     const head = document.createElement('thead');
+//     if (thead !== undefined)
+//     {
+//         if (thead instanceof HTMLElement || thead instanceof DocumentFragment)
+//         {
+//             head.appendChild(thead);
+//         }
+//         else
+//         {
+//             thead.map((child) => {
+//                 head.appendChild(child);
+//             });
+//         }
+//     }
+//     tb.appendChild(head);
+//     const body = document.createElement("tbody");
+//     tb.appendChild(body);
+//     if (tbody === undefined) return [tb,body];
+//     if (tbody instanceof HTMLElement || tbody instanceof DocumentFragment)
+//         body.appendChild(tbody);
+//     else
+//         tbody.map((child) => {
+//             body.appendChild(child);
+//         });
+//     return [tb,body];
+// };
 
-export const TR = (
-    className: string,
-    children?: HTMLElement[] | HTMLElement | DocumentFragment
-) => {
-    const tr = document.createElement("tr");
-    if(className.split(' ').length > 0)
-        className.split(' ').map((clsNme : string)=>tr.classList.add(clsNme))
+// export const TR = (
+//     className: string,
+//     children?: HTMLElement[] | HTMLElement | DocumentFragment
+// ) => {
+//     const tr = document.createElement("tr");
+//     if(className.split(' ').length > 0)
+//         className.split(' ').map((clsNme : string)=>tr.classList.add(clsNme))
 
-    if (children === undefined) return tr;
-    if (children instanceof HTMLElement || children instanceof DocumentFragment)
-        tr.appendChild(children);
-    else
-        children.map((child) => {
-            tr.appendChild(child);
-        });
-    return tr;
-}
+//     if (children === undefined) return tr;
+//     if (children instanceof HTMLElement || children instanceof DocumentFragment)
+//         tr.appendChild(children);
+//     else
+//         children.map((child) => {
+//             tr.appendChild(child);
+//         });
+//     return tr;
+// }
 
-export const TD = (
-    children?: HTMLElement[] | HTMLElement | DocumentFragment | string
-) => {
-    const td = document.createElement("td");
-    if (children === undefined) return td;
-    if (children instanceof HTMLElement || children instanceof DocumentFragment)
-        td.appendChild(children);
-    else if(typeof children === 'string')
-        td.append(children)
-    else
-        children.map((child) => {
-            td.appendChild(child);
-        });
-    return td;
-};
+// export const TD = (
+//     children?: HTMLElement[] | HTMLElement | DocumentFragment | string
+// ) => {
+//     const td = document.createElement("td");
+//     if (children === undefined) return td;
+//     if (children instanceof HTMLElement || children instanceof DocumentFragment)
+//         td.appendChild(children);
+//     else if(typeof children === 'string')
+//         td.append(children)
+//     else
+//         children.map((child) => {
+//             td.appendChild(child);
+//         });
+//     return td;
+// };
 
 export const LABEL = (
     className: string,

@@ -233,7 +233,7 @@ export class EditorCanvas implements CanvasBase {
             let ev: PaintEvent ={
                 X: e.offsetX,
                 Y: e.offsetY,
-                type: e.pointerType as PaintEvent["type"] || "",
+                type: e.pointerType as PaintEvent["type"] || "mouse",
                 pressure: e.pressure
             };
             if (this.draw_func.PointerMove !== undefined) {
