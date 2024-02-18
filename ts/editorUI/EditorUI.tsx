@@ -199,13 +199,13 @@ class EditorUI {
         this.Menubar = new Menubar();
         this.Mode = new ModeManger();
     }
-    private time_to_rerender : boolean = true;
-    private should_rerender : boolean = false;
+    private time_to_rerender: boolean = true;
+    private should_rerender: boolean = false;
     private canvas_container_vnode = toVNode(DIV("canvas_group"));
     private render() {
-        if(!this.time_to_rerender)
+        if (!this.time_to_rerender)
             return;
-        if(!this.should_rerender)
+        if (!this.should_rerender)
             return;
         this.should_rerender = false;
         this.time_to_rerender = false;
@@ -228,7 +228,7 @@ class EditorUI {
                 console.log("[HOK] editorUI.setstate")
                 return;
             // case "state.init":
-                // break;
+            // break;
             default:
                 break;
         }
@@ -250,7 +250,7 @@ class EditorUI {
         let isErrorHandlerPageActive: boolean = isNotExistPath || isDisableMode;
 
         // let canvas_group = <Div Id="canvas_group" className="canvas_group"></Div>
-        if(this.Mode.ModeChanged) {
+        if (this.Mode.ModeChanged) {
             window.editorUI.CenterCanvas.attachCanvas(this.canvas_container_vnode.elm as HTMLDivElement)
         }
         else {
@@ -295,7 +295,9 @@ class EditorUI {
                     }
                     {
                         isModeSelectorActive &&
-                        <ModeSelectorComp />
+                        <Div className="menu-middle-part">
+                            <ModeSelectorComp />
+                        </Div>
                     }
                     {
                         isMenubarRightActive &&
@@ -312,8 +314,8 @@ class EditorUI {
         this.lastVNode = newVNode;
     }
 
-    private timeToRerender = () => { 
-        this.time_to_rerender = true; 
+    private timeToRerender = () => {
+        this.time_to_rerender = true;
         this.render();
         window.requestAnimationFrame(this.timeToRerender);
     }
@@ -331,7 +333,7 @@ class EditorUI {
         this.lastVNode = toVNode(this.container);
         this.unsubscribe = editorUIData.subscribe(() => {
             let stateAction = editorUIData.getState().state.action;
-            if(stateAction !== "state.usestate") {
+            if (stateAction !== "state.usestate") {
                 this.should_rerender = true;
             }
             this.render();
