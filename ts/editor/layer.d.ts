@@ -12,7 +12,7 @@ export declare class LayerManager {
     private cvs;
     private ctx;
     private id2zIndex;
-    constructor(containerr: HTMLDivElement, width: number, height: number);
+    constructor(container: HTMLDivElement, width: number, height: number);
     private addLayer;
     addLayerAfter(): string;
     changeTo(id: string): void;

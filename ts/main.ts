@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     let eui = await import( /* webpackChunkName: "editorUI" */ './editorUI');
     let editor = await import( /* webpackChunkName: "modeEditor" */ './editor/modeEditor');
     // console.log("[DEB] dynamic loaded : ", typeof eui, eui.default)
-    window.editorUIng = new eui.default();
-    window.editorUIng.Mode.add("editor", new editor.default());
-    window.editorUIng.Mount("editorUI_container");
-    window.editorUIng.Mode.changeTo("editor");
+    window.editorUI = new eui.default();
+    window.editorUI.Mode.add("editor", new editor.default());
+    window.editorUI.Mount("editorUI_container");
+    window.editorUI.Mode.changeTo("editor");
 });

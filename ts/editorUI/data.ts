@@ -116,7 +116,9 @@ let modeManagerSlice = createSlice({
     initialState: {
         root: "",
         action: "",
-        data: {}
+        data: {},
+        curMode: "",
+        lastMode: "",
     },
     reducers: {
         rendered: (state, action) => {
@@ -172,7 +174,15 @@ let modeManagerSlice = createSlice({
         },
         setRoot: (state, action: PayloadAction<string>) => {
             state.root = action.payload
-        }
+        },
+        // changeTo: (state, action: PayloadAction<string>) => {
+        //     if(state.curMode === action.payload) return;
+        //     if(!(action.payload in state.data)) return;
+        //     state.lastMode = state.curMode;
+        //     state.curMode = action.payload;
+        //     state.action = `mode.changed`;
+        //     return state;
+        // }
     }
 });
 

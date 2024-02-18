@@ -31,6 +31,8 @@ import LayerMgrSidebar, { LayerManager, Layer } from './layer';
 import SettingPageSidebar from "./setting";
 import { editorUIActions, editorUIData } from "../editorUI/data";
 import HistoryManager from "./historyLogger";
+import { Div } from "../editorUI/util/Element";
+import { VNode } from "snabbdom";
 
 
 export class btnCanvas implements FunctionInterface {
@@ -69,7 +71,8 @@ export class EditorCanvas implements CanvasBase {
     );
     private scaleElement: HTMLDivElement = DIV("absolute w-fit h-fit transform-center")
     private backgroundDiv: HTMLDivElement = DIV("absolute disable-mouse");
-    private cnt !:HTMLDivElement;
+    private cnt !: HTMLDivElement;
+    // private containerVNode: VNode;
     // private cvs !: Konva.Stage;
     // private ctx !:Konva.Layer;
     // private prev_ctx = () => this.LayerManager.Layer.prev;
@@ -88,7 +91,7 @@ export class EditorCanvas implements CanvasBase {
     constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
-        this.scaleTip = window.editorUIng.Statusbar.addTip("", true);
+        this.scaleTip = window.editorUI.Statusbar.addTip("", true);
         this.refreshScaleTip(0,1);
         this.cnt = DIV("w-full h-full");
         this.LayerManager = new LayerManager(this.cnt, width, height);
@@ -114,7 +117,7 @@ export class EditorCanvas implements CanvasBase {
                 shape.hide();
             })
         })
-        editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "LayerMgrSidebar", new_func: null}));
+        // editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "LayerMgrSidebar", new_func: null}));
     };
     public redo = () => { // Ctrl-Y
         let redoLst = this.historyMagr.redo();
@@ -127,7 +130,7 @@ export class EditorCanvas implements CanvasBase {
                 shape.show();
             })
         })
-        editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "LayerMgrSidebar", new_func: null}));
+        // editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "LayerMgrSidebar", new_func: null}));
     };
     private finishDrawing() {
         // console.log("[DEB] Finish Drawing ...");
@@ -178,10 +181,15 @@ export class EditorCanvas implements CanvasBase {
     private isDrawing: boolean = false;
     private isDrawRotate: boolean = true;
     attachCanvas(container: HTMLDivElement) {
-        
+
+        // this.containerVNode = <Div className="w-full h-full" />;
+        // let container = this.containerVNode.elm as HTMLDivElement;
+        // console.log("[HOK] attachCanvas : ", this.containerVNode)
+        console.log("[HOK] Canvas Size ", this.width, this.height);
         this.backgroundDiv.style.width = `${this.width}px`;
         this.backgroundDiv.style.height = `${this.height}px`;
         this.backgroundDiv.style.backgroundColor = "white";
+        this.backgroundDiv.id = "backgroundDiv";
         
         let interactCVS = interact(this.cnt, {
             styleCursor: false
@@ -266,7 +274,7 @@ export class EditorCanvas implements CanvasBase {
             this.isPointOut = undefined;
             if (
                 e.pointerType === "touch" &&
-                (window.editorUIng.CenterCanvas as EditorCanvas)
+                (window.editorUI.CenterCanvas as EditorCanvas)
                     .canDrawWithTouch === false
             ) {
                 // console.log("pointerdown");
@@ -295,7 +303,7 @@ export class EditorCanvas implements CanvasBase {
             // console.log("pointermove");
             if (
                 e.pointerType === "touch" &&
-                (window.editorUIng.CenterCanvas as EditorCanvas)
+                (window.editorUI.CenterCanvas as EditorCanvas)
                     .canDrawWithTouch === false
             )
             {
@@ -325,7 +333,7 @@ export class EditorCanvas implements CanvasBase {
             // console.log("pointerup");
             if (
                 e.pointerType === "touch" &&
-                (window.editorUIng.CenterCanvas as EditorCanvas)
+                (window.editorUI.CenterCanvas as EditorCanvas)
                     .canDrawWithTouch === false
             ) {
                 // console.log("pointerup");
@@ -387,6 +395,8 @@ export class EditorCanvas implements CanvasBase {
         container.appendChild(this.scrollDiv);
 
         this.initCanvas();
+        // return <Div />;
+        // return this.containerVNode;
     }
 
     public enableDrag() {
@@ -446,7 +456,7 @@ export class EditorCanvas implements CanvasBase {
             this.cnt.style.cursor =
                 "url(img/cursor/" + func.CursorName + ".cur), auto";
         }
-        editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "SettingsPage", new_func: null}));
+        // editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "SettingsPage", new_func: null}));
     }
     resizeCanvas = (e?: UIEvent) => {};
     removeCanvas = () => {};
@@ -470,6 +480,7 @@ export class EditorCanvas implements CanvasBase {
         this.isPointOut = undefined;
         // this.ctx.clearRect(0, 0, this.width, this.height);
         // this.ctx.drawImage(this.render_cvs.element, 0, 0, this.width, this.height);
+        // return this.containerVNode;
     };
 
     private drawWithTouch = false;

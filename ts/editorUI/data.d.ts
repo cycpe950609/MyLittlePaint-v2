@@ -24,6 +24,8 @@ export declare const editorUIData: import("@reduxjs/toolkit").EnhancedStore<{
         root: string;
         action: string;
         data: {};
+        curMode: string;
+        lastMode: string;
     };
     menubar_left_: {
         action: string;
@@ -97,6 +99,8 @@ export declare const editorUIData: import("@reduxjs/toolkit").EnhancedStore<{
             root: string;
             action: string;
             data: {};
+            curMode: string;
+            lastMode: string;
         };
         menubar_left_: {
             action: string;

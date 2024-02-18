@@ -36,12 +36,12 @@ class SettingPageSidebar implements SidebarInterface {
     HistoryName?: string; // Undefined if dont want to store in redo/undo hostory
     Visible: boolean = false;
     Title: () => string = () => {
-        let name = (window.editorUIng.CenterCanvas as EditorCanvas).settings.Name;
+        let name = (window.editorUI.CenterCanvas as EditorCanvas).settings.Name;
         if (name === undefined) return 'Settings';
         return `Settings of ${name}`;
     };
     Body: () => VNode = () => {
-        let setting = (window.editorUIng.CenterCanvas as EditorCanvas).settings;
+        let setting = (window.editorUI.CenterCanvas as EditorCanvas).settings;
         console.log(`[DEB] Setting of ${setting.Name}`, setting.Settings);
         if (setting.Name === undefined || setting.Settings == undefined)
             return <Div className="w-full">
@@ -71,7 +71,7 @@ class SettingPageSidebar implements SidebarInterface {
                                                 }]
                                             ])
                                         };
-                                        (window.editorUIng.CenterCanvas as EditorCanvas).settings = newSet;
+                                        (window.editorUI.CenterCanvas as EditorCanvas).settings = newSet;
                                     }
                                     } />
                             </Td>
@@ -98,7 +98,7 @@ class SettingPageSidebar implements SidebarInterface {
                                                     }]
                                                 ])
                                             };
-                                            (window.editorUIng.CenterCanvas as EditorCanvas).settings = newSet;
+                                            (window.editorUI.CenterCanvas as EditorCanvas).settings = newSet;
                                         }
                                     }
                                 />
@@ -126,7 +126,7 @@ class SettingPageSidebar implements SidebarInterface {
                                                     }]
                                                 ])
                                             };
-                                            (window.editorUIng.CenterCanvas as EditorCanvas).settings = newSet;
+                                            (window.editorUI.CenterCanvas as EditorCanvas).settings = newSet;
                                         }
                                     }
                                 />

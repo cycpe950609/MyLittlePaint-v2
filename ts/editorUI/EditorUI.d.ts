@@ -7,7 +7,7 @@ import StatusBar from './statusbar';
 import './util/console';
 declare global {
     interface Window {
-        editorUIng: EditorUI;
+        editorUI: EditorUI;
     }
 }
 declare class ModeManger {
@@ -15,6 +15,7 @@ declare class ModeManger {
     private func_mode;
     private funcNoop;
     private func;
+    private isModeChanged;
     constructor();
     currentMode(): string;
     enable(modeName: string): void;
@@ -24,6 +25,7 @@ declare class ModeManger {
     remove(name: string): void;
     changeFunction(next_func: FunctionInterface): void;
     changeTo(modeName: string): void;
+    get ModeChanged(): boolean;
 }
 declare class Menubar {
     Left: ToolbarPart<FunctionInterface>;
@@ -51,6 +53,7 @@ declare class EditorUI {
     constructor();
     private time_to_rerender;
     private should_rerender;
+    private canvas_container_vnode;
     private render;
     private timeToRerender;
     Mount(container: string | HTMLDivElement): void;

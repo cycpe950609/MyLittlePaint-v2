@@ -40,3 +40,8 @@ export type ImgPropsType = Omit<JSX.IntrinsicElements["img"], 'id'> & {Id?: stri
 export const Img: Snabbdom.Component<ImgPropsType> = (props) => {
     return <img {...props} id={props.Id!= undefined? props.Id : "imgcnt" as any}>{props.children}</img>
 };
+
+export type CanvasPropsType = Omit<JSX.IntrinsicElements["canvas"], 'id'> & {Id?: string};
+export const Canvas: Snabbdom.Component<CanvasPropsType> = (props) => {
+    return <canvas {...props} id={props.Id!= undefined? props.Id : "cvscnt" as any}>{props.children}</canvas>
+};

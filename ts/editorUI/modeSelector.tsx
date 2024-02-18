@@ -17,7 +17,7 @@ export const ModeSelectorComp: Snabbdom.Component<{}> = () => {
                 if (btnName === undefined) return <></>;
 
                 return <Label className="buttongroup-item"
-                    onclick={() => window.editorUIng.Mode.changeTo(val.modeName)}
+                    onclick={() => window.editorUI.Mode.changeTo(val.modeName)}
                 >
                     <Input type="radio" className="button_input" name="modeSelector" defaultChecked={false} disabled={val.enable !== true}/>
                     <Div className="button">

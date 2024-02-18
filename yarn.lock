@@ -1832,13 +1832,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/parse5@npm:^6.0.0":
-  version: 6.0.3
-  resolution: "@types/parse5@npm:6.0.3"
-  checksum: 10/834d40c9b1a8a99a9574b0b3f6629cf48adcff2eda01a35d701f1de5dcf46ce24223684647890aba9f985d6c801b233f878168683de0ae425940403c383fba8f
-  languageName: node
-  linkType: hard
-
 "@types/qs@npm:*":
   version: 6.9.11
   resolution: "@types/qs@npm:6.9.11"
@@ -5743,8 +5736,6 @@ __metadata:
     remark: "npm:^14.0.0"
     remark-html: "npm:^16.0.1"
     remark-loader: "npm:^6.0.0"
-    single-spa: "npm:^6.0.0"
-    single-spa-layout: "npm:^2.2.0"
     snabbdom: "npm:^3.6.2"
     style-loader: "npm:^3.3.4"
     ts-loader: "npm:^9.5.1"
@@ -6049,13 +6040,6 @@ __metadata:
   dependencies:
     callsites: "npm:^3.0.0"
   checksum: 10/6ba8b255145cae9470cf5551eb74be2d22281587af787a2626683a6c20fbb464978784661478dd2a3f1dad74d1e802d403e1b03c1a31fab310259eec8ac560ff
-  languageName: node
-  linkType: hard
-
-"parse5@npm:^6.0.1":
-  version: 6.0.1
-  resolution: "parse5@npm:6.0.1"
-  checksum: 10/dfb110581f62bd1425725a7c784ae022a24669bd0efc24b58c71fc731c4d868193e2ebd85b74cde2dbb965e4dcf07059b1e651adbec1b3b5267531bd132fdb75
   languageName: node
   linkType: hard
 
@@ -6983,25 +6967,6 @@ __metadata:
   version: 4.1.0
   resolution: "signal-exit@npm:4.1.0"
   checksum: 10/c9fa63bbbd7431066174a48ba2dd9986dfd930c3a8b59de9c29d7b6854ec1c12a80d15310869ea5166d413b99f041bfa3dd80a7947bcd44ea8e6eb3ffeabfa1f
-  languageName: node
-  linkType: hard
-
-"single-spa-layout@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "single-spa-layout@npm:2.2.0"
-  dependencies:
-    "@types/parse5": "npm:^6.0.0"
-    merge2: "npm:^1.4.1"
-    parse5: "npm:^6.0.1"
-    single-spa: "npm:^6.0.0-beta.1"
-  checksum: 10/defbb2dd6a5ff88aa29b4251fc4745eddc1ba6dddc731a408e4a48d67c54cf08706f394e7faadc82251c6c2dc454bace12a3905c03da6b40ea09eb1696ff2b31
-  languageName: node
-  linkType: hard
-
-"single-spa@npm:^6.0.0, single-spa@npm:^6.0.0-beta.1":
-  version: 6.0.0
-  resolution: "single-spa@npm:6.0.0"
-  checksum: 10/e61f6b83f5b200fc093fce41ed2704b631c53d3214fef77342571ee9aadf903131c9aedec80568424ba23fa794b97bc74cbdb8ac741b19ad44a1c2cb1628a462
   languageName: node
   linkType: hard
 

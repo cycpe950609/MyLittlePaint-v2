@@ -5,7 +5,6 @@ import createFunctionInterfaceButton from "./util/createFunctionInterfaceButton"
 import Snabbdom from "@herp-inc/snabbdom-jsx";
 import { Div } from "./util/Element";
 
-// Menubar application form single-spa
 
 let unsubscribe: { [key: string]: Unsubscribe } = {};
 let rendered: { [key: string]: boolean } = {};

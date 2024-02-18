@@ -1,6 +1,8 @@
 import Konva from "konva";
+import { VNode } from "snabbdom";
 // import { PaintCanvas, PaintContext } from "../editor/canvas";
 import { v4 as uuidv4 } from "uuid";
+import { Div } from "./util/Element";
 
 export type PaintEvent = {
     X: number;
@@ -101,7 +103,7 @@ export class DrawBase implements CanvasInterface {
         return [newX, newY];
     }
     public DrawFunction(ctx: Konva.Group, width: number, height: number,rotate: number) {};
-    public CompositeOperation: GlobalCompositeOperation = <GlobalCompositeOperation>"source-over";
+    public CompositeOperation: GlobalCompositeOperation = "source-over" as GlobalCompositeOperation;
     public set Settings(setting:CanvasInterfaceSettings) {}; 
     public get Settings() { return {} as CanvasInterfaceSettings; }; 
 };
@@ -124,6 +126,7 @@ export class NoOPCanvas implements CanvasBase {
     attachCanvas(container: HTMLDivElement) {
         // console.log("NoOPCanvas attachCanvas on ");
         // console.log(container);
+        // return <Div />;
     }
     setFunction(func: CanvasInterface){
         console.log("setFunction",func);
@@ -136,6 +139,7 @@ export class NoOPCanvas implements CanvasBase {
     }
     render() {
         // console.log("NoOPCanvas render");
+        // return <Div />;
     }
     isUpdate: boolean = false;
 }

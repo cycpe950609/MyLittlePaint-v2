@@ -23,9 +23,9 @@ export class LayerManager {
 
     private id2zIndex: Map<string, number> = new Map<string, number>(); //
 
-    constructor(containerr: HTMLDivElement, width: number, height: number) {
+    constructor(container: HTMLDivElement, width: number, height: number) {
         this.cvs = new Konva.Stage({
-            container: containerr,   // id of container <div>
+            container: container,   // id of container <div>
             width: width,
             height: height,
         } as Konva.StageConfig);
@@ -68,7 +68,7 @@ export class LayerManager {
         if (!this.layerList.has(id))
             throw new Error(`Layer ${id} not exist`);
         this.defaultLayer = id;
-        editorUIData.dispatch(editorUIActions.sidebar_window.update({ id: "LayerMgrSidebar", new_func: null }));
+        // editorUIData.dispatch(editorUIActions.sidebar_window.update({ id: "LayerMgrSidebar", new_func: null }));
     }
 
     public get Canvas(): Konva.Stage {
@@ -93,8 +93,10 @@ export class LayerManager {
     }
 
     public clear(): void {
+        // let origSz = this.layerList.size;
         this.layerList.forEach(layer => layer.clear());
-        editorUIData.dispatch(editorUIActions.sidebar_window.update({ id: "LayerMgrSidebar", new_func: null }));
+        // if(origSz > 0)
+        //     editorUIData.dispatch(editorUIActions.sidebar_window.update({ id: "LayerMgrSidebar", new_func: null }));
     };
 };
 
@@ -173,7 +175,7 @@ export class Layer {
             this._render.add(item);
         })
         this._prev.destroyChildren();
-        editorUIData.dispatch(editorUIActions.sidebar_window.update({ id: "LayerMgrSidebar", new_func: null }));
+        // editorUIData.dispatch(editorUIActions.sidebar_window.update({ id: "LayerMgrSidebar", new_func: null }));
     }
     public add(item: any) {
         this._isPreview = false;
@@ -206,7 +208,7 @@ class LayerMgrSidebar implements SidebarInterface {
     Body = async () => {
         if (this.Visible) {
             // let pointsList = (cvs as LabelCanvas).AllNodes;
-            let layersList = (window.editorUIng.CenterCanvas as EditorCanvas).LayerManager.LayerList;
+            let layersList = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.LayerList;
 
             const createList = async (classNames: string, idx: number, layer: LayerInfo) => {
                 // let btnEdit = HBUTTON("edit_btn mt-20px px-0", "..", (e: MouseEvent) => {
@@ -220,7 +222,7 @@ class LayerMgrSidebar implements SidebarInterface {
                 return <Tr className={classNames}
                     onclick={
                         (e: MouseEvent) => {
-                            (window.editorUIng.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
+                            (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
                         }
                     }
                 >
@@ -229,7 +231,7 @@ class LayerMgrSidebar implements SidebarInterface {
                     <Td>{layer.Name}</Td>
                 </Tr>
             }
-            let edittedLayer = (window.editorUIng.CenterCanvas as EditorCanvas).LayerManager.Layer.ID;
+            let edittedLayer = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.Layer.ID;
             let newTableBody = await Promise.all(
                 layersList.map((layer: LayerInfo, idx: number) => {
                     if (layer.ID === edittedLayer) {

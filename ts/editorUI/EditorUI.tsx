@@ -15,10 +15,11 @@ import { MenuboxComp } from './menubox';
 import { ModeSelectorComp } from './modeSelector';
 import { changeToMode } from './mode';
 import { ErrorHandlerPage } from './errorPage';
+import { DIV } from './util/HTMLElement';
 
 declare global {
     interface Window {
-        editorUIng: EditorUI;
+        editorUI: EditorUI;
     }
 }
 class ModeManger {
@@ -31,6 +32,7 @@ class ModeManger {
 
     private funcNoop: FunctionInterface = new NoOPFunc(0);
     private func: FunctionInterface = this.funcNoop;
+    private isModeChanged: boolean = false;
 
     constructor() { }
 
@@ -90,12 +92,12 @@ class ModeManger {
 
     changeFunction(next_func: FunctionInterface) {
         if (this.func.EndFunction !== undefined) {
-            this.func.EndFunction(window.editorUIng.CenterCanvas);
+            this.func.EndFunction(window.editorUI.CenterCanvas);
             // this.mdfunc.CenterCanvas.render();
         }
 
-        const ifChangFunc = next_func.StartFunction(window.editorUIng.CenterCanvas);
-        window.editorUIng.CenterCanvas.render();
+        const ifChangFunc = next_func.StartFunction(window.editorUI.CenterCanvas);
+        window.editorUI.CenterCanvas.render();
         if (ifChangFunc === true) this.func = next_func;
     }
 
@@ -111,10 +113,17 @@ class ModeManger {
         )
             return;
         console.log(`[MOD] Change mode to ${modeName} 2`);
-        changeToMode(modeNameHash)
+        changeToMode(modeNameHash);
+        this.isModeChanged = true;
         console.log("[DEB]", modeName, editorUIData.getState().mode.data)
         // singleSpa.navigateToUrl(`#/${modeName}`)
         console.log("[MOD] Change mode to " + modeName);
+    }
+
+    public get ModeChanged() { // Can only be called once at render time
+        let rtv = this.isModeChanged;
+        this.isModeChanged = false;
+        return rtv;
     }
 }
 
@@ -192,6 +201,7 @@ class EditorUI {
     }
     private time_to_rerender : boolean = true;
     private should_rerender : boolean = false;
+    private canvas_container_vnode = toVNode(DIV("canvas_group"));
     private render() {
         if(!this.time_to_rerender)
             return;
@@ -239,10 +249,16 @@ class EditorUI {
         let isDisableMode = (url.hash in editorUIData.getState()["mode"].data && editorUIData.getState()["mode"].data[url.hash].enable === false)
         let isErrorHandlerPageActive: boolean = isNotExistPath || isDisableMode;
 
+        // let canvas_group = <Div Id="canvas_group" className="canvas_group"></Div>
+        if(this.Mode.ModeChanged) {
+            window.editorUI.CenterCanvas.attachCanvas(this.canvas_container_vnode.elm as HTMLDivElement)
+        }
+        else {
+            window.editorUI.CenterCanvas.render()
+        }
         let editorUI = <>
             <Div>
-                <Div Id="canvas_group" className="canvas_group">
-                </Div>
+                {this.canvas_container_vnode}
                 {
                     isToolbarLeftActive &&
                     <Div className="toolbar-vertical-cnt toolbar-vertical-cnt-left">
@@ -315,8 +331,7 @@ class EditorUI {
         this.lastVNode = toVNode(this.container);
         this.unsubscribe = editorUIData.subscribe(() => {
             let stateAction = editorUIData.getState().state.action;
-            if(     stateAction !== "state.usestate" 
-                ) {
+            if(stateAction !== "state.usestate") {
                 this.should_rerender = true;
             }
             this.render();

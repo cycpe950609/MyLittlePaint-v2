@@ -103,8 +103,6 @@ class Toolbar<ButtonInfoType> {
 
 export default Toolbar;
 
-// Toolbar application form single-spa
-
 let createFuncList : {[key:string]:createFuncType<any>} = {};
 export type ToolbarPropsType = {
     type: string;

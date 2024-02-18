@@ -32,3 +32,7 @@ export type ImgPropsType = Omit<JSX.IntrinsicElements["img"], 'id'> & {
     Id?: string;
 };
 export declare const Img: Snabbdom.Component<ImgPropsType>;
+export type CanvasPropsType = Omit<JSX.IntrinsicElements["canvas"], 'id'> & {
+    Id?: string;
+};
+export declare const Canvas: Snabbdom.Component<CanvasPropsType>;

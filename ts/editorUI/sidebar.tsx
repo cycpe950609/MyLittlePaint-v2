@@ -89,7 +89,7 @@ export const bootstrap = async () => {
 let windowCache: { [key: string]: VNode } = {};
 let renderWindow = (uuid: string, windowName: string):VNode => {
     if (uuid in windowCache &&
-        !window.editorUIng.CenterCanvas.isUpdate &&
+        !window.editorUI.CenterCanvas.isUpdate &&
         !(editorUIData.getState()['sidebar_window'].action === `sidebar_window.${windowName}.update`)
     )
         return windowCache[uuid];
@@ -168,7 +168,7 @@ export const SidebarComp: Snabbdom.Component<{}> = () => {
     </Div>
 
     // console.log("[DEB]", sidebar)
-    window.editorUIng.CenterCanvas.isUpdate = false;
+    window.editorUI.CenterCanvas.isUpdate = false;
 
     return sidebar;
 }
