@@ -13,7 +13,7 @@ export class PolygonBase extends DrawBase {
     CanFilled = false;
     get Settings () {
         let rtv: CanvasInterfaceSettings = {
-            Name : "Brush",
+            Name : this.Name,
             Settings : new Map<string, CanvasSettingEntry<any>>([
                 ["BorderBrush" , {
                     type: CanvasSettingType.Color,

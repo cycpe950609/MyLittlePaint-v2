@@ -44,7 +44,7 @@ class LineCVSFunc extends DrawBase{
     CompositeOperation = <GlobalCompositeOperation>"source-over"
     get Settings () {
         let rtv: CanvasInterfaceSettings = {
-            Name : "Brush",
+            Name : "Line",
             Settings : new Map<string, CanvasSettingEntry<any>>([
                 ["BrushColor" , {
                     type: CanvasSettingType.Color,

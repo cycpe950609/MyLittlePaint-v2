@@ -463,7 +463,7 @@ export class EditorCanvas implements CanvasBase {
             this.cnt.style.cursor =
                 "url(img/cursor/" + func.CursorName + ".cur), auto";
         }
-        // editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "SettingsPage", new_func: null}));
+        window.editorUI.forceRerender();
     }
     resizeCanvas = (e?: UIEvent) => {};
     removeCanvas = () => {};

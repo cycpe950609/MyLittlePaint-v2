@@ -45,7 +45,7 @@ class EraserCVSFunc extends DrawBase {
     CompositeOperation = <GlobalCompositeOperation>"destination-out"
 get Settings () {
         let rtv: CanvasInterfaceSettings = {
-            Name : "Brush",
+            Name : "Eraser",
             Settings : new Map<string, CanvasSettingEntry<any>>([
                 ["BrushWidth", {
                     type: CanvasSettingType.Number,

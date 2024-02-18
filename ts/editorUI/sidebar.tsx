@@ -1,35 +1,11 @@
-import { Unsubscribe } from "@reduxjs/toolkit";
-// import { CanvasBase } from "./canvas";
 import { ToolbarStateType, editorUIData, editorUIActions } from "./data";
-// import EditorUI from "./EditorUI";
 import FunctionInterface from "./interface/function";
 import SidebarInterface from "./interface/sidebar";
 import {
-    init,
-    classModule,
-    propsModule,
-    styleModule,
-    eventListenersModule,
-    toVNode,
     VNode,
 } from "snabbdom";
 import { Div, Span } from "./util/Element";
 import Snabbdom from "@herp-inc/snabbdom-jsx";
-
-const patchSidebar = init([
-    // Init patch function with chosen modules
-    classModule, // makes it easy to toggle classes
-    propsModule, // for setting properties on DOM elements
-    styleModule, // handles styling on elements with support for animations
-    eventListenersModule, // attaches event listeners
-],
-    undefined,
-    {
-        experimental: {
-            fragments: true
-        }
-    }
-);
 
 class Sidebar implements FunctionInterface {
     Name: string;
@@ -82,10 +58,6 @@ class Sidebar implements FunctionInterface {
 }
 
 export default Sidebar;
-
-export const bootstrap = async () => {
-    console.log("[EUI] modeSelector bootstrapping");
-}
 
 let renderWindow = (uuid: string, windowName: string):VNode => {
 

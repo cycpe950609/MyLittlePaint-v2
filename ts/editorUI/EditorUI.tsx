@@ -98,7 +98,9 @@ class ModeManger {
 
         const ifChangFunc = next_func.StartFunction(window.editorUI.CenterCanvas);
         window.editorUI.CenterCanvas.render();
-        if (ifChangFunc === true) this.func = next_func;
+        if (ifChangFunc === true){ 
+            this.func = next_func
+        };
     }
 
     changeTo(modeName: string) {

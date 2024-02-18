@@ -14,5 +14,4 @@ declare class Sidebar implements FunctionInterface {
     StartFunction(): boolean;
 }
 export default Sidebar;
-export declare const bootstrap: () => Promise<void>;
 export declare const SidebarComp: Snabbdom.Component<{}>;
