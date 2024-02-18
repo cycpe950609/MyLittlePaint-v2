@@ -6,7 +6,15 @@ export type ModeInfo = {
     def: ModeFunction;
     btn?: HTMLElement;
 };
-export type StateType = string | number | boolean | null | undefined;
+export type StateType = string | number | boolean | null | undefined | Array<string | number | boolean | null | undefined> | any;
+export type DataBinderType = {
+    key: string;
+    val: StateType;
+};
+export type DataBinderDataType = {
+    isCreated: boolean;
+    val: StateType;
+};
 export declare const modeDisable: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/disable">, modeEnable: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/enable">, modeToggle: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/toggle">, modeAdd: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<ModeInfo, "modeManager/add">, modeRemove: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/remove">, modeSetRoot: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/setRoot">;
 export type ToolbarStateType<ButtonInfoType> = {
     [key: string]: ButtonInfoType;
@@ -91,7 +99,15 @@ export declare const editorUIData: import("@reduxjs/toolkit").EnhancedStore<{
         action: string;
         useStateCount: number;
         firstInit: boolean;
-        data: StateType[];
+        data: any[];
+    };
+    binder: {
+        action: string;
+        useStateCount: number;
+        firstInit: boolean;
+        data: {
+            [key: string]: DataBinderDataType;
+        };
     };
 }, import("redux").UnknownAction, import("@reduxjs/toolkit").Tuple<[import("redux").StoreEnhancer<{
     dispatch: import("redux-thunk").ThunkDispatch<{
@@ -166,7 +182,15 @@ export declare const editorUIData: import("@reduxjs/toolkit").EnhancedStore<{
             action: string;
             useStateCount: number;
             firstInit: boolean;
-            data: StateType[];
+            data: any[];
+        };
+        binder: {
+            action: string;
+            useStateCount: number;
+            firstInit: boolean;
+            data: {
+                [key: string]: DataBinderDataType;
+            };
         };
     }, undefined, import("redux").UnknownAction>;
 }>, import("redux").StoreEnhancer]>>;

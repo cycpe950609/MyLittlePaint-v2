@@ -211,27 +211,44 @@ class EditorUI {
         this.time_to_rerender = false;
         console.log("[EUI] Render");
 
-        let stateAction = editorUIData.getState().state.action;
-        console.log("[HOK] State action", stateAction);
-        switch (stateAction) {
-            // case "state.usestate":
-            //     console.log("[HOK] editorUI.useState")
-            //     return;
-            case "state.patchstates":
-                console.log("[HOK] editorUI.patchstates")
-                // break;
-                return;
-            case "state.resetcount":
-                console.log("[HOK] editorUI.resetcount")
-                break;
-            case "state.setstate":
-                console.log("[HOK] editorUI.setstate")
-                return;
-            // case "state.init":
-            // break;
-            default:
-                break;
-        }
+        // let stateAction = editorUIData.getState().state.action;
+        // console.log("[HOK] State action", stateAction);
+        // switch (stateAction) {
+        //     // case "state.usestate":
+        //     //     console.log("[HOK] editorUI.useState")
+        //     //     return;
+        //     case "state.patchstates":
+        //         console.log("[HOK] editorUI.patchstates")
+        //         // break;
+        //         return;
+        //     case "state.resetcount":
+        //         console.log("[HOK] editorUI.resetcount")
+        //         break;
+        //     case "state.setstate":
+        //         console.log("[HOK] editorUI.setstate")
+        //         return;
+        //     // case "state.init":
+        //     // break;
+        //     default:
+        //         break;
+        // }
+        // let dataAction = editorUIData.getState().binder.action;
+        // switch (dataAction) {
+        //     case "data.create.binder":
+        //         console.log("[HOK] editorUI.patchstates")
+        //         // break;
+        //         return;
+        //     case "data.reset.binder":
+        //         console.log("[HOK] editorUI.resetcount")
+        //         break;
+        //     case "state.setstate":
+        //         console.log("[HOK] editorUI.setstate")
+        //         return;
+        //     // case "state.init":
+        //     // break;
+        //     default:
+        //         break;
+        // }
 
         console.log("[DEB] Render");
 
@@ -310,7 +327,6 @@ class EditorUI {
         </>
         let newVNode = isErrorHandlerPageActive ? <ErrorHandlerPage /> : editorUI
         this.renderVNode(this.lastVNode, newVNode);
-        // editorUIData.dispatch(editorUIActions.state.finishUseState(null));
         this.lastVNode = newVNode;
     }
 
@@ -318,6 +334,11 @@ class EditorUI {
         this.time_to_rerender = true;
         this.render();
         window.requestAnimationFrame(this.timeToRerender);
+    }
+    public forceRerender() {
+        this.should_rerender = true;
+        this.time_to_rerender = true;
+        this.render();
     }
 
     public Mount(container: string | HTMLDivElement) {
@@ -333,9 +354,15 @@ class EditorUI {
         this.lastVNode = toVNode(this.container);
         this.unsubscribe = editorUIData.subscribe(() => {
             let stateAction = editorUIData.getState().state.action;
-            if (stateAction !== "state.usestate") {
+            let dataAction = editorUIData.getState().binder.action;
+            if (
+                stateAction !== "state.usestate" ||
+                dataAction !== "data.use.data"
+            ) {
+                console.log("[EUI] Should Render ", stateAction, dataAction);
                 this.should_rerender = true;
             }
+            
             this.render();
         })
         window.requestAnimationFrame(this.timeToRerender)

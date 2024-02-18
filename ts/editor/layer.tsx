@@ -7,8 +7,9 @@ import SidebarInterface from '../editorUI/interface/sidebar'
 import { HistoryLogEntry } from "./historyLogger";
 import { EditorCanvas } from "./modeEditor";
 import { Div, Img, Table, Td, Tr } from "../editorUI/util/Element";
+import { useConsumer } from "../editorUI/util/useHook";
 
-class LayerInfo {
+export class LayerInfo {
     public Snapshot: string = "";
     public Name: string = "";
     public ID: string = "";
@@ -68,6 +69,7 @@ export class LayerManager {
         if (!this.layerList.has(id))
             throw new Error(`Layer ${id} not exist`);
         this.defaultLayer = id;
+        window.editorUI.forceRerender()
         // editorUIData.dispatch(editorUIActions.sidebar_window.update({ id: "LayerMgrSidebar", new_func: null }));
     }
 
@@ -94,6 +96,7 @@ export class LayerManager {
 
     public clear(): void {
         // let origSz = this.layerList.size;
+        console.log("[EUI] Layer clear");
         this.layerList.forEach(layer => layer.clear());
         // if(origSz > 0)
         //     editorUIData.dispatch(editorUIActions.sidebar_window.update({ id: "LayerMgrSidebar", new_func: null }));
@@ -205,12 +208,12 @@ class LayerMgrSidebar implements SidebarInterface {
     Tip = "Layer Manager";
     Visible = false;
     Title = () => "Layer";
-    Body = async () => {
+    Body = () => {
         if (this.Visible) {
             // let pointsList = (cvs as LabelCanvas).AllNodes;
-            let layersList = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.LayerList;
-
-            const createList = async (classNames: string, idx: number, layer: LayerInfo) => {
+            let layersList = useConsumer("editor.layer.info.list") as LayerInfo[];
+            console.log("[EUI] LayerMgrSidebar : ", layersList);
+            const createList = (classNames: string, idx: number, layer: LayerInfo) => {
                 // let btnEdit = HBUTTON("edit_btn mt-20px px-0", "..", (e: MouseEvent) => {
                 //     (window.editorUIng.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
                 // });
@@ -232,16 +235,15 @@ class LayerMgrSidebar implements SidebarInterface {
                 </Tr>
             }
             let edittedLayer = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.Layer.ID;
-            let newTableBody = await Promise.all(
-                layersList.map((layer: LayerInfo, idx: number) => {
-                    if (layer.ID === edittedLayer) {
-                        return createList("editted-layer", idx, layer);
-                    }
-                    else {
-                        return createList("normal-layer", idx, layer);
-                    }
-                })
-            );
+            let newTableBody = layersList.map((layer: LayerInfo, idx: number) => {
+                if (layer.ID === edittedLayer) {
+                    return createList("editted-layer", idx, layer);
+                }
+                else {
+                    return createList("normal-layer", idx, layer);
+                }
+            })
+
             return <Table className="w-full b-none align-right">
                 <Tr className="layers-header">
                     <Td>Index</Td>
@@ -251,7 +253,7 @@ class LayerMgrSidebar implements SidebarInterface {
                 {newTableBody}
             </Table>
         }
-        return <Div/>;
+        return <Div />;
     };
 }
 

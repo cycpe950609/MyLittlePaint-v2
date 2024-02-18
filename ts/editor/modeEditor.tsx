@@ -27,12 +27,13 @@ import {
 import { TipComponent } from "../editorUI/statusbar";
 import interact from "interactjs";
 import Interact from "@interactjs/types/index";
-import LayerMgrSidebar, { LayerManager, Layer } from './layer';
+import LayerMgrSidebar, { LayerManager, Layer, LayerInfo } from './layer';
 import SettingPageSidebar from "./setting";
 import { editorUIActions, editorUIData } from "../editorUI/data";
 import HistoryManager from "./historyLogger";
 import { Div } from "../editorUI/util/Element";
 import { VNode } from "snabbdom";
+import { setValueFunctionType, useProvider } from "../editorUI/util/useHook";
 
 
 export class btnCanvas implements FunctionInterface {
@@ -153,6 +154,7 @@ export class EditorCanvas implements CanvasBase {
         this.EventFired = false;
         this.isDrawing = false;
         this.isPointOut = undefined;
+        this.setLayerInfoList(this.LayerManager.LayerList);
     }
     private initCanvas = () => {
         this.LayerManager.clear();
@@ -180,8 +182,9 @@ export class EditorCanvas implements CanvasBase {
     }
     private isDrawing: boolean = false;
     private isDrawRotate: boolean = true;
+    private layerInfoList: LayerInfo[] = [];
+    private setLayerInfoList: setValueFunctionType = () => {} 
     attachCanvas(container: HTMLDivElement) {
-
         // this.containerVNode = <Div className="w-full h-full" />;
         // let container = this.containerVNode.elm as HTMLDivElement;
         // console.log("[HOK] attachCanvas : ", this.containerVNode)
@@ -395,6 +398,10 @@ export class EditorCanvas implements CanvasBase {
         container.appendChild(this.scrollDiv);
 
         this.initCanvas();
+
+        [this.layerInfoList, this.setLayerInfoList] = useProvider("editor.layer.info.list", []);
+        this.setLayerInfoList(this.LayerManager.LayerList);
+
         // return <Div />;
         // return this.containerVNode;
     }
@@ -462,6 +469,7 @@ export class EditorCanvas implements CanvasBase {
     removeCanvas = () => {};
 
     render = () => {
+        // [this.layerInfoList, this.setLayerInfoList] = useProvider("editor.layer.info.list", []);
         if (this.EventFired) {
             let angle = this.isDrawRotate ? this.angleScale.angle : 0;
             this.draw_func.DrawFunction(this.LayerManager.Layer.prev, this.width, this.height,angle);

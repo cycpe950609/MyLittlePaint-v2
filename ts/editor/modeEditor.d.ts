@@ -42,6 +42,8 @@ export declare class EditorCanvas implements CanvasBase {
     private dragMoveListener;
     private isDrawing;
     private isDrawRotate;
+    private layerInfoList;
+    private setLayerInfoList;
     attachCanvas(container: HTMLDivElement): void;
     enableDrag(): void;
     disableDrag(): void;

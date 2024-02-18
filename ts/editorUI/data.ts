@@ -20,7 +20,10 @@ export type ModeInfo = {
     btn?: HTMLElement
 }
 
-export type StateType = string | number | boolean | null | undefined;
+export type StateType = string | number | boolean | null | undefined | 
+                        Array<string | number | boolean | null | undefined> |
+                        any
+                        ;
 let stateManagerSlice = createSlice({
     name: "stateManager",
     initialState: {
@@ -30,11 +33,9 @@ let stateManagerSlice = createSlice({
         data: [] as Array<StateType>,
     },
     reducers: {
-        useState: (state, action: PayloadAction<StateType>) => {// This is used to create Action, never called by reducer
-            // throw new Error("Method not called directly.");
+        useState: (state, action: PayloadAction<StateType>) => {
             // if(state.useStateCount === state.data.length && state.firstInit === false)
             //     throw new Error("Called useState is different than last time. It may have some useState in loop");
-                
             if(state.useStateCount === state.data.length && state.firstInit){ // First called useState
                 // console.log("[STA] useState", state);
                 state.data = [...state.data, action.payload]
@@ -43,25 +44,14 @@ let stateManagerSlice = createSlice({
             state.useStateCount += 1
             return state;
         },
-        // finishUseState: (state, action: PayloadAction) => {
-        //     state.action = "state.finishusestate";
+        // resetCount : (state, action: PayloadAction) => { 
+        //     // if(state.useStateCount !== state.data.length)
+        //     //     throw new Error("RESET: Called useState is different than last time. It may have some useState in loop");
         //     state.firstInit = false;
+        //     state.action = "state.resetcount";
+        //     state.useStateCount = 0;
         //     return state;
         // },
-        // patchStates : (state, action: PayloadAction<StateType[]>) => { // For first round of useState
-        //     state.data = action.payload;
-        //     state.action = "state.patchstates";
-        //     return state;
-        // },
-        resetCount : (state, action: PayloadAction) => { // This is used to create Action, never called by reducer
-            // throw new Error("Method not called directly.");
-            // if(state.useStateCount !== state.data.length)
-            //     throw new Error("RESET: Called useState is different than last time. It may have some useState in loop");
-            state.firstInit = false;
-            state.action = "state.resetcount";
-            state.useStateCount = 0;
-            return state;
-        },
         setState: (state, action: PayloadAction<{id: number, val: StateType}>) => {
             if(action.payload.id >= state.data.length){
                 console.log("[HOK] setState", action.payload.id, state.data.length)
@@ -75,41 +65,57 @@ let stateManagerSlice = createSlice({
     }
 })
 
-// export const createStateMangementMiddleware = () => {
 
-//     let isPatched: boolean = false;
-//     let useStateCount = 0;
-//     let middlewareStorage: StateType[] = [];
-
-//     console.log("[HOK] patchStates", middlewareStorage)
-//     return store => next => action => {
-//         if(action.type === stateManagerSlice.actions.useState.type)
-//         {
-//             middlewareStorage.push(action.payload)
-//             useStateCount += 1;
-//             isPatched = false;
-//             return useStateCount - 1;
-//         }
-//         if(action.type === stateManagerSlice.actions.finishUseState.type)
-//         {
-//             if(store.getState().firstInit === true) {
-//                 useStateCount = 0;
-//                 next(stateManagerSlice.actions.patchStates(middlewareStorage))
-//                 middlewareStorage = []
-//             }
-//             return;
-//         }
-//         if(action.type === stateManagerSlice.actions.patchStates.type)
-//         {
-//             console.log("[HOK] patchStates")
-//             return;
-//         }
-//         if(isPatched === false){
-//             next(stateManagerSlice.actions.patchStates(middlewareStorage))
-//         }
-//         return next(action);
-//     }
-// }
+export type DataBinderType = {
+    key: string,
+    val: StateType,
+}
+export type DataBinderDataType = {
+    isCreated: boolean,//Used to prevent multiple useProvider with same namespace
+    val: StateType,
+}
+let dataBinderSlice = createSlice({
+    name: "dataManager",
+    initialState: {
+        action: "data.init",
+        useStateCount: 0,
+        firstInit: true,
+        data: {} as { [key: string]: DataBinderDataType },
+    },
+    reducers: {
+        useData: (state, action: PayloadAction<DataBinderType>) => {
+            // if(state.useStateCount === state.data.length && state.firstInit === false)
+            //     throw new Error("Called useState is different than last time. It may have some useState in loop");
+            if(action.payload.key in state.data && state.data[action.payload.key].isCreated === true)
+                throw new Error("Multiple useProvider with same namespace");
+            if(!(action.payload.key in state.data)){ // First called useState
+                state.data[action.payload.key] = {
+                    isCreated: true, 
+                    val: action.payload.val
+                };
+                console.log("[STA] useData", state.data);
+            }
+            if(action.payload.key in state.data) { 
+                state.data[action.payload.key].isCreated = true;
+            }
+            state.action = "data.use.data";
+            return state;
+        },
+        setData: (state, action: PayloadAction<DataBinderType>) => {
+            if(!(action.payload.key in state.data)){
+                console.log("[HOK] setData", action.payload.key, state.data)
+                throw new Error("INTERNEL ERROR : key of setData is not found");
+            }
+            console.log("[HOK] setData", action.payload.key, action.payload.val)
+            state.data[action.payload.key] = {
+                ...state.data[action.payload.key],  
+                val: action.payload.val
+            } as DataBinderDataType;
+            state.action = "data.set.data";
+            return state;
+        },
+    }
+})
 
 let modeManagerSlice = createSlice({
     name: "modeManager",
@@ -276,6 +282,7 @@ export const editorUIActions = {
     statusbar_right_: statusRightSlice.actions,
 
     state: stateManagerSlice.actions,
+    binder: dataBinderSlice.actions,
 } as { [key: string]: CaseReducerActions<SliceCaseReducers<any>, string> }
 
 export const editorUIData = configureStore({
@@ -298,6 +305,7 @@ export const editorUIData = configureStore({
         statusbar_right_: statusRightSlice.reducer,
 
         state: stateManagerSlice.reducer,
+        binder: dataBinderSlice.reducer,
     },
 
     middleware: (getDefaultMiddleware) =>

@@ -1,7 +1,7 @@
 import Konva from "konva";
 import SidebarInterface from '../editorUI/interface/sidebar';
 import { HistoryLogEntry } from "./historyLogger";
-declare class LayerInfo {
+export declare class LayerInfo {
     Snapshot: string;
     Name: string;
     ID: string;
@@ -50,6 +50,6 @@ declare class LayerMgrSidebar implements SidebarInterface {
     Tip: string;
     Visible: boolean;
     Title: () => string;
-    Body: () => Promise<import("snabbdom").VNode>;
+    Body: () => import("snabbdom").VNode;
 }
 export default LayerMgrSidebar;

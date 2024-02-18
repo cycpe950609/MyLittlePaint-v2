@@ -2,7 +2,7 @@ import type Snabbdom from "@herp-inc/snabbdom-jsx";
 import { editorUIData } from "./data";
 import { DIV, SPAN } from "./util/HTMLElement";
 // import Alert from "./util/alert";
-import { useConsumer, useLocation, useProvider } from "./util/useHook";
+import { useConsumer, useLocation } from "./util/useHook";
 import { Div, Span } from "./util/Element";
 
 

@@ -56,6 +56,7 @@ declare class EditorUI {
     private canvas_container_vnode;
     private render;
     private timeToRerender;
+    forceRerender(): void;
     Mount(container: string | HTMLDivElement): void;
 }
 export default EditorUI;

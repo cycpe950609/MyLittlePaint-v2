@@ -11,7 +11,7 @@ export default interface SidebarInterface {
     HistoryName?: string; // Undefined if dont want to store in redo/undo hostory
     Visible: boolean;
     Title: () => string;
-    Body: () => VNode | Promise<VNode>;
+    Body: () => VNode;
 }
 
 export class NoOPSidebar implements SidebarInterface {

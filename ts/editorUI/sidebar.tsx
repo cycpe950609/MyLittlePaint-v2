@@ -86,13 +86,8 @@ export default Sidebar;
 export const bootstrap = async () => {
     console.log("[EUI] modeSelector bootstrapping");
 }
-let windowCache: { [key: string]: VNode } = {};
+
 let renderWindow = (uuid: string, windowName: string):VNode => {
-    if (uuid in windowCache &&
-        !window.editorUI.CenterCanvas.isUpdate &&
-        !(editorUIData.getState()['sidebar_window'].action === `sidebar_window.${windowName}.update`)
-    )
-        return windowCache[uuid];
 
     let sidebarImple = undefined;
     if (uuid in editorUIData.getState()['sidebar_top_'].data)
@@ -105,6 +100,7 @@ let renderWindow = (uuid: string, windowName: string):VNode => {
         sidebarImple = editorUIData.getState()['sidebar_bottom_perm'].data[uuid];
     if (sidebarImple === undefined) throw new Error("INTERNAL_ERROR: SidebarInterface is not found");
 
+    console.log("[EUI] renderWindow", sidebarImple.Body());
 
     let sidebar = <Div className="property-bar"
         $style={{ pointerEvents: "all" }}
@@ -119,7 +115,6 @@ let renderWindow = (uuid: string, windowName: string):VNode => {
         </Div>
     </Div>
 
-    windowCache[windowName] = sidebar;
     return sidebar
 }
 const renderSidebarPart = (partList: ToolbarStateType<SidebarInterface>): VNode => {
@@ -127,8 +122,6 @@ const renderSidebarPart = (partList: ToolbarStateType<SidebarInterface>): VNode 
         {
             Object.keys(partList).map((key: string) => {
                 if (partList[key].Visible === false) {
-                    if (key in windowCache)
-                        delete windowCache[key];
                     return <Div />;
                 }
 

@@ -1,11 +1,18 @@
-import { StateType, editorUIActions, editorUIData } from "../data"
+import { DataBinderType, StateType, editorUIActions, editorUIData } from "../data"
 
-export const useConsumer = (selector: string) => { 
-
+export const useConsumer = (namespace: string) => { 
+    console.log("[EUI] useConsumer", namespace, editorUIData.getState().binder.data[namespace])
+    return editorUIData.getState().binder.data[namespace].val
 }
 
-export const useProvider = (selector: string) => { 
-    return [(newState: any) => {}]
+export type setValueFunctionType = (value: StateType) => void;
+export const useProvider = (namespace: string, initData: StateType) => { 
+    editorUIData.dispatch(editorUIActions.binder.useData({key: namespace, val: initData} as DataBinderType))
+    let val = editorUIData.getState().binder.data[namespace];
+    return [
+        val, 
+        (newData: StateType) => editorUIData.dispatch(editorUIActions.binder.setData({key: namespace, val: newData} as DataBinderType ))
+    ] as [StateType, setValueFunctionType]
 }
 
 export const useState: (StateType) => [StateType, (StateType) => void] = (initState: StateType) => {
@@ -15,7 +22,7 @@ export const useState: (StateType) => [StateType, (StateType) => void] = (initSt
     return [
         val, 
         (newState: StateType) => editorUIData.dispatch(editorUIActions.state.setState({id: id, val: newState}))
-    ]
+    ] as [StateType, setValueFunctionType]
 }
 
 export const useLocation: () => [Location, (string) => void] = () => {
