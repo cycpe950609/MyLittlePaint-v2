@@ -16,6 +16,7 @@ import { ModeSelectorComp } from './modeSelector';
 import { changeToMode } from './mode';
 import { ErrorHandlerPage } from './errorPage';
 import { DIV } from './util/HTMLElement';
+import { useLocation } from './util/useHook';
 
 declare global {
     interface Window {
@@ -120,6 +121,8 @@ class ModeManger {
         console.log("[DEB]", modeName, editorUIData.getState().mode.data)
         // singleSpa.navigateToUrl(`#/${modeName}`)
         console.log("[MOD] Change mode to " + modeName);
+        const [loc, setLoc] = useLocation();
+        setLoc(modeNameHash);
     }
 
     public get ModeChanged() { // Can only be called once at render time

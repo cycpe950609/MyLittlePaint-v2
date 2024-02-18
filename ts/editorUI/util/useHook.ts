@@ -26,10 +26,8 @@ export const useState: (StateType) => [StateType, (StateType) => void] = (initSt
 }
 
 export const useLocation: () => [Location, (string) => void] = () => {
-    const [location, setLocation] = useState(window.location.toString())
     return [window.location, (newLoc: string) => {
         console.log("[HOK] Location", newLoc);
         window.location.href = newLoc;
-        setLocation(newLoc);
     }]
 }
