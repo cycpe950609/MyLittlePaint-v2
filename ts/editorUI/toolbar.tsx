@@ -5,6 +5,8 @@ import { ToolbarStateType, editorUIData, editorUIActions } from "./data";
 import { DIV } from "./util/HTMLElement";
 import FunctionInterface from "./interface/function";
 import createFunctionInterfaceButton from "./util/createFunctionInterfaceButton";
+import Snabbdom from "@herp-inc/snabbdom-jsx";
+import { Div } from "./util/Element";
 
 export interface ToolbarInterface {
     hide: () => void;
@@ -30,6 +32,7 @@ export class ToolbarPart<ButtonInfoType> {
     }
 
     addButtonList(funcList?: ButtonInfoType[]): string[] {
+        console.log('[TBR] AddButtonList', funcList)
         if (funcList === undefined || funcList.length === 0) return [];
         return funcList.map((func: ButtonInfoType) => {
             return this.addButton(func);
@@ -38,6 +41,7 @@ export class ToolbarPart<ButtonInfoType> {
 
     addButton(func: ButtonInfoType): string {
         const btnID = uuidv4();
+        console.log('[TBR] AddButton')
         editorUIData.dispatch(editorUIActions[this.name].add({id:btnID,func: func}));
         return btnID;
     }
@@ -101,36 +105,30 @@ export default Toolbar;
 
 // Toolbar application form single-spa
 
-let unsubscribe: {[key:string]:Unsubscribe} = {};
 let createFuncList : {[key:string]:createFuncType<any>} = {};
-let rendered : {[key:string]:boolean} = {};
 export type ToolbarPropsType = {
     type: string;
 }
-export const bootstrap = async (props: ToolbarPropsType) => {
-    console.log("[EUI] Toolbar bootstrapping");
-    let underscore      = props.type.replace('-','_');
-    rendered[`${underscore}_top_`] = false;
-    rendered[`${underscore}_top_perm`] = false;
-    rendered[`${underscore}_bottom_`] = false;
-    rendered[`${underscore}_bottom_perm`] = false;
-}
 
 const renderToolPart = (type:string,partName: string,partListName:string,partList: ToolbarStateType<any>) => {
-    console.log("[EUI] ToolbarPart render", partListName, Object.keys(partList).length)
-    return DIV(partName,
-        Object.keys(partList).map((key:string) => {
-            rendered[partListName] = true;
-            return createFunctionInterfaceButton(createFuncList[type](partListName,key,partList[key]));
-        })
-    );
+    console.log("[TBR] ToolbarPart render", partListName, Object.keys(partList).length)
+    return <Div className={partName}>
+        {
+            Object.keys(partList).map((key:string) => {
+                return createFunctionInterfaceButton(createFuncList[type](partListName,key,partList[key]));
+            })
+        }
+    </Div>
 }
 
-const render = (type: string) => {
-    let name = `editorui-${type}`;
-    let cnt = document.getElementById(name);
-    if(cnt === null) throw new Error(`INTERNAL_ERROR: Container of ${type} not found`);
+export type ToolbarCompPropsType = {
+    type: string;
+}
 
+export const ToolbarComp: Snabbdom.Component<ToolbarCompPropsType> = (props: ToolbarCompPropsType) => {
+    let type = props.type;
+    let name = `editorui-${type}`;
+    
     let underscore      = type.replace('-','_');
     let dataTop         = editorUIData.getState()[`${underscore}_top_`].data;
     let dataTopPerm     = editorUIData.getState()[`${underscore}_top_perm`].data;
@@ -144,7 +142,7 @@ const render = (type: string) => {
     //      <div class="toolbar-bottom"></div>
     //      <div class="toolbar-perm"></div>
     // </div>
-    cnt.innerHTML = ""
+    console.log("[DEB] ToolbarComp",editorUIData.getState() );
     if(
         Object.keys(dataTop         ).length +
         Object.keys(dataTopPerm     ).length +
@@ -153,53 +151,14 @@ const render = (type: string) => {
         === 0
     )
     {
-        let newCNt = document.createElement("div");
-        newCNt.id = name;
-        cnt.parentNode?.replaceChild(newCNt,cnt);
-        return;
+        return <Div />;
     }
-    let toolbar = DIV("toolbar-vertical",[
-        renderToolPart(type,"toolbar-perm",`${underscore}_top_perm`,dataTopPerm),
-        renderToolPart(type,"toolbar-top",`${underscore}_top_`,dataTop),
-        renderToolPart(type,"toolbar-bottom",`${underscore}_bottom_`,dataBottom),
-        renderToolPart(type,"toolbar-perm",`${underscore}_bottom_perm`,dataBottomPerm)
-    ]);
-    toolbar.id = name;
-    cnt.parentNode?.replaceChild(toolbar,cnt);
-}
-export const mount = async (props: ToolbarPropsType) => {
-    unsubscribe[props.type] = editorUIData.subscribe(() =>
-    {
-        // console.log(`[EUI] data updated : toolbar ${props.type}`,data.getState());
-        let underscore      = props.type.replace('-','_');
-        if(
-            (
-                rendered[`${underscore}_top_`]          === false && editorUIData.getState()[`${underscore}_top_`].action !== ""         ||
-                rendered[`${underscore}_top_perm`]      === false && editorUIData.getState()[`${underscore}_top_perm`].action !== ""     ||
-                rendered[`${underscore}_bottom_`]       === false && editorUIData.getState()[`${underscore}_bottom_`].action !== ""      ||
-                rendered[`${underscore}_bottom_perm`]   === false && editorUIData.getState()[`${underscore}_bottom_perm`].action !== ""  
-            )
-        )
-        {
-            // console.log(`${props.type} rerendered`);
-            
-            render(props.type);
-        }
-        
-        [
-            `${underscore}_top_`,
-            `${underscore}_top_perm`,
-            `${underscore}_bottom_`,
-            `${underscore}_bottom_perm`,
-        ].forEach((name) => {
-            if(editorUIData.getState()[name].action !== "" && rendered[name] === true){
-                rendered[name] = false;
-                editorUIData.dispatch(editorUIActions[name].rendered(null));
-            }
-        })
+    return <Div className="toolbar-vertical" >
+        {renderToolPart(type,"toolbar-perm",`${underscore}_top_perm`,dataTopPerm)}
+        {renderToolPart(type,"toolbar-top",`${underscore}_top_`,dataTop)}
+        {renderToolPart(type,"toolbar-bottom",`${underscore}_bottom_`,dataBottom)}
+        {renderToolPart(type,"toolbar-perm",`${underscore}_bottom_perm`,dataBottomPerm)}
+    </Div>
 
-    });
-    render(props.type);
-    console.log(`[EUI] Toolbar ${props.type} mounted`);
+    
 }
-export const unmount = async (props: ToolbarPropsType) => {unsubscribe[props.type]();};

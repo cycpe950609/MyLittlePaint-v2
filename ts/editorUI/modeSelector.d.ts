@@ -1,3 +1,3 @@
+import Snabbdom from "@herp-inc/snabbdom-jsx";
 export declare const bootstrap: () => Promise<void>;
-export declare const mount: () => Promise<void>;
-export declare const unmount: () => Promise<void>;
+export declare const ModeSelectorComp: Snabbdom.Component<{}>;

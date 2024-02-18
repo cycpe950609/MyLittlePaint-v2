@@ -6,7 +6,7 @@ import {
     CanvasInterfaceSettings,
 } from "../editorUI/canvas";
 import Dialog from "../editorUI/dialog";
-// import ModeFunction from "../editorUI/interface/mode";
+// import ModeFunction from "../editorUI-ng/interface/mode";
 import { ModeFunction, FunctionInterface } from "../editorUI";
 import {
     BUTTON,
@@ -88,7 +88,7 @@ export class EditorCanvas implements CanvasBase {
     constructor(width: number, height: number) {
         this.width = width;
         this.height = height;
-        this.scaleTip = window.editorUI.Statusbar.addTip("", true);
+        this.scaleTip = window.editorUIng.Statusbar.addTip("", true);
         this.refreshScaleTip(0,1);
         this.cnt = DIV("w-full h-full");
         this.LayerManager = new LayerManager(this.cnt, width, height);
@@ -203,7 +203,7 @@ export class EditorCanvas implements CanvasBase {
             console.log(
                 `[EUI] Gesture move scale:${e.ds}, angle: ${e.da}`
             );
-            // let cvs = window.editorUI.CenterCanvas as EditorCanvas
+            // let cvs = window.editorUIng.CenterCanvas as EditorCanvas
             // cvs.scaleTo(cvs.scaleFactor+e.ds/2)
 
             let currentAngle = e.angle + angleScale.angle;
@@ -266,7 +266,7 @@ export class EditorCanvas implements CanvasBase {
             this.isPointOut = undefined;
             if (
                 e.pointerType === "touch" &&
-                (window.editorUI.CenterCanvas as EditorCanvas)
+                (window.editorUIng.CenterCanvas as EditorCanvas)
                     .canDrawWithTouch === false
             ) {
                 // console.log("pointerdown");
@@ -295,7 +295,7 @@ export class EditorCanvas implements CanvasBase {
             // console.log("pointermove");
             if (
                 e.pointerType === "touch" &&
-                (window.editorUI.CenterCanvas as EditorCanvas)
+                (window.editorUIng.CenterCanvas as EditorCanvas)
                     .canDrawWithTouch === false
             )
             {
@@ -325,7 +325,7 @@ export class EditorCanvas implements CanvasBase {
             // console.log("pointerup");
             if (
                 e.pointerType === "touch" &&
-                (window.editorUI.CenterCanvas as EditorCanvas)
+                (window.editorUIng.CenterCanvas as EditorCanvas)
                     .canDrawWithTouch === false
             ) {
                 // console.log("pointerup");

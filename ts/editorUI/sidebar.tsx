@@ -14,6 +14,7 @@ import {
     VNode,
 } from "snabbdom";
 import { Div, Span } from "./util/Element";
+import Snabbdom from "@herp-inc/snabbdom-jsx";
 
 const patchSidebar = init([
     // Init patch function with chosen modules
@@ -70,6 +71,7 @@ class Sidebar implements FunctionInterface {
         let isShowSidebar = !curSideInterface.Visible;
         if (isShowSidebar === true) this.showSidebar();
         else this.hiddenSidebar();
+        console.log("[EUI] Toggle sidebar");
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -81,14 +83,13 @@ class Sidebar implements FunctionInterface {
 
 export default Sidebar;
 
-let unsubscribe: Unsubscribe;
 export const bootstrap = async () => {
     console.log("[EUI] modeSelector bootstrapping");
 }
 let windowCache: { [key: string]: VNode } = {};
-let renderWindow = async (uuid: string, windowName: string): Promise<VNode> => {
+let renderWindow = (uuid: string, windowName: string):VNode => {
     if (uuid in windowCache &&
-        !window.editorUI.CenterCanvas.isUpdate &&
+        !window.editorUIng.CenterCanvas.isUpdate &&
         !(editorUIData.getState()['sidebar_window'].action === `sidebar_window.${windowName}.update`)
     )
         return windowCache[uuid];
@@ -114,39 +115,32 @@ let renderWindow = async (uuid: string, windowName: string): Promise<VNode> => {
             </Span>
         </Div>
         <Div className="pb_Property_bdy">
-            {await Promise.resolve(sidebarImple.Body())}
+            {sidebarImple.Body()}
         </Div>
     </Div>
 
     windowCache[windowName] = sidebar;
     return sidebar
 }
-const renderSidebarPart = async (partList: ToolbarStateType<SidebarInterface>): Promise<VNode> => {
+const renderSidebarPart = (partList: ToolbarStateType<SidebarInterface>): VNode => {
     return <Div className="w-fit h-fit">
         {
-            await Promise.all(Object.keys(partList).map(async (key: string) => {
+            Object.keys(partList).map((key: string) => {
                 if (partList[key].Visible === false) {
                     if (key in windowCache)
                         delete windowCache[key];
                     return <Div />;
                 }
 
-                return await renderWindow(key, partList[key].Name);
-            }))
+                return renderWindow(key, partList[key].Name);
+            })
         }
     </Div>
 }
 
-let cntSidebar: HTMLDivElement;
-let lastSidebarVNode: VNode;
 
-const render = async () => {
-    if (cntSidebar == null) {
-        let cnt = document.getElementById("editorui-sidebar-windows");
-        if (cnt === null) throw new Error(`INTERNAL_ERROR: Container of Sidebar-Window not found`);
-        cntSidebar = cnt as HTMLDivElement;
-        lastSidebarVNode = toVNode(cntSidebar);
-    }
+export const SidebarComp: Snabbdom.Component<{}> = () => {
+    
     let dataTop = editorUIData.getState()[`sidebar_top_`].data;
     let dataTopPerm = editorUIData.getState()[`sidebar_top_perm`].data;
     let dataBottom = editorUIData.getState()[`sidebar_bottom_`].data;
@@ -167,23 +161,14 @@ const render = async () => {
 
     let sidebar = <Div Id="editorui-sidebar-windows" className="sidebar"
         $style={{ pointerEvents: windowCount > 0 ? "all" : "none" }}>
-        {await renderSidebarPart(dataTop)}
-        {await renderSidebarPart(dataTopPerm)}
-        {await renderSidebarPart(dataBottom)}
-        {await renderSidebarPart(dataBottomPerm)}
+        {renderSidebarPart(dataTop)}
+        {renderSidebarPart(dataTopPerm)}
+        {renderSidebarPart(dataBottom)}
+        {renderSidebarPart(dataBottomPerm)}
     </Div>
 
     // console.log("[DEB]", sidebar)
-    patchSidebar(lastSidebarVNode, sidebar);
-    lastSidebarVNode = sidebar;
-    window.editorUI.CenterCanvas.isUpdate = false;
+    window.editorUIng.CenterCanvas.isUpdate = false;
+
+    return sidebar;
 }
-export const mount = async () => {
-    unsubscribe = editorUIData.subscribe(() => {
-        console.log("[EUI] Sidebar-Window updated");
-        render();
-    });
-    render();
-    console.log("[EUI] Sidebar-Window mounted");
-}
-export const unmount = async () => { unsubscribe(); };

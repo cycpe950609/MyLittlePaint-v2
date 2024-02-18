@@ -7,7 +7,7 @@ import StatusBar from './statusbar';
 import './util/console';
 declare global {
     interface Window {
-        editorUI: EditorUI;
+        editorUIng: EditorUI;
     }
 }
 declare class ModeManger {
@@ -45,7 +45,14 @@ declare class EditorUI {
     get CenterCanvas(): CanvasBase;
     set CenterCanvas(cvs: CanvasBase | undefined);
     private container;
+    private lastVNode;
+    private unsubscribe;
+    private renderVNode;
     constructor();
+    private time_to_rerender;
+    private should_rerender;
+    private render;
+    private timeToRerender;
     Mount(container: string | HTMLDivElement): void;
 }
 export default EditorUI;

@@ -1,3 +1,2 @@
-export declare const bootstrap: () => Promise<void>;
-export declare const mount: () => Promise<void>;
-export declare const unmount: () => Promise<void>;
+import type Snabbdom from "@herp-inc/snabbdom-jsx";
+export declare const ErrorHandlerPage: Snabbdom.Component<any>;

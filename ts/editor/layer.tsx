@@ -206,11 +206,11 @@ class LayerMgrSidebar implements SidebarInterface {
     Body = async () => {
         if (this.Visible) {
             // let pointsList = (cvs as LabelCanvas).AllNodes;
-            let layersList = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.LayerList;
+            let layersList = (window.editorUIng.CenterCanvas as EditorCanvas).LayerManager.LayerList;
 
             const createList = async (classNames: string, idx: number, layer: LayerInfo) => {
                 // let btnEdit = HBUTTON("edit_btn mt-20px px-0", "..", (e: MouseEvent) => {
-                //     (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
+                //     (window.editorUIng.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
                 // });
                 let toImage = (img: string) => {
                     return <Img $style={{ maxWidth: `96px`, maxHeight: `54px` }} src={img} />
@@ -220,7 +220,7 @@ class LayerMgrSidebar implements SidebarInterface {
                 return <Tr className={classNames}
                     onclick={
                         (e: MouseEvent) => {
-                            (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
+                            (window.editorUIng.CenterCanvas as EditorCanvas).LayerManager.changeTo(layer.ID);
                         }
                     }
                 >
@@ -229,7 +229,7 @@ class LayerMgrSidebar implements SidebarInterface {
                     <Td>{layer.Name}</Td>
                 </Tr>
             }
-            let edittedLayer = (window.editorUI.CenterCanvas as EditorCanvas).LayerManager.Layer.ID;
+            let edittedLayer = (window.editorUIng.CenterCanvas as EditorCanvas).LayerManager.Layer.ID;
             let newTableBody = await Promise.all(
                 layersList.map((layer: LayerInfo, idx: number) => {
                     if (layer.ID === edittedLayer) {

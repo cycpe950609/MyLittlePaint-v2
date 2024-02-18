@@ -1,6 +1,8 @@
 import { Unsubscribe } from "@reduxjs/toolkit";
 import { StatusBarStateType as StatusbarStateType, editorUIData, editorUIActions } from "./data";
 import { DIV, SPAN } from "./util/HTMLElement";
+import Snabbdom from "@herp-inc/snabbdom-jsx";
+import { Div, Span } from "./util/Element";
 
 export class TipComponent {
     private idx: number;
@@ -86,63 +88,29 @@ export default StatusBar;
 export type StatusbarPropsType = {
     side: string,
 }
-let unsubscribe: {[key:string]:Unsubscribe} = {};
-let rendered : {[key:string]:boolean} = {};
 
-export const bootstrap = async (props: StatusbarPropsType) => {
-    console.log("[EUI] modeSelector bootstrapping");
-    rendered[`statusbar_${props.side}_`]    = false;
-}
 const renderTipComponent = (tip: string) => {
-    return DIV("status-bar",
-        SPAN("status_help_tip", tip)
-    );
+    return <Div className="status-bar">
+        <Span className="status_help_tip">
+            {tip}
+        </Span>
+    </Div>
 }
 const renderStatusPart = (partListName: string,partList: StatusbarStateType) => {
     return Object.keys(partList).map((key:string)=>{
-        rendered[partListName] = true;
-        return partList[key].showed ? renderTipComponent(partList[key].tip) : document.createElement("span");
+        return partList[key].showed ? renderTipComponent(partList[key].tip) : <Span/>;
     })
 }
-const render = (side: string) => {
+
+export const StatusBarComp: Snabbdom.Component<StatusbarPropsType> = (props: StatusbarPropsType) => {
+    let side = props.side;
     let name = `editorui-statusbar-${side}`
-    let statusbarCNT = document.getElementById(name);
-    if(statusbarCNT === null) throw new Error("INTERNAL_ERROR: Cannot find container of editorui-menubar-middle");
-    statusbarCNT.innerHTML = '';
+    
     // console.log("[DEB] Statusbar data : ",data.getState()[`statusbar_${side}_`]);
-    let sidebar = DIV(name,renderStatusPart(`statusbar_${side}_`,editorUIData.getState()[`statusbar_${side}_`].data));
-    sidebar.id = name;
-    statusbarCNT.parentNode?.replaceChild(sidebar,statusbarCNT);
-}
-export const mount = async (props: StatusbarPropsType) => {
-    unsubscribe[props.side] = editorUIData.subscribe(() =>
-    {
-        if(
-            (
-                rendered[`statusbar_${props.side}_`]    === false && editorUIData.getState()[`statusbar_${props.side}_`].action !== ""
-            )
-        )
+    return <Div className={name}>
         {
-            // console.log(`[DEB] Statusbar ${props.side} rerendered`);
-            
-            render(props.side);
+            renderStatusPart(`statusbar_${side}_`,editorUIData.getState()[`statusbar_${side}_`].data)
         }
-        
-        [
-            `statusbar_${props.side}_`,
-        ].forEach((name) => {
-            // console.log(`[DEB] ${data.getState()[name].action}, ${rendered[name]}`)
-            if(editorUIData.getState()[name].action !== "" && rendered[name] === true){
-                rendered[name] = false;
-                // console.log(`[DEB] Statusbar ${name} rendered`)
-                editorUIData.dispatch(editorUIActions[name].rendered(null));
-            }
-        })
-    });
-    render(props.side);
-    console.log(`[EUI] Statusbar ${props.side} mounted`);
+    </Div>
+
 }
-export const unmount = async (props: StatusbarPropsType) => {
-    unsubscribe[props.side]();
-    delete unsubscribe[props.side];
-};

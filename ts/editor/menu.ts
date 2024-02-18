@@ -17,7 +17,7 @@ export class btnUpload implements FunctionInterface {
 }
 
 export class btnUndo implements FunctionInterface {
-    Name = "btn_undp";
+    Name = "btn_undo";
     ImgName= "undo";
     Tip = "Undo";
 

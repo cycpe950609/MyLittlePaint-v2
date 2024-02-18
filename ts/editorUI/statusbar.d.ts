@@ -1,3 +1,4 @@
+import Snabbdom from "@herp-inc/snabbdom-jsx";
 export declare class TipComponent {
     private idx;
     private side;
@@ -17,6 +18,4 @@ export default StatusBar;
 export type StatusbarPropsType = {
     side: string;
 };
-export declare const bootstrap: (props: StatusbarPropsType) => Promise<void>;
-export declare const mount: (props: StatusbarPropsType) => Promise<void>;
-export declare const unmount: (props: StatusbarPropsType) => Promise<void>;
+export declare const StatusBarComp: Snabbdom.Component<StatusbarPropsType>;

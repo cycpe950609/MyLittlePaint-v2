@@ -27,9 +27,11 @@ const logger = function (logFunc :(message?: any, ...optionalParams: any[]) => v
 
     }
 }
-export var consoleLogList : string[] = ["DEB"];
+// export var consoleLogList : string[] = ["DEB", "EUI", "MOD"];
+// export var consoleLogList : string[] = ["TBR", "HOK"];
+export var consoleLogList : string[] = ["STA", "HOK", "EUI"];
 console.log = logger(console.log,consoleLogList)
-export var consoleErrorList : string[] = [];
+export var consoleErrorList : string[] = ["HOK"];
 console.error = logger(console.error,consoleErrorList)
 export var consoleInfoList : string[] = [];
 console.info = logger(console.info,consoleInfoList)

@@ -1,4 +1,5 @@
 import FunctionInterface from "./interface/function";
+import Snabbdom from "@herp-inc/snabbdom-jsx";
 export interface ToolbarInterface {
     hide: () => void;
     show: () => void;
@@ -29,6 +30,7 @@ export default Toolbar;
 export type ToolbarPropsType = {
     type: string;
 };
-export declare const bootstrap: (props: ToolbarPropsType) => Promise<void>;
-export declare const mount: (props: ToolbarPropsType) => Promise<void>;
-export declare const unmount: (props: ToolbarPropsType) => Promise<void>;
+export type ToolbarCompPropsType = {
+    type: string;
+};
+export declare const ToolbarComp: Snabbdom.Component<ToolbarCompPropsType>;

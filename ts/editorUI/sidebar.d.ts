@@ -1,5 +1,6 @@
 import FunctionInterface from "./interface/function";
 import SidebarInterface from "./interface/sidebar";
+import Snabbdom from "@herp-inc/snabbdom-jsx";
 declare class Sidebar implements FunctionInterface {
     Name: string;
     ImgName?: string;
@@ -14,5 +15,4 @@ declare class Sidebar implements FunctionInterface {
 }
 export default Sidebar;
 export declare const bootstrap: () => Promise<void>;
-export declare const mount: () => Promise<void>;
-export declare const unmount: () => Promise<void>;
+export declare const SidebarComp: Snabbdom.Component<{}>;
