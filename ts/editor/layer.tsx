@@ -101,6 +101,24 @@ export class LayerManager {
         // if(origSz > 0)
         //     editorUIData.dispatch(editorUIActions.sidebar_window.update({ id: "LayerMgrSidebar", new_func: null }));
     };
+
+    public resize(width: number, height: number): void {
+        this.cvs.width(width);
+        this.cvs.height(height);
+    }
+    //TODO : Move this outside of LayerManager
+    public moveTo(x: number, y: number): void {
+        // console.log("[CVS] Layer move to", x, y);
+        this.ctx.position({ x: x, y: y });
+    }
+    public scaleTo(factor: number): void {
+        // console.log("[CVS] Layer scale to", factor);
+        this.ctx.scale({ x: factor, y: factor });
+    }
+    public rotateTo(angle: number): void {
+        // console.log("[CVS] Layer rotate to", angle);
+        this.ctx.rotation(angle);
+    }
 };
 
 export class Layer {

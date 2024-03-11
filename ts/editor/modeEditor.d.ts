@@ -19,8 +19,6 @@ declare global {
 }
 export declare class EditorCanvas implements CanvasBase {
     name: string;
-    private scrollDiv;
-    private scaleElement;
     private backgroundDiv;
     private cnt;
     private render_layer;
@@ -38,7 +36,7 @@ export declare class EditorCanvas implements CanvasBase {
     redo: () => void;
     private finishDrawing;
     private initCanvas;
-    private angleScale;
+    private angleScalePos;
     private dragMoveListener;
     private isDrawing;
     private isDrawRotate;
@@ -64,7 +62,6 @@ export declare class EditorCanvas implements CanvasBase {
     private isCtlKeyDown;
     private isShiftDown;
     private isAltDown;
-    private transformTo;
     scaleTo: (scale: number) => void;
     rotateTo: (rotate: number) => void;
     moveTo: (moveX: number, moveY: number) => void;

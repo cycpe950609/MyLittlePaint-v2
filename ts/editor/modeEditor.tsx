@@ -67,10 +67,10 @@ declare global {
 export class EditorCanvas implements CanvasBase {
     name = "EditorCanvas";
 
-    private scrollDiv: HTMLDivElement = DIV(
-        "w-full h-full overflowX-scroll overflowY-scroll relative disable-touch"
-    );
-    private scaleElement: HTMLDivElement = DIV("absolute w-fit h-fit transform-center")
+    // private scrollDiv: HTMLDivElement = DIV(
+    //     "w-full h-full overflowX-scroll overflowY-scroll relative disable-touch"
+    // );
+    // private scaleElement: HTMLDivElement = DIV("absolute w-fit h-fit transform-center")
     private backgroundDiv: HTMLDivElement = DIV("absolute disable-mouse");
     private cnt !: HTMLDivElement;
     // private containerVNode: VNode;
@@ -95,7 +95,7 @@ export class EditorCanvas implements CanvasBase {
         this.scaleTip = window.editorUI.Statusbar.addTip("", true);
         this.refreshScaleTip(0,1);
         this.cnt = DIV("w-full h-full");
-        this.LayerManager = new LayerManager(this.cnt, width, height);
+        this.LayerManager = new LayerManager(this.cnt, window.innerWidth, window.innerHeight);
         this.render_layer = this.LayerManager.Layer;
 
         //NOTE : Testing
@@ -159,26 +159,26 @@ export class EditorCanvas implements CanvasBase {
     private initCanvas = () => {
         this.LayerManager.clear();
     };
-    private angleScale = {
+    private angleScalePos = {
         angle: 0,
-        scale: 1
+        scale: 1,
+        pos: {
+            x: 0,
+            y: 0
+        }
     };
     private dragMoveListener = (event: Interact.GestureEvent, target: HTMLElement,angleScale: {angle:number, scale:number}) => {
         // console.log("[DEB] dragMoveListener : ",event)
         // keep the dragged position in the data-x/data-y attributes
-        var x = (parseFloat(target.getAttribute("data-x") || "0") || 0) + event.dx;
-        var y = (parseFloat(target.getAttribute("data-y") || "0") || 0) + event.dy;
+        this.angleScalePos.pos.x = this.angleScalePos.pos.x + event.dx;
+        this.angleScalePos.pos.y = this.angleScalePos.pos.y + event.dy;
 
         // translate the element
-        let currentAngle = this.normalizeRotate((event.angle || 0) + angleScale.angle);
-        let currentScale = (event.scale || 1) * angleScale.scale;
-
-        this.transformTo(target,x , y, currentAngle, currentScale);
-        // update the posiion attributes
-        target.setAttribute("data-x", x.toString());
-        target.setAttribute("data-y", y.toString());
-
-        this.refreshScaleTip(currentAngle,currentScale);
+        this.rotateTo(angleScale.angle)
+        this.scaleTo(angleScale.scale);
+        this.moveTo(this.angleScalePos.pos.x, this.angleScalePos.pos.y);
+        
+        this.refreshScaleTip(angleScale.angle,angleScale.scale);
     }
     private isDrawing: boolean = false;
     private isDrawRotate: boolean = true;
@@ -189,61 +189,64 @@ export class EditorCanvas implements CanvasBase {
         // let container = this.containerVNode.elm as HTMLDivElement;
         // console.log("[HOK] attachCanvas : ", this.containerVNode)
         console.log("[HOK] Canvas Size ", this.width, this.height);
-        this.backgroundDiv.style.width = `${this.width}px`;
-        this.backgroundDiv.style.height = `${this.height}px`;
+        this.backgroundDiv.style.width = `${window.innerWidth}px`;
+        this.backgroundDiv.style.height = `${window.innerHeight}px`;
         this.backgroundDiv.style.backgroundColor = "white";
         this.backgroundDiv.id = "backgroundDiv";
         
         let interactCVS = interact(this.cnt, {
             styleCursor: false
         });
+
+        var startAngle = 0;
+        var startScale = 1;
         let gestureStart = (e: Interact.GestureEvent) => {
             console.log(`[DEB] isDrawing GestureStart ${isDrawing}`)
             if(isDrawing) return;
             console.log(
-                `[EUI] Gesture start scale:${e.scale}, angle: ${e.angle}`
+                `[CVS] Gesture start scale:${e.scale}, angle: ${e.angle}`
             );
             e.preventDefault();
             e.stopPropagation();
-            angleScale.angle -= e.angle;
-            scaleElement.classList.remove("reset");
+            startAngle = angleScale.angle - e.angle;
+            startScale = e.scale;
+            this.cnt.classList.remove("reset");
         }
         let gestureMove = (e: Interact.GestureEvent) => {
             console.log(`[DEB] isDrawing GestureMove ${isDrawing}`)
             if(isDrawing) return;
             console.log(
-                `[EUI] Gesture move scale:${e.ds}, angle: ${e.da}`
+                `[CVS] Gesture move scale:${e.ds}, angle: ${e.da}`
             );
-            // let cvs = window.editorUIng.CenterCanvas as EditorCanvas
-            // cvs.scaleTo(cvs.scaleFactor+e.ds/2)
-
-            let currentAngle = e.angle + angleScale.angle;
-            let currentScale = e.scale * angleScale.scale;
-            // scaleElement.style.transform =
-            //     "rotate(" + currentAngle + "deg)" +
-            //     "scale(" + currentScale + ")";
-            dragMoveListener(e,scaleElement,angleScale);
+            angleScale.angle = this.normalizeRotate(e.angle + startAngle);
+            angleScale.scale = e.scale * startScale;
+            dragMoveListener(e,this.cnt,angleScale);
             e.preventDefault();
             e.stopPropagation();
         }
         let gestureEnd = (e: Interact.GestureEvent) => {
             if(isDrawing) return;
             console.log(
-                `[EUI] Gesture end scale:${e.scale}, angle: ${e.angle}`
+                `[CVS] Gesture end scale:${e.scale}, angle: ${e.angle}`
             );
-            angleScale.angle = angleScale.angle + e.angle;
-            angleScale.scale = angleScale.scale * e.scale;
+            angleScale.angle = this.normalizeRotate(startAngle + e.angle);
+            angleScale.scale = e.scale * startScale;
             e.preventDefault();
             e.stopPropagation();
         }
         let dragMove = (e: Interact.GestureEvent) => { 
             if(!isDrawing && this.isPointOut === undefined)
-                dragMoveListener(e,scaleElement,angleScale) 
+                dragMoveListener(e,this.cnt,angleScale) 
         }
         let pointOut = (e: Interact.PointerEvent) => {
+            let new_x_wo_rot = (e.offsetX - this.angleScalePos.pos.x)/this.angleScalePos.scale;
+            let new_y_wo_rot = (e.offsetY - this.angleScalePos.pos.y)/this.angleScalePos.scale;
+            let rot_deg = -angleScale.angle/180*Math.PI;
+            let new_x = new_x_wo_rot*Math.cos(rot_deg) - new_y_wo_rot*Math.sin(rot_deg);
+            let new_y = new_x_wo_rot*Math.sin(rot_deg) + new_y_wo_rot*Math.cos(rot_deg);
             let ev: PaintEvent ={
-                X: e.offsetX,
-                Y: e.offsetY,
+                X: new_x,
+                Y: new_y,
                 type: e.pointerType as PaintEvent["type"] || "mouse",
                 pressure: e.pressure
             };
@@ -255,8 +258,8 @@ export class EditorCanvas implements CanvasBase {
             return;
         }
 
-        var scaleElement = this.scaleElement;
-        var angleScale = this.angleScale;
+        // var scaleElement = this.scaleElement;
+        var angleScale = this.angleScalePos;
         var dragMoveListener = this.dragMoveListener;
         var isDrawing = this.isDrawing;
         interactCVS
@@ -288,9 +291,15 @@ export class EditorCanvas implements CanvasBase {
             container.style.touchAction = "none";
             e.preventDefault();
             e.stopPropagation();
+
+            let new_x_wo_rot = (e.offsetX - this.angleScalePos.pos.x)/this.angleScalePos.scale;
+            let new_y_wo_rot = (e.offsetY - this.angleScalePos.pos.y)/this.angleScalePos.scale;
+            let rot_deg = -angleScale.angle/180*Math.PI;
+            let new_x = new_x_wo_rot*Math.cos(rot_deg) - new_y_wo_rot*Math.sin(rot_deg);
+            let new_y = new_x_wo_rot*Math.sin(rot_deg) + new_y_wo_rot*Math.cos(rot_deg);
             let mouseEvent: PaintEvent = {
-                X: e.offsetX,
-                Y: e.offsetY,
+                X: new_x,
+                Y: new_y,
                 type: "mouse",
                 pressure: 1.0
             };
@@ -321,9 +330,14 @@ export class EditorCanvas implements CanvasBase {
                 // pointleave wont triggered when we draw with finger, so we need call it manually
                 pointOut(e);
             }
+            let new_x_wo_rot = (e.offsetX - this.angleScalePos.pos.x)/this.angleScalePos.scale;
+            let new_y_wo_rot = (e.offsetY - this.angleScalePos.pos.y)/this.angleScalePos.scale;
+            let rot_deg = -angleScale.angle/180*Math.PI;
+            let new_x = new_x_wo_rot*Math.cos(rot_deg) - new_y_wo_rot*Math.sin(rot_deg);
+            let new_y = new_x_wo_rot*Math.sin(rot_deg) + new_y_wo_rot*Math.cos(rot_deg);
             let mouseEvent: PaintEvent = {
-                X: e.offsetX,
-                Y: e.offsetY,
+                X: new_x,
+                Y: new_y,
                 type: "mouse",
                 pressure: 1.0
             };
@@ -346,9 +360,15 @@ export class EditorCanvas implements CanvasBase {
             container.style.touchAction = "none";
             e.preventDefault();
             e.stopPropagation();
+
+            let new_x_wo_rot = (e.offsetX - this.angleScalePos.pos.x)/this.angleScalePos.scale;
+            let new_y_wo_rot = (e.offsetY - this.angleScalePos.pos.y)/this.angleScalePos.scale;
+            let rot_deg = -angleScale.angle/180*Math.PI;
+            let new_x = new_x_wo_rot*Math.cos(rot_deg) - new_y_wo_rot*Math.sin(rot_deg);
+            let new_y = new_x_wo_rot*Math.sin(rot_deg) + new_y_wo_rot*Math.cos(rot_deg);
             let mouseEvent: PaintEvent = {
-                X: e.offsetX,
-                Y: e.offsetY,
+                X: new_x,
+                Y: new_y,
                 type: "mouse",
                 pressure: 1.0
             };
@@ -361,41 +381,43 @@ export class EditorCanvas implements CanvasBase {
         })
         .on('pointerleave', pointOut);
         
-        interact(this.scrollDiv, {
-            styleCursor: false
-        })
-        .gesturable({
-            listeners: {
-                start : gestureStart,
-                move : gestureMove,
-                end : gestureEnd
-            }
-        })
-        .draggable({
-            listeners: { 
-                move: dragMove
-            }
-        })
-        .on("down", (e: Interact.PointerEvent) => {
-            isDrawing = false;
-            this.isPointOut = undefined;
-        })
-        .on("up", (e: Interact.PointerEvent) => {
-            if(e.pointerType === "touch"){
-                isDrawing = false;
-                this.isPointOut = undefined;
-            }
-        })
+        // interact(this.cnt, {
+        //     styleCursor: false
+        // })
+        // .gesturable({
+        //     listeners: {
+        //         start : gestureStart,
+        //         move : gestureMove,
+        //         end : gestureEnd
+        //     }
+        // })
+        // .draggable({
+        //     listeners: { 
+        //         move: dragMove
+        //     }
+        // })
+        // .on("down", (e: Interact.PointerEvent) => {
+        //     isDrawing = false;
+        //     this.isPointOut = undefined;
+        // })
+        // .on("up", (e: Interact.PointerEvent) => {
+        //     if(e.pointerType === "touch"){
+        //         isDrawing = false;
+        //         this.isPointOut = undefined;
+        //     }
+        // })
         container.addEventListener("wheel", this.cvsMouseWheelHandler);
 
         window.addEventListener("keydown", this.docKeydownHandler);
         window.addEventListener("keyup", this.docKeyupHandler);
 
-        this.scaleElement.appendChild(this.backgroundDiv);
-        this.scaleElement.appendChild(this.cnt);
+        // this.scaleElement.appendChild(this.backgroundDiv);
+        // this.scaleElement.appendChild(this.cnt);
         // this.scaleElement.appendChild(this.prev_cvs.element);
-        this.scrollDiv.appendChild(this.scaleElement);
-        container.appendChild(this.scrollDiv);
+        // this.scrollDiv.appendChild(this.scaleElement);
+        // container.appendChild(this.scrollDiv);
+        container.appendChild(this.backgroundDiv);
+        container.appendChild(this.cnt);
 
         this.initCanvas();
 
@@ -465,13 +487,17 @@ export class EditorCanvas implements CanvasBase {
         }
         window.editorUI.forceRerender();
     }
-    resizeCanvas = (e?: UIEvent) => {};
+    resizeCanvas = (e?: UIEvent) => {
+        this.backgroundDiv.style.width = `${window.innerWidth}px`;
+        this.backgroundDiv.style.height = `${window.innerHeight}px`;
+        this.LayerManager.resize(window.innerWidth, window.innerHeight);
+    };
     removeCanvas = () => {};
 
     render = () => {
         // [this.layerInfoList, this.setLayerInfoList] = useProvider("editor.layer.info.list", []);
         if (this.EventFired) {
-            let angle = this.isDrawRotate ? this.angleScale.angle : 0;
+            let angle = this.isDrawRotate ? this.angleScalePos.angle : 0;
             this.draw_func.DrawFunction(this.LayerManager.Layer.prev, this.width, this.height,angle);
             if(this.isPointOut !== undefined){
                 if (this.draw_func.PointerOut !== undefined) {
@@ -590,7 +616,7 @@ export class EditorCanvas implements CanvasBase {
         dia.show();
     }
     /* Scaling of Canvas */
-    public get scaleFactor() { return this.angleScale.scale; }
+    public get scaleFactor() { return this.angleScalePos.scale; }
     private scaleTip: TipComponent;
     private normalizeRotate = (rotate: number) => {
         let angle = rotate % 360;
@@ -607,42 +633,29 @@ export class EditorCanvas implements CanvasBase {
     private isCtlKeyDown: boolean = false;
     private isShiftDown: boolean = false;
     private isAltDown: boolean = false;
-    private transformTo = (target: HTMLElement,x:number,y:number,angle:number,scale:number) => {
-        target.style.transformOrigin = `${this.width/2}px ${this.height/2}px`
-        target.style.transform =    "translate(" + x + "px, " + y + "px)" +
-                                    "rotate(" + angle + "deg)" +
-                                    "scale(" + scale + ")";
-    }
     public scaleTo = (scale: number) => {
         let new_scale = scale;
         if (new_scale >= 4) new_scale = 4;
         if (new_scale <= 0.1) new_scale = 0.1;
-        // keep the dragged position in the data-x/data-y attributes
-        let x = parseFloat(this.scaleElement.getAttribute("data-x") || "0")
-        let y = parseFloat(this.scaleElement.getAttribute("data-y") || "0")
-        this.angleScale.scale = new_scale;
-        this.refreshScaleTip(this.angleScale.angle,this.angleScale.scale);
-        console.log("Next scale factor = " + this.angleScale.scale);
+        this.angleScalePos.scale = new_scale;
+        this.refreshScaleTip(this.angleScalePos.angle,this.angleScalePos.scale);
+        // console.log("Next scale factor = " + this.angleScalePos.scale);
 
-        this.transformTo(this.scaleElement,x,y,this.angleScale.angle,this.angleScale.scale)
+        this.LayerManager.scaleTo(new_scale);
     };
     public rotateTo = (rotate: number) => {
         let new_rotate = this.normalizeRotate(rotate);
-        // keep the dragged position in the data-x/data-y attributes
-        let x = parseFloat(this.scaleElement.getAttribute("data-x") || "0")
-        let y = parseFloat(this.scaleElement.getAttribute("data-y") || "0")
-        this.angleScale.angle = new_rotate;
-        this.refreshScaleTip(this.angleScale.angle,this.angleScale.scale);
-        console.log("Next rotate factor = " + this.angleScale.scale);
+        this.angleScalePos.angle = new_rotate;
+        this.refreshScaleTip(this.angleScalePos.angle,this.angleScalePos.scale);
+        // console.log("Next rotate factor = " + this.angleScalePos.scale);
 
-        this.transformTo(this.scaleElement,x,y,this.angleScale.angle,this.angleScale.scale)
+        this.LayerManager.rotateTo(new_rotate);
     };
 
     public moveTo = (moveX: number,moveY: number) => {
-        // keep the dragged position in the data-x/data-y attributes
-        this.transformTo(this.scaleElement,moveX,moveY,this.angleScale.angle,this.angleScale.scale)
-        this.scaleElement.setAttribute("data-x", moveX.toString());
-        this.scaleElement.setAttribute("data-y", moveY.toString());
+        this.angleScalePos.pos.x = moveX;
+        this.angleScalePos.pos.y = moveY;
+        this.LayerManager.moveTo(moveX,moveY);
     };
     private cvsMouseWheelHandler = (ev: WheelEvent) => {
         
@@ -650,52 +663,42 @@ export class EditorCanvas implements CanvasBase {
             ev.preventDefault();
             if (ev.deltaY < 0) {
                 // ZOOM IN
-                this.scaleTo(this.scaleFactor + 0.1);
+                this.scaleTo(this.angleScalePos.scale + 0.1);
             } else if (ev.deltaY > 0) {
                 // zoom out
-                this.scaleTo(this.scaleFactor - 0.1);
+                this.scaleTo(this.angleScalePos.scale - 0.1);
             }
             this.render();
             return;
         }
-        if (!this.isCtlKeyDown && !this.isShiftDown && !this.isAltDown) { // Shift Up/Down
+        if (!this.isCtlKeyDown && !this.isShiftDown && !this.isAltDown) { // No Key: Up/Down
             ev.preventDefault();
-            let x = parseFloat(this.scaleElement.getAttribute("data-x") || "0")
-            let y = parseFloat(this.scaleElement.getAttribute("data-y") || "0")
             if (ev.deltaY < 0) {
-                y = y - 30
+                this.moveTo(this.angleScalePos.pos.x,this.angleScalePos.pos.y + 30);
             } else if (ev.deltaY > 0) {
-                y = y + 30
+                this.moveTo(this.angleScalePos.pos.x,this.angleScalePos.pos.y - 30);
             }
-            this.transformTo(this.scaleElement,x,y,this.angleScale.angle,this.angleScale.scale);
-            this.scaleElement.setAttribute("data-x", x.toString());
-            this.scaleElement.setAttribute("data-y", y.toString());
-            this.render();
+                this.render();
             return;
         }
-        if (!this.isCtlKeyDown && this.isShiftDown && !this.isAltDown) {// Shift Left/Right
+        if (!this.isCtlKeyDown && this.isShiftDown && !this.isAltDown) {// Shift: Left/Right
             ev.preventDefault();
-            let x = parseFloat(this.scaleElement.getAttribute("data-x") || "0")
-            let y = parseFloat(this.scaleElement.getAttribute("data-y") || "0")
             if (ev.deltaY < 0) {
-                x = x + 30
+                this.moveTo(this.angleScalePos.pos.x + 30,this.angleScalePos.pos.y);
             } else if (ev.deltaY > 0) {
-                x = x - 30
+                this.moveTo(this.angleScalePos.pos.x - 30,this.angleScalePos.pos.y);
             }
-            this.transformTo(this.scaleElement,x,y,this.angleScale.angle,this.angleScale.scale);
-            this.scaleElement.setAttribute("data-x", x.toString());
-            this.scaleElement.setAttribute("data-y", y.toString());
             this.render();
             return;
         }
-        if (!this.isCtlKeyDown && !this.isShiftDown && this.isAltDown) { // Rotate Left/Right
+        if (!this.isCtlKeyDown && !this.isShiftDown && this.isAltDown) { // Alt: Rotate Left/Right
             ev.preventDefault();
             if (ev.deltaY < 0) {
                 // ZOOM IN
-                this.rotateTo(this.angleScale.angle + 2);
+                this.rotateTo(this.angleScalePos.angle + 2);
             } else if (ev.deltaY > 0) {
                 // zoom out
-                this.rotateTo(this.angleScale.angle - 2);
+                this.rotateTo(this.angleScalePos.angle - 2);
             }
             this.render();
             return;

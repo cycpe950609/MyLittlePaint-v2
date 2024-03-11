@@ -20,6 +20,10 @@ export declare class LayerManager {
     get Layer(): Layer;
     get LayerList(): LayerInfo[];
     clear(): void;
+    resize(width: number, height: number): void;
+    moveTo(x: number, y: number): void;
+    scaleTo(factor: number): void;
+    rotateTo(angle: number): void;
 }
 export declare class Layer {
     private _render;

@@ -203,6 +203,9 @@ class EditorUI {
         this.Statusbar = new StatusBar();
         this.Menubar = new Menubar();
         this.Mode = new ModeManger();
+        window.addEventListener("resize", (e) => {
+            this.cvs.resizeCanvas(e);
+        })
     }
     private time_to_rerender: boolean = true;
     private should_rerender: boolean = false;
