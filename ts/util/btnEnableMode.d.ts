@@ -5,6 +5,6 @@ declare class btnToggleMode implements FunctionInterface {
     Tip: string;
     private toggleModeName;
     constructor(modeName: string);
-    StartFunction(cvs: CanvasBase): boolean;
+    StartFunction(cvs: CanvasBase): void;
 }
 export default btnToggleMode;

@@ -1,5 +1,5 @@
 import { CanvasBase } from "../editorUI/canvas";
-import FunctionInterface from "../editorUI/interface/function";
+import FunctionInterface, { NextFunctionState } from "../editorUI/interface/function";
 
 class btnToggleMode implements FunctionInterface {
     Name = "Toggle Mode";
@@ -12,9 +12,7 @@ class btnToggleMode implements FunctionInterface {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    StartFunction(cvs: CanvasBase) {
-        return false as boolean;
-    }
+    StartFunction(cvs: CanvasBase) {}
 }
 
 export default btnToggleMode;

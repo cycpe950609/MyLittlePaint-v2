@@ -53,7 +53,6 @@ class Sidebar implements FunctionInterface {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     StartFunction(/*cvs: CanvasBase*/) {
         this.toggleSidebar();
-        return false;
     }
 }
 

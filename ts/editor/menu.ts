@@ -10,9 +10,8 @@ export class btnUpload implements FunctionInterface {
 
     constructor(){}
 
-    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+    StartFunction = (cvs: CanvasBase) => {
         (cvs as EditorCanvas).open();
-        return false;
     };
 }
 
@@ -23,9 +22,8 @@ export class btnUndo implements FunctionInterface {
 
     constructor(){}
 
-    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+    StartFunction = (cvs: CanvasBase) => {
         (cvs as EditorCanvas).undo();
-        return false;
     };
 }
 
@@ -36,9 +34,8 @@ export class btnRedo implements FunctionInterface {
 
     constructor(){}
 
-    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+    StartFunction = (cvs: CanvasBase) => {
         (cvs as EditorCanvas).redo();
-        return false;
     };
 }
 
@@ -49,9 +46,8 @@ export class btnClear implements FunctionInterface {
 
     constructor(){}
 
-    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+    StartFunction = (cvs: CanvasBase) => {
         (cvs as EditorCanvas).clear();
-        return false;
     };
 }
 export class btnSave implements FunctionInterface {
@@ -61,9 +57,8 @@ export class btnSave implements FunctionInterface {
 
     constructor(){}
 
-    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+    StartFunction = (cvs: CanvasBase) => {
         (cvs as EditorCanvas).save();
-        return false;
     };
 }
 
@@ -74,9 +69,8 @@ export class btnToggleTouch implements FunctionInterface {
 
     constructor(){}
 
-    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+    StartFunction = (cvs: CanvasBase) => {
         (cvs as EditorCanvas).toggleTouch();
-        return false;
     };
 }
 
@@ -87,9 +81,8 @@ export class btnResetScale implements FunctionInterface {
 
     constructor(){}
 
-    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+    StartFunction = (cvs: CanvasBase) => {
         (cvs as EditorCanvas).scaleTo(1);
-        return false;
     };
 }
 
@@ -100,8 +93,7 @@ export class btnResetRotate implements FunctionInterface {
 
     constructor(){}
 
-    StartFunction: (cvs: CanvasBase) => boolean = (cvs: CanvasBase) => {
+    StartFunction = (cvs: CanvasBase) => {
         (cvs as EditorCanvas).rotateTo(0);
-        return false;
     };
 }

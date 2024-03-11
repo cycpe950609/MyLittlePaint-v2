@@ -1,5 +1,7 @@
 import Konva from "konva";
-import { CanvasInterfaceSettings, ClickDrawBase, DrawBase } from "../editorUI/canvas";
+import { CanvasBase, CanvasInterfaceSettings, ClickDrawBase, DrawBase } from "../editorUI/canvas";
+import { FunctionInterface } from "../editorUI";
+import { NextFunctionState } from "../editorUI/interface/function";
 export declare class PolygonBase extends DrawBase {
     CursorName: string;
     BorderBrush: string;
@@ -35,6 +37,14 @@ export declare class RectangleCVSFunc extends PathDraw {
     ImgName: string;
     Tip: string;
     Path: string;
+}
+export declare class btnPolygon implements FunctionInterface {
+    Name: string;
+    ImgName: string;
+    Tip: string;
+    private draw_func;
+    constructor();
+    StartFunction: (cvs: CanvasBase) => Promise<NextFunctionState>;
 }
 export declare class PolygonCVSFunc extends ClickDrawBase {
     CursorName: string;

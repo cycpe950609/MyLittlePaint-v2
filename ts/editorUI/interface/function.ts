@@ -1,4 +1,5 @@
 import { CanvasBase } from "../canvas";
+import { SubModeFunction } from "./mode";
 
 export enum PropertyType {
     String = "string",
@@ -22,12 +23,17 @@ export type PropertyItem = {
 // How about if Tool Button clicked in StartFunction ?
 //     Change = return true,
 //     Remain = return false
+export type NextFunctionState = {
+    isChangeTo: boolean;
+    finishSubMode?: boolean;
+    subMode?: SubModeFunction;
+}
 export interface FunctionInterface {
     Name: string; // Tips of ToolButton
     ImgName?: string;
     Tip?: string | (() => string); // Tip showed on StatusBar
     HistoryName?: string; // Undefined if dont want to store in redo/undo hostory
-    StartFunction: (cvs: CanvasBase) => boolean | Promise<boolean>; // triggered when click ToolButton of this function
+    StartFunction: (cvs: CanvasBase) => void | Promise<void> | NextFunctionState | Promise<NextFunctionState>; // triggered when click ToolButton of this function
     EndFunction?: (cvs: CanvasBase) => void; // triggered when click ToolButton of OTHER function
 }
 
@@ -42,9 +48,7 @@ export class NoOPFunc implements FunctionInterface {
     Name = "no_op";
     ImgName = "text";
     Tip = "";
-    StartFunction(cvs: CanvasBase) {
-        return false;
-    }
+    StartFunction(cvs: CanvasBase) {}
     MouseDown = (e: UIEvent) => {
         // console.log("MouseDown event trigger");
     };

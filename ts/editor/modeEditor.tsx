@@ -34,6 +34,8 @@ import HistoryManager from "./historyLogger";
 import { Div } from "../editorUI/util/Element";
 import { VNode } from "snabbdom";
 import { setValueFunctionType, useProvider } from "../editorUI/util/useHook";
+import { NextFunctionState } from "../editorUI/interface/function";
+import { btnPolygon } from "./polygon";
 
 
 export class btnCanvas implements FunctionInterface {
@@ -54,7 +56,7 @@ export class btnCanvas implements FunctionInterface {
         if(this.draw_func == undefined)
             this.draw_func = await this.loadModule();
         cvs.setFunction(this.draw_func);
-        return true;
+        return {isChangeTo: true} as NextFunctionState;
     };
 }
 
@@ -776,7 +778,7 @@ class modeEditor implements ModeFunction {
         new btnCanvas('Circle','circle','Circle',async() =>             new (await import(/* webpackChunkName: "paint-polygon" */"./polygon")).CircleCVSFunc() ),
         new btnCanvas('Triangle','triangle','Triangle',async() =>       new (await import(/* webpackChunkName: "paint-polygon" */"./polygon")).TriangleCVSFunc() ),
         new btnCanvas('Rectangle','rectangle','Rectangle',async() =>    new (await import(/* webpackChunkName: "paint-polygon" */"./polygon")).RectangleCVSFunc() ),
-        new btnCanvas('Polygon','polygon','Polygon',async() =>          new (await import(/* webpackChunkName: "paint-polygon" */"./polygon")).PolygonCVSFunc() ),
+        new btnPolygon(),
     ];
     
     RightToolbarTop = [

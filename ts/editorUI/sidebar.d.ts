@@ -11,7 +11,7 @@ declare class Sidebar implements FunctionInterface {
     showSidebar(): void;
     hiddenSidebar(): void;
     toggleSidebar(): void;
-    StartFunction(): boolean;
+    StartFunction(): void;
 }
 export default Sidebar;
 export declare const SidebarComp: Snabbdom.Component<{}>;

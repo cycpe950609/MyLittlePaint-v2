@@ -13,7 +13,7 @@ import { Unsubscribe } from "@reduxjs/toolkit";
 import { Div } from './util/Element';
 import { MenuboxComp } from './menubox';
 import { ModeSelectorComp } from './modeSelector';
-import { changeToMode } from './mode';
+import { changeToMode, changeToSubMode, returnMode } from './mode';
 import { ErrorHandlerPage } from './errorPage';
 import { DIV } from './util/HTMLElement';
 import { useLocation } from './util/useHook';
@@ -96,12 +96,24 @@ class ModeManger {
             this.func.EndFunction(window.editorUI.CenterCanvas);
             // this.mdfunc.CenterCanvas.render();
         }
+        console.log("[DEB] Change to function",next_func);
 
         const ifChangFunc = next_func.StartFunction(window.editorUI.CenterCanvas);
-        window.editorUI.CenterCanvas.render();
-        if (ifChangFunc === true){ 
-            this.func = next_func
-        };
+        Promise.resolve(ifChangFunc).then((val) => {
+            console.log("[DEB] Change function",typeof val);
+            window.editorUI.CenterCanvas.render();
+            if(typeof val === 'undefined' ) return;
+            if (val.isChangeTo === true){ 
+                this.func = next_func
+            };
+            if(val.finishSubMode === true) {
+                returnMode();
+            }
+            if(val.subMode !== undefined) {
+                console.log("[DEB] subMode",val.subMode);
+                changeToSubMode(val.subMode);
+            }
+        });
     }
 
     changeTo(modeName: string) {

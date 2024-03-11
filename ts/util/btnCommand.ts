@@ -31,7 +31,6 @@ class btnCommand implements FunctionInterface {
             )
         )
         dia.show();
-        return false as boolean;
     }
 }
 

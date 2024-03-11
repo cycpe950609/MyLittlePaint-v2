@@ -1,4 +1,5 @@
 import { CanvasBase } from "../canvas";
+import { SubModeFunction } from "./mode";
 export declare enum PropertyType {
     String = "string",
     Integer = "integer",
@@ -16,12 +17,17 @@ export type PropertyItem = {
     Info: string;
     Value: string | number | string[] | number[];
 };
+export type NextFunctionState = {
+    isChangeTo: boolean;
+    finishSubMode?: boolean;
+    subMode?: SubModeFunction;
+};
 export interface FunctionInterface {
     Name: string;
     ImgName?: string;
     Tip?: string | (() => string);
     HistoryName?: string;
-    StartFunction: (cvs: CanvasBase) => boolean | Promise<boolean>;
+    StartFunction: (cvs: CanvasBase) => void | Promise<void> | NextFunctionState | Promise<NextFunctionState>;
     EndFunction?: (cvs: CanvasBase) => void;
 }
 export default FunctionInterface;
@@ -30,6 +36,6 @@ export declare class NoOPFunc implements FunctionInterface {
     Name: string;
     ImgName: string;
     Tip: string;
-    StartFunction(cvs: CanvasBase): boolean;
+    StartFunction(cvs: CanvasBase): void;
     MouseDown: (e: UIEvent) => void;
 }

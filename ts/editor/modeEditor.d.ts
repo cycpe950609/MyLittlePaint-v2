@@ -3,6 +3,8 @@ import { ModeFunction, FunctionInterface } from "../editorUI";
 import { btnClear, btnRedo, btnResetRotate, btnResetScale, btnSave, btnToggleTouch, btnUndo } from "./menu";
 import LayerMgrSidebar, { LayerManager } from './layer';
 import SettingPageSidebar from "./setting";
+import { NextFunctionState } from "../editorUI/interface/function";
+import { btnPolygon } from "./polygon";
 export declare class btnCanvas implements FunctionInterface {
     Name: string;
     ImgName?: string | undefined;
@@ -10,7 +12,7 @@ export declare class btnCanvas implements FunctionInterface {
     private loadModule;
     constructor(name: string, imgName: string, tip: string, loadModule: () => Promise<CanvasInterface>);
     private draw_func?;
-    StartFunction: (cvs: CanvasBase) => Promise<boolean>;
+    StartFunction: (cvs: CanvasBase) => Promise<NextFunctionState>;
 }
 declare global {
     interface Touch {
@@ -76,7 +78,7 @@ declare class modeEditor implements ModeFunction {
     CenterCanvas: EditorCanvas;
     MenuToolbarLeft: (btnCanvas | btnUndo | btnRedo | btnClear)[];
     MenuToolbarRight: (btnResetScale | btnResetRotate | btnToggleTouch | btnSave)[];
-    LeftToolbarTop: btnCanvas[];
+    LeftToolbarTop: (btnCanvas | btnPolygon)[];
     RightToolbarTop: (LayerMgrSidebar | SettingPageSidebar)[];
     StartMode(): void;
     EndMode(): void;

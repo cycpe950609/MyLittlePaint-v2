@@ -1,9 +1,13 @@
 import Konva from "konva";
 import { CircleConfig } from "konva/lib/shapes/Circle";
 import { PathConfig } from "konva/lib/shapes/Path";
-import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType, ClickDrawBase, DrawBase } from "../editorUI/canvas";
+import { CanvasBase, CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType, ClickDrawBase, DrawBase, NoOPCVSFunc } from "../editorUI/canvas";
 import { editorUIActions, editorUIData } from "../editorUI/data";
 import Mexp from "math-expression-evaluator";
+import { FunctionInterface } from "../editorUI";
+import { NextFunctionState } from "../editorUI/interface/function";
+import { SubModeFunction } from "../editorUI/interface/mode";
+import { EditorCanvas } from "./modeEditor";
 
 export class PolygonBase extends DrawBase {
     CursorName ='crosshair';
@@ -233,6 +237,42 @@ export class RectangleCVSFunc extends PathDraw
     ImgName = 'rectangle';
     Tip = 'Rectangle'
     Path = "M ${startX} ${startY} L ${endX} ${startY} L ${endX} ${endY} L ${startX} ${endY} Z";
+}
+
+class btnExitDrawing implements FunctionInterface {
+    Name: string = "Exit";
+    ImgName?: string = "exit";
+    Tip = "Finish Drawing";
+    StartFunction = (cvs: CanvasBase) => {
+        (window.editorUI.CenterCanvas as EditorCanvas);
+        cvs.setFunction(new NoOPCVSFunc())
+        return {
+            isChangeTo: false,
+            finishSubMode: true,
+        } as NextFunctionState;
+    };    
+}
+
+export class btnPolygon implements FunctionInterface {
+    Name: string = "Polygon";
+    ImgName = "polygon";
+    Tip = "Polygon";
+
+    private draw_func: PolygonCVSFunc;
+    constructor() {
+        this.draw_func = new PolygonCVSFunc();
+    }
+
+    StartFunction = async (cvs: CanvasBase) => {
+        cvs.setFunction(this.draw_func);
+        return {
+            isChangeTo: true,
+            subMode: {
+                clearToolbar: true,
+                MenuToolbarRight : [new btnExitDrawing()]
+            } as SubModeFunction
+        } as NextFunctionState;
+    };
 }
 
 export class PolygonCVSFunc extends ClickDrawBase {
