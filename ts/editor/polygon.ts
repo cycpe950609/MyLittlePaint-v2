@@ -9,6 +9,7 @@ import { NextFunctionState } from "../editorUI/interface/function";
 import { SubModeFunction } from "../editorUI/interface/mode";
 import { EditorCanvas } from "./modeEditor";
 import { returnMode } from "../editorUI/mode";
+import SettingPageSidebar from "./setting";
 
 export class PolygonBase extends DrawBase {
     CursorName ='crosshair';
@@ -248,7 +249,6 @@ class btnExitDrawing implements FunctionInterface {
         if(window.editorUI.CenterCanvas.Function !== undefined)
             if(window.editorUI.CenterCanvas.Function.RightPointerUp !== undefined)
                 window.editorUI.CenterCanvas.Function.RightPointerUp(undefined);
-        cvs.Function = new NoOPCVSFunc();
         return {
             isChangeTo: false,
             finishSubMode: false,//Because we exzit subMode at RightPointerUp, we dont need to finish subMode here
@@ -273,6 +273,10 @@ export class btnPolygon implements FunctionInterface {
             subMode: {
                 clearToolbar: true,
                 MenuToolbarRight : [new btnExitDrawing()],
+                RightToolbarTop: [new SettingPageSidebar()],
+                EndMode: () => {
+                    cvs.Function = new NoOPCVSFunc();
+                }
             } as SubModeFunction
         } as NextFunctionState;
     };
@@ -335,7 +339,55 @@ export class PolygonCVSFunc extends ClickDrawBase {
     }
 
     get Settings () {
-        return {};
+        let rtv: CanvasInterfaceSettings = {
+            Name : this.Name,
+            Settings : new Map<string, CanvasSettingEntry<any>>([
+                ["BorderBrush" , {
+                    type: CanvasSettingType.Color,
+                    label: "Brush Color",
+                    value: this.BorderBrush
+                }],
+                ["BorderWidth", {
+                    type: CanvasSettingType.Number,
+                    label: "Brush Width",
+                    info: [1,64], // min,max
+                    value: this.BorderWidth
+                }],
+                ["CanFilled" , {
+                    type: CanvasSettingType.Boolean,
+                    label: "Filled the content",
+                    value: this.CanFilled
+                }],
+                ["ContentColor" , {
+                    type: CanvasSettingType.Color,
+                    label: "Filled Color",
+                    value: this.ContentColor
+                }],
+            ])
+        };
+        return rtv;
     }
-    set Settings (setting: CanvasInterfaceSettings) {}
+    set Settings (setting: CanvasInterfaceSettings) {
+        if(setting.Settings === undefined)
+            throw new Error("INTENAL_ERROR: Settings are missing");
+        let refreshWindow = false;
+        if(setting.Settings.get("BorderBrush") !== undefined) {
+            this.BorderBrush = setting.Settings.get("BorderBrush")?.value;
+            refreshWindow = true;
+        }
+        if(setting.Settings.get("BorderWidth") !== undefined) {
+            this.BorderWidth = setting.Settings.get("BorderWidth")?.value;
+            refreshWindow = true;
+        }
+        if(setting.Settings.get("ContentColor") !== undefined) {
+            this.ContentColor = setting.Settings.get("ContentColor")?.value;
+            refreshWindow = true;
+        }
+        if(setting.Settings.get("CanFilled") !== undefined) {
+            this.CanFilled = setting.Settings.get("CanFilled")?.value;
+            refreshWindow = true;
+        }
+        if(refreshWindow)
+            editorUIData.dispatch(editorUIActions.sidebar_window.update({id: "SettingsPage", new_func: null}));
+    }
 }

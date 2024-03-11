@@ -80,7 +80,7 @@ declare class modeEditor implements ModeFunction {
     MenuToolbarLeft: (btnCanvas | btnUndo | btnRedo | btnClear)[];
     MenuToolbarRight: (btnResetScale | btnResetRotate | btnToggleTouch | btnSave)[];
     LeftToolbarTop: (btnCanvas | btnPolygon)[];
-    RightToolbarTop: (LayerMgrSidebar | SettingPageSidebar)[];
+    RightToolbarTop: (SettingPageSidebar | LayerMgrSidebar)[];
     StartMode(): void;
     EndMode(): void;
 }
