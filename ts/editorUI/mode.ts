@@ -26,6 +26,9 @@ const setMode = (mode: SubModeFunction) => {
 }
 
 export const returnMode = () => {
+    if(modeStack[modeStack.length -1].EndMode !== undefined){
+        modeStack[modeStack.length -1].EndMode();
+    }
     modeStack.pop();
     setMode(modeStack[modeStack.length-1]);
     let funcNoop = new NoOPFunc(0);

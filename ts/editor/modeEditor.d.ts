@@ -47,7 +47,8 @@ export declare class EditorCanvas implements CanvasBase {
     attachCanvas(container: HTMLDivElement): void;
     enableDrag(): void;
     disableDrag(): void;
-    setFunction(func: CanvasInterface): void;
+    get Function(): CanvasInterface;
+    set Function(func: CanvasInterface);
     resizeCanvas: (e?: UIEvent) => void;
     removeCanvas: () => void;
     render: () => void;

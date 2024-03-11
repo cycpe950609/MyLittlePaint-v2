@@ -1,5 +1,5 @@
 import Konva from "konva";
-import { CanvasBase, CanvasInterfaceSettings, ClickDrawBase, DrawBase } from "../editorUI/canvas";
+import { CanvasBase, CanvasInterfaceSettings, ClickDrawBase, DrawBase, PaintEvent } from "../editorUI/canvas";
 import { FunctionInterface } from "../editorUI";
 import { NextFunctionState } from "../editorUI/interface/function";
 export declare class PolygonBase extends DrawBase {
@@ -56,6 +56,7 @@ export declare class PolygonCVSFunc extends ClickDrawBase {
     HistoryName: string;
     ImgName: string;
     DrawFunction: (Ctx: Konva.Group, width: number, height: number, angle: number) => void;
+    RightPointerUp(e: PaintEvent): void;
     get Settings(): CanvasInterfaceSettings;
     set Settings(setting: CanvasInterfaceSettings);
 }

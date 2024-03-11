@@ -90,7 +90,7 @@ export declare class NoOPCVSFunc extends DrawBase {
 export interface CanvasBase {
     name: string;
     attachCanvas: (container: HTMLDivElement) => void;
-    setFunction: (func: CanvasInterface) => void;
+    Function: CanvasInterface;
     resizeCanvas: (e?: UIEvent) => void;
     removeCanvas: () => void;
     render: () => void;
@@ -102,7 +102,7 @@ export declare class NoOPCanvas implements CanvasBase {
     update?: ((time: number) => void) | undefined;
     name: string;
     attachCanvas(container: HTMLDivElement): void;
-    setFunction(func: CanvasInterface): void;
+    set Function(func: CanvasInterface);
     resizeCanvas(e?: UIEvent): void;
     removeCanvas(): void;
     render(): void;

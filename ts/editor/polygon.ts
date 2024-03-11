@@ -1,13 +1,14 @@
 import Konva from "konva";
 import { CircleConfig } from "konva/lib/shapes/Circle";
 import { PathConfig } from "konva/lib/shapes/Path";
-import { CanvasBase, CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType, ClickDrawBase, DrawBase, NoOPCVSFunc } from "../editorUI/canvas";
+import { CanvasBase, CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType, ClickDrawBase, DrawBase, NoOPCVSFunc, PaintEvent } from "../editorUI/canvas";
 import { editorUIActions, editorUIData } from "../editorUI/data";
 import Mexp from "math-expression-evaluator";
 import { FunctionInterface } from "../editorUI";
 import { NextFunctionState } from "../editorUI/interface/function";
 import { SubModeFunction } from "../editorUI/interface/mode";
 import { EditorCanvas } from "./modeEditor";
+import { returnMode } from "../editorUI/mode";
 
 export class PolygonBase extends DrawBase {
     CursorName ='crosshair';
@@ -244,11 +245,13 @@ class btnExitDrawing implements FunctionInterface {
     ImgName?: string = "exit";
     Tip = "Finish Drawing";
     StartFunction = (cvs: CanvasBase) => {
-        (window.editorUI.CenterCanvas as EditorCanvas);
-        cvs.setFunction(new NoOPCVSFunc())
+        if(window.editorUI.CenterCanvas.Function !== undefined)
+            if(window.editorUI.CenterCanvas.Function.RightPointerUp !== undefined)
+                window.editorUI.CenterCanvas.Function.RightPointerUp(undefined);
+        cvs.Function = new NoOPCVSFunc();
         return {
             isChangeTo: false,
-            finishSubMode: true,
+            finishSubMode: false,//Because we exzit subMode at RightPointerUp, we dont need to finish subMode here
         } as NextFunctionState;
     };    
 }
@@ -264,12 +267,12 @@ export class btnPolygon implements FunctionInterface {
     }
 
     StartFunction = async (cvs: CanvasBase) => {
-        cvs.setFunction(this.draw_func);
+        cvs.Function = this.draw_func;
         return {
             isChangeTo: true,
             subMode: {
                 clearToolbar: true,
-                MenuToolbarRight : [new btnExitDrawing()]
+                MenuToolbarRight : [new btnExitDrawing()],
             } as SubModeFunction
         } as NextFunctionState;
     };
@@ -325,6 +328,11 @@ export class PolygonCVSFunc extends ClickDrawBase {
         polygon.setAttr("strokeWidth", this.BorderWidth)
         polygon.setAttr("courtName", this.courtName);
     };
+
+    public RightPointerUp(e: PaintEvent): void {
+        super.RightPointerUp(e);
+        returnMode();//TODO : Add a better way to stop drawing Polygon
+    }
 
     get Settings () {
         return {};

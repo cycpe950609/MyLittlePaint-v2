@@ -36,6 +36,7 @@ import { VNode } from "snabbdom";
 import { setValueFunctionType, useProvider } from "../editorUI/util/useHook";
 import { NextFunctionState } from "../editorUI/interface/function";
 import { btnPolygon } from "./polygon";
+import { returnMode } from "../editorUI/mode";
 
 
 export class btnCanvas implements FunctionInterface {
@@ -55,7 +56,7 @@ export class btnCanvas implements FunctionInterface {
     StartFunction = async (cvs: CanvasBase) => {
         if(this.draw_func == undefined)
             this.draw_func = await this.loadModule();
-        cvs.setFunction(this.draw_func);
+        cvs.Function = this.draw_func;
         return {isChangeTo: true} as NextFunctionState;
     };
 }
@@ -391,31 +392,6 @@ export class EditorCanvas implements CanvasBase {
         })
         .on('pointerleave', pointOut);
         
-        // interact(this.cnt, {
-        //     styleCursor: false
-        // })
-        // .gesturable({
-        //     listeners: {
-        //         start : gestureStart,
-        //         move : gestureMove,
-        //         end : gestureEnd
-        //     }
-        // })
-        // .draggable({
-        //     listeners: { 
-        //         move: dragMove
-        //     }
-        // })
-        // .on("down", (e: Interact.PointerEvent) => {
-        //     isDrawing = false;
-        //     this.isPointOut = undefined;
-        // })
-        // .on("up", (e: Interact.PointerEvent) => {
-        //     if(e.pointerType === "touch"){
-        //         isDrawing = false;
-        //         this.isPointOut = undefined;
-        //     }
-        // })
         container.addEventListener("wheel", this.cvsMouseWheelHandler);
 
         window.addEventListener("keydown", this.docKeydownHandler);
@@ -424,11 +400,6 @@ export class EditorCanvas implements CanvasBase {
             e.preventDefault();
         });
 
-        // this.scaleElement.appendChild(this.backgroundDiv);
-        // this.scaleElement.appendChild(this.cnt);
-        // this.scaleElement.appendChild(this.prev_cvs.element);
-        // this.scrollDiv.appendChild(this.scaleElement);
-        // container.appendChild(this.scrollDiv);
         container.appendChild(this.backgroundDiv);
         container.appendChild(this.cnt);
 
@@ -436,9 +407,6 @@ export class EditorCanvas implements CanvasBase {
 
         [this.layerInfoList, this.setLayerInfoList] = useProvider("editor.layer.info.list", []);
         this.setLayerInfoList(this.LayerManager.LayerList);
-
-        // return <Div />;
-        // return this.containerVNode;
     }
 
     public enableDrag() {
@@ -448,7 +416,11 @@ export class EditorCanvas implements CanvasBase {
         this.cnt.style.touchAction = "none";
     }
 
-    public setFunction(func: CanvasInterface) {
+    public get Function() {
+        return this.draw_func;
+    }
+
+    public set Function(func: CanvasInterface) {
         console.log("setFunction", func);
         this.draw_func = func;
         const browerCursor = [
