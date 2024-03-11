@@ -18,11 +18,9 @@ export interface ModeFunction {
     CenterCanvas: CanvasBase;
 
     // triggered when click selector of this mode,
-    // load data from stored 3dl file
     StartMode?: () => void;
 
     // triggered when click selector of OTHER mode,
-    // should flush all state into storge if need save in 3dl file
     EndMode?: () => void;
 }
 

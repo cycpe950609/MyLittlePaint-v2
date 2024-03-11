@@ -1,5 +1,5 @@
 import Konva from "konva";
-import { CanvasInterfaceSettings, DrawBase } from "../editorUI/canvas";
+import { CanvasInterfaceSettings, ClickDrawBase, DrawBase } from "../editorUI/canvas";
 export declare class PolygonBase extends DrawBase {
     CursorName: string;
     BorderBrush: string;
@@ -35,4 +35,17 @@ export declare class RectangleCVSFunc extends PathDraw {
     ImgName: string;
     Tip: string;
     Path: string;
+}
+export declare class PolygonCVSFunc extends ClickDrawBase {
+    CursorName: string;
+    BorderBrush: string;
+    BorderWidth: number;
+    ContentColor: string;
+    CanFilled: boolean;
+    Name: string;
+    HistoryName: string;
+    ImgName: string;
+    DrawFunction: (Ctx: Konva.Group, width: number, height: number, angle: number) => void;
+    get Settings(): CanvasInterfaceSettings;
+    set Settings(setting: CanvasInterfaceSettings);
 }

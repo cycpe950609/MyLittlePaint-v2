@@ -372,9 +372,17 @@ export class EditorCanvas implements CanvasBase {
                 type: "mouse",
                 pressure: 1.0
             };
-            if (this.draw_func.PointerUp !== undefined) {
-                // console.log("Mouse Up");
-                this.draw_func.PointerUp(mouseEvent);
+            if(e.button === 0) {
+                if (this.draw_func.PointerUp !== undefined) {
+                    // console.log("Mouse Up");
+                    this.draw_func.PointerUp(mouseEvent);
+                }
+            }
+            else if(e.button === 2) {
+                if (this.draw_func.RightPointerUp!== undefined) {
+                    // console.log("Mouse Out");
+                    this.draw_func.RightPointerUp(mouseEvent);
+                }
             }
             isDrawing = false;
 
@@ -410,6 +418,9 @@ export class EditorCanvas implements CanvasBase {
 
         window.addEventListener("keydown", this.docKeydownHandler);
         window.addEventListener("keyup", this.docKeyupHandler);
+        window.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+        });
 
         // this.scaleElement.appendChild(this.backgroundDiv);
         // this.scaleElement.appendChild(this.cnt);
@@ -765,6 +776,7 @@ class modeEditor implements ModeFunction {
         new btnCanvas('Circle','circle','Circle',async() =>             new (await import(/* webpackChunkName: "paint-polygon" */"./polygon")).CircleCVSFunc() ),
         new btnCanvas('Triangle','triangle','Triangle',async() =>       new (await import(/* webpackChunkName: "paint-polygon" */"./polygon")).TriangleCVSFunc() ),
         new btnCanvas('Rectangle','rectangle','Rectangle',async() =>    new (await import(/* webpackChunkName: "paint-polygon" */"./polygon")).RectangleCVSFunc() ),
+        new btnCanvas('Polygon','polygon','Polygon',async() =>          new (await import(/* webpackChunkName: "paint-polygon" */"./polygon")).PolygonCVSFunc() ),
     ];
     
     RightToolbarTop = [

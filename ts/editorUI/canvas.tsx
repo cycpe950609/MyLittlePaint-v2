@@ -22,6 +22,8 @@ export interface CanvasInterface {
     PointerMove?:   (e: PaintEvent) => void;
     PointerUp?:     (e: PaintEvent) => void;
     PointerOut?:    (e: PaintEvent) => void;
+    RightPointerDown?:   (e: PaintEvent) => void;
+    RightPointerUp?:     (e: PaintEvent) => void;
     DrawFunction: (
         ctx: Konva.Group,
         width: number, 
@@ -107,6 +109,77 @@ export class DrawBase implements CanvasInterface {
     public set Settings(setting:CanvasInterfaceSettings) {}; 
     public get Settings() { return {} as CanvasInterfaceSettings; }; 
 };
+
+export class ClickDrawBase implements CanvasInterface {
+    Name: string = "base";
+    private _canfinishDrawing: boolean = true
+    public get CanFinishDrawing(){ return this._canfinishDrawing; };
+
+    protected LastX = 0;
+    protected LastY = 0;
+    protected NextX = 0;
+    protected NextY = 0;
+    protected ifDrawing = false;
+    protected ifMouseMove = false;
+    protected shapeID!: string;
+    protected points: [number, number][] = [];
+    protected courtName!: string;
+
+    public PointerDown(e: PaintEvent){
+        if(this._canfinishDrawing == true) { // First click
+            [this.LastX, this.LastY] = [e.X, e.Y];
+            [this.NextX, this.NextY] = [e.X, e.Y];
+            this.ifDrawing = true;
+            this.ifMouseMove = false;
+            this._canfinishDrawing = false;
+            this.shapeID = uuidv4();
+            this.points = [[e.X, e.Y],];
+        }
+        
+    };
+    public PointerMove(e: PaintEvent){
+        if(!this.ifDrawing) return;
+        this.ifMouseMove = true;
+        [this.NextX, this.NextY] = [e.X, e.Y];
+    };
+    public PointerUp(e: PaintEvent){
+        this.points.push([e.X, e.Y]);
+    };
+
+    public RightPointerUp(e: PaintEvent) {
+        this._canfinishDrawing = true;
+        this.ifMouseMove = false;
+        this.ifDrawing = false;
+    }
+
+    public PointerOut(e: PaintEvent){
+        this._canfinishDrawing = true;
+        this.ifMouseMove = false;
+        this.ifDrawing = false; 
+    };
+    protected rotatedDelta(radian: number, offsetX?: number, offsetY?: number ): [number, number] {
+        let OffsetX = offsetX !== undefined ? offsetX : this.NextX;
+        let OffsetY = offsetY !== undefined ? offsetY : this.NextY;
+        let dx = OffsetX - this.LastX;
+        let dy = OffsetY - this.LastY;
+        let new_dx = dx*Math.cos(radian) - dy*Math.sin(-radian);
+        let new_dy = dx*Math.sin(-radian) + dy*Math.cos(radian);
+        return [new_dx,new_dy];
+    }
+    protected rotatedPoint(x: number, y: number,radian: number):[number, number]{
+        let originX = x;// - this.LastX;
+        let originY = y;// - this.LastY;
+        let newX = originX*Math.cos(radian) - originY*Math.sin(radian);
+        let newY = originX*Math.sin(radian) + originY*Math.cos(radian);
+        // return [newX + this.LastX, newY + this.LastY];
+        return [newX, newY];
+    }
+    public DrawFunction(ctx: Konva.Group, width: number, height: number,rotate: number) {};
+    public CompositeOperation: GlobalCompositeOperation = "source-over";
+    public set Settings(setting:CanvasInterfaceSettings) {}; 
+    public get Settings() { return {} as CanvasInterfaceSettings; }; 
+};
+
 export class NoOPCVSFunc extends DrawBase{};
 export interface CanvasBase {
     name: string;

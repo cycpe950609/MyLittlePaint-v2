@@ -7,8 +7,11 @@ import { NoOPFunc } from "./interface/function";
 export const changeToMode = (modeName: string) => {
 
     let mode = editorUIData.getState().mode.data[modeName];
-    if (mode.def.StartMode !== undefined) {
-        mode.def.StartMode();
+    let curMode = editorUIData.getState().mode.data[editorUIData.getState().mode.curMode];
+    let isSubMode = mode.def.CenterCanvas === undefined;
+
+    if(!isSubMode && curMode !== undefined && curMode.def.EndMode!== undefined) {
+        curMode.def.EndMode()
     }
 
     if (mode.def.StartMode !== undefined) {

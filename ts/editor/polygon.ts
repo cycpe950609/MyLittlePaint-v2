@@ -1,7 +1,7 @@
 import Konva from "konva";
 import { CircleConfig } from "konva/lib/shapes/Circle";
 import { PathConfig } from "konva/lib/shapes/Path";
-import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType, DrawBase } from "../editorUI/canvas";
+import { CanvasInterfaceSettings, CanvasSettingEntry, CanvasSettingType, ClickDrawBase, DrawBase } from "../editorUI/canvas";
 import { editorUIActions, editorUIData } from "../editorUI/data";
 import Mexp from "math-expression-evaluator";
 
@@ -233,4 +233,61 @@ export class RectangleCVSFunc extends PathDraw
     ImgName = 'rectangle';
     Tip = 'Rectangle'
     Path = "M ${startX} ${startY} L ${endX} ${startY} L ${endX} ${endY} L ${startX} ${endY} Z";
+}
+
+export class PolygonCVSFunc extends ClickDrawBase {
+    CursorName ='crosshair';
+    BorderBrush = '#FF0000';//'rgb(255,0,0)';
+    BorderWidth = 2;
+    ContentColor = '#FF000025';//'rgb(0,0,255)';
+    CanFilled = true;
+    Name = 'Polygon';
+    HistoryName = 'polygon-polygon';
+    ImgName = 'polygon';
+
+
+    DrawFunction = (Ctx: Konva.Group,width: number, height: number, angle: number) =>
+    { 
+        let shape = Ctx.find(`.${this.shapeID}`)
+        let polygon = undefined;
+        if(shape.length > 0){
+            polygon = shape[0]
+        }
+        else {
+            polygon = new Konva.Path({
+                name: this.shapeID
+            } as PathConfig);
+            Ctx.add(polygon)
+        }
+
+        let radian = (-angle) * Math.PI/180;
+        let newDelta = this.rotatedDelta(radian);
+        let new_dx = newDelta[0];
+        let new_dy = newDelta[1];
+
+        let drawPath = "M 0 0 ";
+        this.points.forEach((point) => {
+            let newPtDelta = this.rotatedDelta(radian,point[0],point[1]);
+            let new_pt_dx = newPtDelta[0];
+            let new_pt_dy = newPtDelta[1];
+            let newPt   = this.rotatedPoint(new_pt_dx,new_pt_dy,radian);
+            drawPath += `L ${newPt[0]} ${newPt[1]} `;
+        })
+        let newNextPt   = this.rotatedPoint(new_dx,new_dy,radian);
+        if(this.ifDrawing)// Only preview need render point of pointer
+            drawPath += `L ${newNextPt[0]} ${newNextPt[1]} `;
+        drawPath += "Z";
+        polygon.setAttr('x',this.LastX);
+        polygon.setAttr('y',this.LastY);
+        polygon.setAttr('data', drawPath);
+        polygon.setAttr("fill", this.CanFilled ?  this.ContentColor : 'transparent');
+        polygon.setAttr("stroke", this.BorderBrush)
+        polygon.setAttr("strokeWidth", this.BorderWidth)
+        polygon.setAttr("courtName", this.courtName);
+    };
+
+    get Settings () {
+        return {};
+    }
+    set Settings (setting: CanvasInterfaceSettings) {}
 }

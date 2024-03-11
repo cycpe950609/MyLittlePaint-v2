@@ -16,6 +16,8 @@ export interface CanvasInterface {
     PointerMove?: (e: PaintEvent) => void;
     PointerUp?: (e: PaintEvent) => void;
     PointerOut?: (e: PaintEvent) => void;
+    RightPointerDown?: (e: PaintEvent) => void;
+    RightPointerUp?: (e: PaintEvent) => void;
     DrawFunction: (ctx: Konva.Group, width: number, height: number, rotate: number) => void;
     CompositeOperation: GlobalCompositeOperation;
     Settings?: CanvasInterfaceSettings;
@@ -52,6 +54,31 @@ export declare class DrawBase implements CanvasInterface {
     PointerUp(e: PaintEvent): void;
     PointerOut(e: PaintEvent): void;
     protected rotatedDelta(radian: number): [number, number];
+    protected rotatedPoint(x: number, y: number, radian: number): [number, number];
+    DrawFunction(ctx: Konva.Group, width: number, height: number, rotate: number): void;
+    CompositeOperation: GlobalCompositeOperation;
+    set Settings(setting: CanvasInterfaceSettings);
+    get Settings(): CanvasInterfaceSettings;
+}
+export declare class ClickDrawBase implements CanvasInterface {
+    Name: string;
+    private _canfinishDrawing;
+    get CanFinishDrawing(): boolean;
+    protected LastX: number;
+    protected LastY: number;
+    protected NextX: number;
+    protected NextY: number;
+    protected ifDrawing: boolean;
+    protected ifMouseMove: boolean;
+    protected shapeID: string;
+    protected points: [number, number][];
+    protected courtName: string;
+    PointerDown(e: PaintEvent): void;
+    PointerMove(e: PaintEvent): void;
+    PointerUp(e: PaintEvent): void;
+    RightPointerUp(e: PaintEvent): void;
+    PointerOut(e: PaintEvent): void;
+    protected rotatedDelta(radian: number, offsetX?: number, offsetY?: number): [number, number];
     protected rotatedPoint(x: number, y: number, radian: number): [number, number];
     DrawFunction(ctx: Konva.Group, width: number, height: number, rotate: number): void;
     CompositeOperation: GlobalCompositeOperation;
