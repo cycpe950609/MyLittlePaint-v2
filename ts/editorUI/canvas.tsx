@@ -153,9 +153,10 @@ export class ClickDrawBase implements CanvasInterface {
     }
 
     public PointerOut(e: PaintEvent){
-        this._canfinishDrawing = true;
-        this.ifMouseMove = false;
-        this.ifDrawing = false; 
+        // this.points.push([e.X, e.Y]);
+        // this._canfinishDrawing = true;
+        // this.ifMouseMove = false;
+        // this.ifDrawing = false; 
     };
     protected rotatedDelta(radian: number, offsetX?: number, offsetY?: number ): [number, number] {
         let OffsetX = offsetX !== undefined ? offsetX : this.NextX;
