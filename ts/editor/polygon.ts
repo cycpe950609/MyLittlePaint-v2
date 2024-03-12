@@ -252,7 +252,7 @@ class btnExitDrawing implements FunctionInterface {
                 window.editorUI.CenterCanvas.Function.RightPointerUp(undefined);
         return {
             isChangeTo: false,
-            finishSubMode: false,//Because we exzit subMode at RightPointerUp, we dont need to finish subMode here
+            finishSubMode: false,//Because we exit subMode at RightPointerUp, we dont need to finish subMode here
         } as NextFunctionState;
     };    
 }
@@ -327,7 +327,7 @@ export class PolygonCVSFunc extends ClickDrawBase {
             drawPath += `L ${newPt[0]} ${newPt[1]} `;
         })
         let newNextPt   = this.rotatedPoint(new_dx,new_dy,radian);
-        if(this.ifDrawing)// Only preview need render point of pointer
+        if(this.ifDrawing && !this.isPointOut)// Only preview need render point of pointer
             drawPath += `L ${newNextPt[0]} ${newNextPt[1]} `;
         drawPath += "Z";
         polygon.setAttr('x',this.LastX);

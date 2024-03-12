@@ -114,13 +114,14 @@ export class ClickDrawBase implements CanvasInterface {
     Name: string = "base";
     private _canfinishDrawing: boolean = true
     public get CanFinishDrawing(){ return this._canfinishDrawing; };
-
+    
     protected LastX = 0;
     protected LastY = 0;
     protected NextX = 0;
     protected NextY = 0;
     protected ifDrawing = false;
     protected ifMouseMove = false;
+    protected isPointOut = false
     protected shapeID!: string;
     protected points: [number, number][] = [];
     protected courtName!: string;
@@ -139,6 +140,7 @@ export class ClickDrawBase implements CanvasInterface {
     };
     public PointerMove(e: PaintEvent){
         if(!this.ifDrawing) return;
+        this.isPointOut = false;
         this.ifMouseMove = true;
         [this.NextX, this.NextY] = [e.X, e.Y];
     };
@@ -153,6 +155,7 @@ export class ClickDrawBase implements CanvasInterface {
     }
 
     public PointerOut(e: PaintEvent){
+        this.isPointOut = true;
         // this.points.push([e.X, e.Y]);
         // this._canfinishDrawing = true;
         // this.ifMouseMove = false;

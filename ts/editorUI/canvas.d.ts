@@ -70,6 +70,7 @@ export declare class ClickDrawBase implements CanvasInterface {
     protected NextY: number;
     protected ifDrawing: boolean;
     protected ifMouseMove: boolean;
+    protected isPointOut: boolean;
     protected shapeID: string;
     protected points: [number, number][];
     protected courtName: string;
