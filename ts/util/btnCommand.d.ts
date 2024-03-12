@@ -5,6 +5,6 @@ declare class btnCommand implements FunctionInterface {
     Tip: string;
     ImgName: string;
     constructor();
-    StartFunction(cvs: CanvasBase): boolean;
+    StartFunction(cvs: CanvasBase): void;
 }
 export default btnCommand;

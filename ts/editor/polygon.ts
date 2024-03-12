@@ -10,6 +10,7 @@ import { SubModeFunction } from "../editorUI/interface/mode";
 import { EditorCanvas } from "./modeEditor";
 import { returnMode } from "../editorUI/mode";
 import SettingPageSidebar from "./setting";
+import { btnResetRotate, btnResetScale, btnToggleTouch } from "./menu";
 
 export class PolygonBase extends DrawBase {
     CursorName ='crosshair';
@@ -272,7 +273,12 @@ export class btnPolygon implements FunctionInterface {
             isChangeTo: true,
             subMode: {
                 clearToolbar: true,
-                MenuToolbarRight : [new btnExitDrawing()],
+                MenuToolbarRight : [
+                    new btnResetScale(), 
+                    new btnResetRotate(), 
+                    new btnToggleTouch(), 
+                    new btnExitDrawing()
+                ],
                 RightToolbarTop: [new SettingPageSidebar()],
                 EndMode: () => {
                     cvs.Function = new NoOPCVSFunc();
