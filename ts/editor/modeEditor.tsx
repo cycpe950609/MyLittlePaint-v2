@@ -306,11 +306,14 @@ export class EditorCanvas implements CanvasBase {
                 type: "mouse",
                 pressure: 1.0
             };
-            if (this.draw_func.PointerDown !== undefined) {
-                this.EventFired = true;
-                this.draw_func.PointerDown(mouseEvent);
-                requestAnimationFrame(this.render);
+            if(e.button === 0) {
+                if (this.draw_func.PointerDown !== undefined) {
+                    this.EventFired = true;
+                    this.draw_func.PointerDown(mouseEvent);
+                    requestAnimationFrame(this.render);
+                }
             }
+            else if(e.button === 2) {}
             isDrawing = true;
             // console.log(`Mouse Down`);
         })
