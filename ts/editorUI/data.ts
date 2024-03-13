@@ -137,10 +137,9 @@ let modeManagerSlice = createSlice({
             // immutable state based off those changes
             let modeName = action.payload
             console.log("[EUI] Tried to enable " + modeName);
-            let modeNameWithHash = `#/${modeName}`;
-            if (modeNameWithHash in state.data) {
+            if (modeName in state.data) {
                 console.log("[EUI] Enable " + modeName);
-                const mode = state.data[modeNameWithHash];
+                const mode = state.data[modeName];
                 if (mode === undefined) throw new Error("MODEMGR_INTERNAL_ERROR");
                 mode.enable = true;
                 state.action = `mode.${modeName}.enable`;
@@ -148,9 +147,8 @@ let modeManagerSlice = createSlice({
         },
         disable: (state, action: PayloadAction<string>) => {
             let modeName = action.payload
-            let modeNameWithHash = `#/${modeName}`;
-            if (modeNameWithHash in state.data) {
-                const mode = state.data[modeNameWithHash];
+            if (modeName in state.data) {
+                const mode = state.data[modeName];
                 if (mode === undefined) throw new Error("MODEMGR_INTERNAL_ERROR");
                 mode.enable = false;
                 state.action = `mode.${modeName}.disable`;
@@ -166,7 +164,7 @@ let modeManagerSlice = createSlice({
             }
         },
         add: (state, action: PayloadAction<ModeInfo>) => {
-            const name = `#/${action.payload.modeName}`;
+            const name = action.payload.modeName;
             state.data[name] = action.payload;
             state.action = `mode.${action.payload.modeName}.added`;
         },
@@ -179,20 +177,29 @@ let modeManagerSlice = createSlice({
             }
         },
         setRoot: (state, action: PayloadAction<string>) => {
-            state.root = action.payload
+            state.root = action.payload;
+            state.curMode = action.payload;
         },
-        // changeTo: (state, action: PayloadAction<string>) => {
-        //     if(state.curMode === action.payload) return;
-        //     if(!(action.payload in state.data)) return;
-        //     state.lastMode = state.curMode;
-        //     state.curMode = action.payload;
-        //     state.action = `mode.changed`;
-        //     return state;
-        // }
+        changeTo: (state, action: PayloadAction<string>) => {
+            if(state.curMode === action.payload) return;
+            if(!(action.payload in state.data)) return;
+            state.lastMode = state.curMode;
+            state.curMode = action.payload;
+            state.action = `mode.changed`;
+            return state;
+        }
     }
 });
 
-export const { disable: modeDisable, enable: modeEnable, toggle: modeToggle, add: modeAdd, remove: modeRemove, setRoot: modeSetRoot } = modeManagerSlice.actions;
+export const { 
+    disable: modeDisable, 
+    enable: modeEnable, 
+    toggle: modeToggle, 
+    add: modeAdd, 
+    remove: modeRemove, 
+    setRoot: modeSetRoot,
+    changeTo: modeChangeTo
+} = modeManagerSlice.actions;
 
 export type ToolbarStateType<ButtonInfoType> = { [key: string]: ButtonInfoType };
 const createToolbarPartSlice = <ButtonInfoType>(name: string) => {

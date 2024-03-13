@@ -2,7 +2,7 @@ import FunctionInterface, { NoOPFunc } from './interface/function';
 import Toolbar, { ToolbarComp, ToolbarPart } from './toolbar';
 // import SidebarInterface from './interface/sidebar';
 import ModeFunction from './interface/mode';
-import { ModeInfo, editorUIActions, editorUIData, modeAdd, modeDisable, modeEnable, modeRemove, modeSetRoot, modeToggle } from './data';
+import { ModeInfo, editorUIActions, editorUIData, modeAdd, modeChangeTo, modeDisable, modeEnable, modeRemove, modeSetRoot, modeToggle } from './data';
 import SidebarInterface from './interface/sidebar';
 import Sidebar, { SidebarComp } from './sidebar';
 import { CanvasBase, NoOPCanvas } from './canvas';
@@ -16,7 +16,6 @@ import { ModeSelectorComp } from './modeSelector';
 import { changeToMode, changeToSubMode, returnMode } from './mode';
 import { ErrorHandlerPage } from './errorPage';
 import { DIV } from './util/HTMLElement';
-import { useLocation } from './util/useHook';
 
 declare global {
     interface Window {
@@ -24,7 +23,6 @@ declare global {
     }
 }
 class ModeManger {
-    // private modeList: Map<string, ModeInfo> = new Map<string, ModeInfo>();
     private selectorBtn: Map<string, HTMLLabelElement> = new Map<
         string,
         HTMLLabelElement
@@ -54,7 +52,6 @@ class ModeManger {
     add(modeName: string, modeFunc: ModeFunction, enabled?: boolean) {
         if (modeName in editorUIData.getState()["mode"].data) throw new Error("Mode " + modeName + " exist");
         if (!(modeName in editorUIData.getState()["mode"].data)) {
-            let modeNameHash = `#/${modeName}`;
 
             editorUIData.dispatch(modeAdd({
                 def: modeFunc,
@@ -62,28 +59,8 @@ class ModeManger {
                 modeName: modeName,
                 btn: document.createElement("label")
             }));
-            // this.modeList.set(name, mode);
-            // console.log("[EUI] Mode is enable : ",(data.getState()['mode'][modeNameHash] as ModeInfo).enable )
-            const modeInfo: ModeInfo = {
-                def: modeFunc,
-                enable: enabled !== undefined ? enabled : modeFunc.Enable,
-                modeName: modeName,
-            };
             if (editorUIData.getState().mode.root === "")
-                editorUIData.dispatch(modeSetRoot(modeNameHash));
-            // singleSpa.registerApplication({
-            //     name: `mode_${modeName}`, // 子应用名
-            //     app: () => import(/* webpackChunkName: "eui-mode-mount" */"./mode"), // 如何加载你的子应用
-            //     // activeWhen: `index.html#/${name}`, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
-            //     activeWhen: (url: Location) => {
-            //         console.log("[EUI] Url hash", url.hash, modeNameHash, modeNameHash in editorUIDataNG.getState()['mode'].data);
-            //         return url.hash === `#/${modeName}` &&
-            //             modeNameHash in editorUIDataNG.getState()['mode'].data &&
-            //             (editorUIDataNG.getState()['mode'].data[modeNameHash] as ModeInfo).enable === true
-            //     }, // url 匹配规则，表示啥时候开始走这个子应用的生命周期
-            //     customProps: modeInfo
-            // });
-
+                editorUIData.dispatch(modeSetRoot(modeName));
         }
         console.log("[EUI] Add mode " + modeName);
     }
@@ -119,22 +96,16 @@ class ModeManger {
     changeTo(modeName: string) {
         console.log("[MOD] Before change mode to " + modeName);
         if (this.func_mode === modeName) return;
-
-        let modeNameHash = `#/${modeName}`;
-        // console.log(modeNameHash in data.getState()["mode"].data && data.getState()["mode"].data[modeNameHash].enable !== true)
         if (
-            modeNameHash in editorUIData.getState()["mode"].data &&
-            editorUIData.getState()["mode"].data[modeNameHash].enable !== true
+            modeName in editorUIData.getState()["mode"].data &&
+            editorUIData.getState()["mode"].data[modeName].enable !== true
         )
             return;
-        console.log(`[MOD] Change mode to ${modeName} 2`);
-        changeToMode(modeNameHash);
+        console.log(`[DEB] Change mode to ${modeName} 2`);
+        changeToMode(modeName);
         this.isModeChanged = true;
         console.log("[DEB]", modeName, editorUIData.getState().mode.data)
-        // singleSpa.navigateToUrl(`#/${modeName}`)
         console.log("[MOD] Change mode to " + modeName);
-        const [loc, setLoc] = useLocation();
-        setLoc(modeNameHash);
     }
 
     public get ModeChanged() { // Can only be called once at render time
@@ -229,48 +200,6 @@ class EditorUI {
             return;
         this.should_rerender = false;
         this.time_to_rerender = false;
-        console.log("[EUI] Render");
-
-        // let stateAction = editorUIData.getState().state.action;
-        // console.log("[HOK] State action", stateAction);
-        // switch (stateAction) {
-        //     // case "state.usestate":
-        //     //     console.log("[HOK] editorUI.useState")
-        //     //     return;
-        //     case "state.patchstates":
-        //         console.log("[HOK] editorUI.patchstates")
-        //         // break;
-        //         return;
-        //     case "state.resetcount":
-        //         console.log("[HOK] editorUI.resetcount")
-        //         break;
-        //     case "state.setstate":
-        //         console.log("[HOK] editorUI.setstate")
-        //         return;
-        //     // case "state.init":
-        //     // break;
-        //     default:
-        //         break;
-        // }
-        // let dataAction = editorUIData.getState().binder.action;
-        // switch (dataAction) {
-        //     case "data.create.binder":
-        //         console.log("[HOK] editorUI.patchstates")
-        //         // break;
-        //         return;
-        //     case "data.reset.binder":
-        //         console.log("[HOK] editorUI.resetcount")
-        //         break;
-        //     case "state.setstate":
-        //         console.log("[HOK] editorUI.setstate")
-        //         return;
-        //     // case "state.init":
-        //     // break;
-        //     default:
-        //         break;
-        // }
-
-        console.log("[DEB] Render");
 
         let isToolbarLeftActive: boolean = true;
         let isToolbarRightActive: boolean = true;
@@ -281,9 +210,10 @@ class EditorUI {
         let isMenubarRightActive: boolean = true;
         let isModeSelectorActive: boolean = true;
 
-        let url = window.location;
-        let isNotExistPath = !(url.hash in editorUIData.getState()["mode"].data);
-        let isDisableMode = (url.hash in editorUIData.getState()["mode"].data && editorUIData.getState()["mode"].data[url.hash].enable === false)
+        let curModeName = editorUIData.getState()["mode"].curMode;
+        console.log("[DEB] curModeName", curModeName);
+        let isNotExistPath = !(curModeName in editorUIData.getState()["mode"].data);
+        let isDisableMode = (curModeName in editorUIData.getState()["mode"].data && editorUIData.getState()["mode"].data[curModeName].enable === false)
         let isErrorHandlerPageActive: boolean = isNotExistPath || isDisableMode;
 
         // let canvas_group = <Div Id="canvas_group" className="canvas_group"></Div>

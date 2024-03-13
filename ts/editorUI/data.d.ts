@@ -15,7 +15,7 @@ export type DataBinderDataType = {
     isCreated: boolean;
     val: StateType;
 };
-export declare const modeDisable: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/disable">, modeEnable: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/enable">, modeToggle: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/toggle">, modeAdd: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<ModeInfo, "modeManager/add">, modeRemove: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/remove">, modeSetRoot: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/setRoot">;
+export declare const modeDisable: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/disable">, modeEnable: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/enable">, modeToggle: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/toggle">, modeAdd: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<ModeInfo, "modeManager/add">, modeRemove: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/remove">, modeSetRoot: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/setRoot">, modeChangeTo: import("@reduxjs/toolkit").ActionCreatorWithOptionalPayload<string, "modeManager/changeTo">;
 export type ToolbarStateType<ButtonInfoType> = {
     [key: string]: ButtonInfoType;
 };

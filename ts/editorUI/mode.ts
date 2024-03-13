@@ -1,5 +1,5 @@
 import { Unsubscribe } from "@reduxjs/toolkit";
-import { ModeInfo, editorUIData } from "./data";
+import { ModeInfo, editorUIData, modeChangeTo } from "./data";
 // import { DIV, LABEL } from "./util/HTMLElement";
 import { NoOPFunc } from "./interface/function";
 import { SubModeFunction } from "./interface/mode";
@@ -72,6 +72,7 @@ export const changeToMode = (modeName: string) => {
     } ;
     modeStack = [];
     changeToSubMode(newMode);
+    editorUIData.dispatch(modeChangeTo(mode.modeName));
     
     let funcNoop = new NoOPFunc(0);
     window.editorUI.Mode.changeFunction(funcNoop);
