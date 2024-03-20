@@ -194,13 +194,13 @@ export class EditorCanvas implements CanvasBase {
         console.log("[HOK] Canvas Size ", this.width, this.height);
         this.backgroundDiv.style.width = `${window.innerWidth*3}px`;
         this.backgroundDiv.style.height = `${window.innerHeight*3}px`;
+        this.backgroundDiv.style.setProperty("--bgDiv-background-width", `${window.innerWidth*3}px`)
+        this.backgroundDiv.style.setProperty("--bgDiv-background-height", `${window.innerHeight*3}px`)
         this.backgroundDiv.style.position = "fixed";
         this.backgroundDiv.style.top = `${-window.innerWidth}px`;
         this.backgroundDiv.style.left = `${-window.innerHeight}px`;
-        this.backgroundDiv.style.backgroundImage = 'url(img/cvs_bg.png)';
-        this.backgroundDiv.style.backgroundSize = "32px 32px";
-        this.backgroundDiv.style.backgroundRepeat = "repeat";
-        this.backgroundDiv.style.overflow = "hidden";
+        this.backgroundDiv.style.setProperty("--bgDiv-background-image" , 'url(../img/cvs_bg.png)');
+        this.backgroundDiv.style.setProperty("--bgDiv-background-size" , "32px 32px");
         this.backgroundDiv.id = "backgroundDiv";
         
         let interactCVS = interact(this.cnt, {
@@ -642,14 +642,14 @@ export class EditorCanvas implements CanvasBase {
         this.angleScalePos.angle = new_rotate;
         this.refreshScaleTip(this.angleScalePos.angle,this.angleScalePos.scale);
         // console.log("Next rotate factor = " + this.angleScalePos.scale);
-        this.backgroundDiv.style.transform = `rotate(${new_rotate}deg)`;
+        this.backgroundDiv.style.setProperty("--bgDiv-transform-rotate",`${new_rotate}deg`);
         this.LayerManager.rotateTo(new_rotate);
     };
 
     public moveTo = (moveX: number,moveY: number) => {
         this.angleScalePos.pos.x = moveX;
         this.angleScalePos.pos.y = moveY;
-        this.backgroundDiv.style.backgroundPosition = `${-moveX}px ${moveY}px`;
+        this.backgroundDiv.style.setProperty("--bgDiv-transform-translate",`${-moveX}px ${-moveY}px`);
         this.LayerManager.moveTo(moveX,moveY);
     };
     private cvsMouseWheelHandler = (ev: WheelEvent) => {
