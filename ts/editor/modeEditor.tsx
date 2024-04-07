@@ -601,6 +601,7 @@ export class EditorCanvas implements CanvasBase {
         btnOK.onclick = () => {
             // console.log(`Clear ${this.width}, ${this.height}`, this.ctx);
             this.initCanvas();
+            this.setLayerInfoList(this.LayerManager.LayerList);
             dia.close();
         };
         let dia = new Dialog(
